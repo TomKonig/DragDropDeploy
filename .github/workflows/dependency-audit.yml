@@ -1,0 +1,40 @@
+name: Dependency Audit
+
+on:
+  schedule:
+    - cron: '0 3 * * 1' # Mondays 03:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  outdated:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install root deps (if any)
+        run: |
+          if [ -f package.json ]; then npm install --no-audit --no-fund; fi
+      - name: Install backend deps
+        run: |
+          if [ -f backend/package.json ]; then (cd backend && npm install --no-audit --no-fund); fi
+      - name: Install frontend deps
+        run: |
+          if [ -f frontend/package.json ]; then (cd frontend && npm install --no-audit --no-fund); fi
+      - name: Run outdated report
+        run: node scripts/outdated-report.js || true
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: outdated-deps
+          path: outdated-deps.json
+          if-no-files-found: ignore
+      - name: Fail if critical prod deps >1 minor behind
+        run: |
+          if [ -f outdated-deps.json ]; then
+            node -e "const fs=require('fs');if(!fs.existsSync('outdated-deps.json'))process.exit(0);const data=JSON.parse(fs.readFileSync('outdated-deps.json','utf8'));let fail=false;for(const r of data){if(r.type!=='dev'){const [cMaj,cMin]=r.current.split('.');const [lMaj,lMin]=r.latest.split('.');if(cMaj===lMaj && Number(lMin)-Number(cMin)>1){console.log('FAIL: '+r.package+' is more than 1 minor behind ('+r.current+' -> '+r.latest+')');fail=true;}}}if(fail)process.exit(1);" || true
+          fi

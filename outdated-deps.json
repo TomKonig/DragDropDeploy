@@ -1,0 +1,290 @@
+[
+  {
+    "package": "@nestjs/common",
+    "current": "10.4.20",
+    "wanted": "10.4.20",
+    "latest": "11.1.6",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/core",
+    "current": "10.4.20",
+    "wanted": "10.4.20",
+    "latest": "11.1.6",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/jwt",
+    "current": "10.2.0",
+    "wanted": "10.2.0",
+    "latest": "11.0.0",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/passport",
+    "current": "10.0.3",
+    "wanted": "10.0.3",
+    "latest": "11.0.5",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/platform-express",
+    "current": "10.4.20",
+    "wanted": "10.4.20",
+    "latest": "11.1.6",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@types/bcrypt",
+    "current": "5.0.2",
+    "wanted": "5.0.2",
+    "latest": "6.0.0",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@types/node",
+    "current": "20.19.13",
+    "wanted": "20.19.13",
+    "latest": "24.3.1",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@types/react",
+    "current": "18.3.24",
+    "wanted": "18.3.24",
+    "latest": "19.1.12",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@types/react-dom",
+    "current": "18.3.7",
+    "wanted": "18.3.7",
+    "latest": "19.1.9",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@typescript-eslint/eslint-plugin",
+    "current": "7.18.0",
+    "wanted": "7.18.0",
+    "latest": "8.43.0",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@typescript-eslint/parser",
+    "current": "7.18.0",
+    "wanted": "7.18.0",
+    "latest": "8.43.0",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "bcrypt",
+    "current": "5.1.1",
+    "wanted": "5.1.1",
+    "latest": "6.0.0",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "concurrently",
+    "current": "8.2.2",
+    "wanted": "8.2.2",
+    "latest": "9.2.1",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "eslint",
+    "current": "8.57.1",
+    "wanted": "8.57.1",
+    "latest": "9.35.0",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "react",
+    "current": "18.3.1",
+    "wanted": "18.3.1",
+    "latest": "19.1.1",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "react-dom",
+    "current": "18.3.1",
+    "wanted": "18.3.1",
+    "latest": "19.1.1",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "react-router-dom",
+    "current": "6.30.1",
+    "wanted": "6.30.1",
+    "latest": "7.8.2",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "reflect-metadata",
+    "current": "0.1.14",
+    "wanted": "0.1.14",
+    "latest": "0.2.2",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "vite",
+    "current": "5.4.20",
+    "wanted": "5.4.20",
+    "latest": "7.1.5",
+    "location": "root",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/common",
+    "current": "10.4.20",
+    "wanted": "10.4.20",
+    "latest": "11.1.6",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/core",
+    "current": "10.4.20",
+    "wanted": "10.4.20",
+    "latest": "11.1.6",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/jwt",
+    "current": "10.2.0",
+    "wanted": "10.2.0",
+    "latest": "11.0.0",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/passport",
+    "current": "10.0.3",
+    "wanted": "10.0.3",
+    "latest": "11.0.5",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "@nestjs/platform-express",
+    "current": "10.4.20",
+    "wanted": "10.4.20",
+    "latest": "11.1.6",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "@types/bcrypt",
+    "current": "5.0.2",
+    "wanted": "5.0.2",
+    "latest": "6.0.0",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "@types/node",
+    "current": "20.19.13",
+    "wanted": "20.19.13",
+    "latest": "24.3.1",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "bcrypt",
+    "current": "5.1.1",
+    "wanted": "5.1.1",
+    "latest": "6.0.0",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "reflect-metadata",
+    "current": "0.1.14",
+    "wanted": "0.1.14",
+    "latest": "0.2.2",
+    "location": "backend",
+    "type": "prod"
+  },
+  {
+    "package": "@types/react",
+    "current": "18.3.24",
+    "wanted": "18.3.24",
+    "latest": "19.1.12",
+    "location": "frontend",
+    "type": "prod"
+  },
+  {
+    "package": "@types/react-dom",
+    "current": "18.3.7",
+    "wanted": "18.3.7",
+    "latest": "19.1.9",
+    "location": "frontend",
+    "type": "prod"
+  },
+  {
+    "package": "@typescript-eslint/eslint-plugin",
+    "current": "7.18.0",
+    "wanted": "7.18.0",
+    "latest": "8.43.0",
+    "location": "frontend",
+    "type": "prod"
+  },
+  {
+    "package": "@typescript-eslint/parser",
+    "current": "7.18.0",
+    "wanted": "7.18.0",
+    "latest": "8.43.0",
+    "location": "frontend",
+    "type": "prod"
+  },
+  {
+    "package": "react",
+    "current": "18.3.1",
+    "wanted": "18.3.1",
+    "latest": "19.1.1",
+    "location": "frontend",
+    "type": "prod"
+  },
+  {
+    "package": "react-dom",
+    "current": "18.3.1",
+    "wanted": "18.3.1",
+    "latest": "19.1.1",
+    "location": "frontend",
+    "type": "prod"
+  },
+  {
+    "package": "react-router-dom",
+    "current": "6.30.1",
+    "wanted": "6.30.1",
+    "latest": "7.8.2",
+    "location": "frontend",
+    "type": "prod"
+  },
+  {
+    "package": "vite",
+    "current": "5.4.20",
+    "wanted": "5.4.20",
+    "latest": "7.1.5",
+    "location": "frontend",
+    "type": "prod"
+  }
+]

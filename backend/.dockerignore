@@ -1,0 +1,17 @@
+node_modules
+dist
+coverage
+*.log
+Dockerfile*
+.dockerignore
+.git
+.gitignore
+.env
+.env.*
+tmp
+*.tsbuildinfo
+README.md
+tests
+__tests__
+prisma/*.db
+scripts/gen-dev-certs.sh

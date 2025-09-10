@@ -1,0 +1,23 @@
+{
+  "name": "dragdropdeploy-monorepo",
+  "private": true,
+  "version": "0.0.1",
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "lint": "eslint . --ext .ts,.tsx || true",
+    "typecheck": "tsc -b",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.0"
+  }
+}

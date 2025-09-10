@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":timezone(Europe/Vienna)",
+    ":prHourlyLimit10",
+    ":prConcurrentLimit20"
+  ],
+  "rangeStrategy": "replace",
+  "separateMajorMinor": true,
+  "packageRules": [
+    {
+      "description": "Group minor/patch NestJS core packages",
+      "matchPackagePatterns": ["^@nestjs/"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "nestjs minors"
+    },
+    {
+      "description": "Group Prisma client + engine",
+      "matchPackagePatterns": ["^@prisma/", "^prisma$"],
+      "groupName": "prisma"
+    },
+    {
+      "description": "Security: auto-merge non-breaking dev dependency patches",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    }
+  ],
+  "labels": ["deps"],
+  "ignorePaths": ["dist/**"],
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboard": true
+}

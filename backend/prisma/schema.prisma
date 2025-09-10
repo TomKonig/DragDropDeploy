@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Multi-tenant note:
+// Initial approach: each user can own many projects; deployments belong to a project.
+// Future tenant/org separation can extend with an Organization model and membership join table.
+
+model User {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  email        String    @unique
+  displayName  String?
+  // first user flagged as operator later by a data migration or seed
+  isOperator   Boolean   @default(false)
+  passwordHash String?
+  role         UserRole  @default(USER)
+  projects     Project[] @relation("UserProjects")
+  deployments  Deployment[]
+}
+
+model Project {
+  id           String       @id @default(cuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  name         String
+  ownerId      String
+  owner        User         @relation(fields: [ownerId], references: [id], name: "UserProjects")
+  deployments  Deployment[]
+  // TODO: build configuration JSON to store build plan in future (use JSONB)
+}
+
+model Deployment {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  projectId    String
+  project      Project   @relation(fields: [projectId], references: [id])
+  userId       String?
+  user         User?     @relation(fields: [userId], references: [id])
+  status       DeployStatus @default(PENDING)
+  commitHash   String?
+  imageTag     String?
+  buildLogsUrl String? // pointer to object storage or internal log retention
+  // Future: environment (preview|production) & domain mapping table
+}
+
+enum DeployStatus {
+  PENDING
+  BUILDING
+  FAILED
+  ACTIVE
+  INACTIVE
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  OPERATOR
+}

@@ -1,0 +1,65 @@
+version: '3.9'
+
+# Coolify-friendly compose (no internal Traefik). Coolify will manage proxy/routing & TLS.
+# Exposes only backend & frontend. Postgres/Redis kept on private network.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ddd
+      POSTGRES_PASSWORD: change_me
+      POSTGRES_DB: ddd
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ddd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://ddd:change_me@postgres:5432/ddd
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "3000:3000" # Exposed for Coolify to attach HTTP routing
+    networks: [internal]
+    # Coolify may add labels automatically; none required here.
+
+  frontend:
+    build: ./frontend
+    # For a production build you might serve via backend or nginx. For now expose Vite dev / preview.
+    environment:
+      NODE_ENV: production
+    ports:
+      - "5173:5173"
+    networks: [internal]
+
+volumes:
+  pgdata: {}
+  redisdata: {}
+
+networks:
+  internal: {}
