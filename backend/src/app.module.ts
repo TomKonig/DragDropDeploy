@@ -12,10 +12,10 @@ import { StatusModule } from './status/status.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validationSchema: configValidationSchema }),
+  AuthModule, // load auth (global guards) early
   HealthModule,
   PrismaModule,
   UsersModule,
-  AuthModule,
   ProjectsModule,
   UploadsModule,
   StatusModule,

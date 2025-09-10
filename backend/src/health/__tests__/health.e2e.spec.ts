@@ -43,7 +43,9 @@ describe('Health endpoints (e2e)', () => {
   });
 
   it('returns 403 for /health/internal with basic user token', async () => {
-    const token = await register(app, 'healthuser@example.com');
+  // Ensure first user (operator bootstrap) is created so the next user is plain USER
+  await register(app, 'health-bootstrap-op@example.com');
+  const token = await register(app, 'healthuser@example.com');
     await request(app.getHttpServer())
       .get('/health/internal')
       .set('Authorization', `Bearer ${token}`)
