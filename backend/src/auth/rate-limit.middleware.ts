@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NestMiddleware, HttpStatus } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
 interface Bucket {
@@ -10,7 +10,28 @@ interface Bucket {
 export class RateLimitMiddleware implements NestMiddleware {
   private buckets = new Map<string, Bucket>();
   private capacity = Number(process.env.RATE_LIMIT_AUTH_CAPACITY || 5); // attempts
-  private windowMs = Number(process.env.RATE_LIMIT_AUTH_WINDOW_MS || 60_000); // per minute
+  private windowMs = Number(process.env.RATE_LIMIT_AUTH_WINDOW_MS || 60_000); // interval length
+  // Stale bucket TTL (same as window) and periodic cleanup handle unbounded growth risk
+  private cleanupInterval: NodeJS.Timeout;
+
+  constructor() {
+    // Periodically prune buckets that have not been touched for > 2 * window (generous grace)
+    const interval = Math.max(30_000, Math.min(5 * 60_000, this.windowMs));
+    this.cleanupInterval = setInterval(() => {
+      const now = Date.now();
+      const ttl = this.windowMs * 2;
+      for (const [key, bucket] of this.buckets.entries()) {
+        if (now - bucket.lastRefill > ttl) {
+          this.buckets.delete(key);
+        }
+      }
+    }, interval).unref?.();
+  }
+
+  // Allow graceful shutdown to clear timer (Nest calls onModuleDestroy for providers, but middleware isn't automatically)
+  public dispose() {
+    clearInterval(this.cleanupInterval);
+  }
 
   use(req: Request, res: Response, next: NextFunction) {
     // Apply only to auth login attempts (registration excluded so tests count only failed logins)
@@ -19,10 +40,10 @@ export class RateLimitMiddleware implements NestMiddleware {
     }
     const ip = ((req.headers['x-forwarded-for'] as string) || req.ip || 'unknown').split(',')[0].trim();
     // Use email if present for login attempts, else just IP (for abuse resistance and test determinism)
-    const email = req.body?.email || '';
-    const key = `${ip}:${email}`;
+  const emailRaw = (req.body?.email || '').toString().toLowerCase();
+  const key = `${ip}:${emailRaw}`;
     const now = Date.now();
-    const bucket = this.buckets.get(key) || { tokens: this.capacity, lastRefill: now };
+  const bucket = this.buckets.get(key) || { tokens: this.capacity, lastRefill: now };
     // Refill
     const elapsed = now - bucket.lastRefill;
     if (elapsed > this.windowMs) {
@@ -30,15 +51,21 @@ export class RateLimitMiddleware implements NestMiddleware {
       bucket.lastRefill = now;
     }
   // Add a custom header for test visibility
-  res.setHeader('X-RateLimit-Test', `${key}:${bucket.tokens}`);
-  const before = bucket.tokens;
-  bucket.tokens -= 1;
-  const after = bucket.tokens;
+    res.setHeader('X-RateLimit-Test', `${key}:${bucket.tokens}`);
+    bucket.tokens -= 1;
     if (bucket.tokens < 0) {
       bucket.tokens = 0; // clamp
-      return next(new HttpException('Rate limit exceeded', HttpStatus.TOO_MANY_REQUESTS));
+      const retryAfterSec = Math.ceil(this.windowMs / 1000);
+      if (!res.getHeader('Retry-After')) {
+        res.setHeader('Retry-After', `${retryAfterSec}`);
+      }
+      res.status(HttpStatus.TOO_MANY_REQUESTS).json({
+        statusCode: HttpStatus.TOO_MANY_REQUESTS,
+        message: 'Rate limit exceeded'
+      });
+      return; // do not call next()
     }
-    this.buckets.set(key, bucket);
+  this.buckets.set(key, bucket);
     next();
   }
 }

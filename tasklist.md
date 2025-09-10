@@ -27,7 +27,8 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Network segmentation: ensure Postgres & Redis only on internal network (not attached to Traefik / public network). (Production compose variant added.)
 - [x] Container security baseline: drop unnecessary Linux capabilities, no privileged containers, read-only root FS where feasible. (Implemented in docker-compose.prod.yml)
 - [x] Configuration reference (CONFIGURATION.md) & expanded .env.example documenting env vs dashboard-managed settings.
-- [ ] Provide initial seccomp/apparmor profile reference (document optional use).
+- [x] Structured logging integrated (nestjs-pino) with LOG_LEVEL env + README & CONFIGURATION.md updates.
+- [x] Provide initial seccomp/apparmor profile reference (document optional use).
 - [x] Dependency automation: Renovate config + weekly dependency audit workflow (outdated report & policy gate in CI)
 
 ## Phase 2: Core Backend Development
@@ -38,16 +39,20 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Add multi-tenancy columns (tenant/user ownership) for RLS (ownerId / projectId relations present; RLS policies pending).
 - [x] Implement authentication (JWT + Passport) (Register/Login endpoints verified)
 - [x] Implement role guard & protect subsequent endpoints (sites, deployments) (initial: JWT + RolesGuard global, Public decorator added)
+- [x] OpenAPI (Swagger) documentation exposed at /docs with bearer auth scheme.
+- [x] Auth login rate limiting (token bucket) with Retry-After header & e2e test.
+  - (Improved) Added stale bucket cleanup to prevent unbounded Map growth (memory leak mitigation).
 - [ ] Add middleware/interceptor design for eventual RLS session variable (SET LOCAL app.tenant_id = userId).
+  - [x] Tenant context skeleton interceptor (AsyncLocalStorage) & RLS_ENABLED flag placeholder.
 - [x] Site (Project) CRUD endpoints (create/list/update/delete) with validation (ownership enforced, e2e tested)
 - [x] Settings persistence schema (SystemSetting, ProjectSetting, SettingType) & SettingsService cache layer.
-- [ ] Domain format validation + uniqueness constraints.
+- [x] Domain format validation + uniqueness constraints.
 - [x] Bootstrap operator seed script (first operator) implemented.
 - [ ] Implement build queue integration (BullMQ preferred) setup.
 - [ ] Add concurrency gate: reject build if another active build for same site/user.
-- [ ] Build job data model (status, logs pointer, artifact path, version index/hash).
-- [ ] Build worker containerized logic placeholder (no actual SSG yet – stub success path).
-- [ ] API: enqueue build, fetch build status.
+- [x] Build job data model (status, logs pointer, artifact path, version index/hash) (initial enum + fields; cascade delete added).
+- [x] Build worker logic placeholder (in-memory simulated lifecycle PENDING→RUNNING→SUCCESS when no queue configured).
+- [x] API: enqueue build (POST /builds/:projectId) (status endpoint still pending).
 - [ ] Deployment version record creation & retrieval.
 - [x] Initial deployment record creation on file upload (status PENDING) with e2e test.
 - [ ] Random staging subdomain generation logic (store).
@@ -57,6 +62,15 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [ ] Document credential rotation procedure (DB + JWT secret + OAuth credentials).
 
 ## Phase 3: Build Process & Artifacts
+
+Immediate Next Focus (shortlist before starting full artifact pipeline):
+
+1. Build status retrieval endpoint(s) (GET /builds/:id and/or /projects/:id/builds latest) – required for UI polling.
+2. Enforce single active build per project (reject enqueue if RUNNING/PENDING exists) – concurrency safety baseline.
+3. Introduce BullMQ (Redis) integration behind feature flag (if REDIS_URL present) – replace in-memory simulation.
+4. Basic build history listing (project scoped) – enables dashboard build timeline.
+5. Persist simple version counter on successful build – prerequisite for deployment linkage.
+
 
 ### Core Drag & Drop Deploy Flow (Primary Value Proposition)
 
@@ -141,7 +155,6 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [ ] Operator documentation: installation, env vars, secrets, optional Stripe, optional S3.
 - [ ] Staging vs production domain configuration (ENV flags) implemented.
 - [ ] Frontend Rollback UI triggers API & reflects updated active version without page reload.
-- [ ] CI pipeline builds & pushes images on tag.
 - [x] CI pipeline builds & pushes images on tag. (GitHub Actions workflow added.)
 - [ ] Final security scan (Snyk) on source & images.
 - [ ] Add non-root user & least-privilege in images verified.

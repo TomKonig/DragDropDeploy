@@ -10,10 +10,11 @@ This document classifies all platform settings and indicates where they live.
 | Core | ENCRYPTION_KEY | env | restart | yes | For encrypting stored third‑party secrets (future). |
 | Core | NODE_ENV | env | restart | no | Standard Node environment. |
 | Core | PORT | env | restart | no | Backend listen port. |
+| Core | LOG_LEVEL | env | restart | no | Logger level (trace, debug, info, warn, error). |
 | Core | PRIMARY_DOMAIN | env | restart (rare) | no | Base root domain for platform; additional domains via dashboard. |
 | Core | API_HOST | env | restart | no | Hostname bound to API router. |
 | Core | APP_HOST | env | restart | no | Hostname bound to frontend. |
-| Core | BUILD_MODE | env | restart | no | local | docker (future isolation). |
+| Core | BUILD_MODE | env | restart | no | One of: local, docker (future isolation). |
 | Feature Flag | ENABLE_RLS | env | restart | no | Activates Row Level Security policies. |
 | Feature Flag | ENABLE_OAUTH | env | restart | no | Enables OAuth flows if provider creds present. |
 | Feature Flag | ENABLE_STRIPE | env | restart | no | Enable billing endpoints. |
@@ -31,9 +32,11 @@ This document classifies all platform settings and indicates where they live.
 | OAuth | OAUTH_GITHUB_CLIENT_SECRET | env | restart | yes |  |
 | Stripe | STRIPE_SECRET_KEY | env | restart | yes | If billing enabled. |
 | Stripe | STRIPE_WEBHOOK_SECRET | env | restart | yes | Validate webhooks. |
-| Security | RATE_LIMIT_LOGIN | db (system_settings) | yes | no | Max attempts per window. |
+| Security | RATE_LIMIT_LOGIN | db (system_settings) | yes | no | Max attempts per window (future db-managed). |
+| Security | RATE_LIMIT_AUTH_CAPACITY | env | restart | no | In-memory auth login attempt capacity (default 5). |
+| Security | RATE_LIMIT_AUTH_WINDOW_MS | env | restart | no | In-memory auth rate limit window in ms (default 60000). |
 | Security | RATE_LIMIT_BUILD_TRIGGER | db | yes | no | Prevent abuse. |
-| Operator | SIGNUP_MODE | db | yes | no | open | invite | closed. |
+| Operator | SIGNUP_MODE | db | yes | no | Modes: open, invite, closed. |
 | Operator | ALLOWED_BASE_DOMAINS | db | yes | no | JSON array of domains. |
 | Operator | GLOBAL_SNIPPET | db | yes | no | HTML injected into `<head>`. |
 | Operator | ENABLE_USER_SNIPPETS | db | yes | no | Toggle per-user snippets. |
@@ -135,3 +138,19 @@ These give immediate operator control without broad schema expansion.
 
 ---
 This reference will evolve as features land; keep CHANGELOG in sync when adding/removing configuration keys.
+
+## OpenAPI / API Documentation
+
+Swagger UI is served at `/docs` (auto-generated OpenAPI 3 spec). Currently always enabled; consider adding `ENABLE_SWAGGER=false` for hardened production.
+
+Planned hardening:
+
+- Optional env flag (`ENABLE_SWAGGER`)
+- Role guard (operator only) or auth requirement
+- ETag caching of spec document
+
+Related env keys today:
+
+- `LOG_LEVEL` influences verbosity of request logging around doc access.
+
+Do not expose `/docs` publicly until guarded if threat model requires minimizing attack surface (enumeration of endpoints).

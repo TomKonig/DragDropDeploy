@@ -71,9 +71,9 @@ jobs:
       #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   security-snyk:
-    name: Snyk Security Scan
+    name: Snyk Security Scan (On-Demand / Tag)
     needs: build-test
-    if: ${{ secrets.SNYK_TOKEN != '' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
