@@ -18,9 +18,6 @@ describe('Projects CRUD (e2e)', () => {
   let prisma: PrismaService;
 
   beforeAll(async () => {
-    process.env.JWT_SECRET = process.env.JWT_SECRET || 'testsecret';
-    process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '15m';
-    process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://user:pass@localhost:5432/testdb';
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));

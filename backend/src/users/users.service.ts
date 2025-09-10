@@ -16,6 +16,17 @@ export class UsersService {
 
   async create(email: string, password: string) {
     const hash = await bcrypt.hash(password, 12);
-  return this.prisma.user.create({ data: { email, passwordHash: hash } });
+    return this.prisma.user.create({
+      data: { email, passwordHash: hash },
+      select: {
+        id: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        role: true,
+        isOperator: true,
+        displayName: true,
+      },
+    });
   }
 }

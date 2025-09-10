@@ -2,7 +2,7 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm install --ignore-scripts || true
+RUN npm install --ignore-scripts
 COPY . .
 RUN npm run build
 
