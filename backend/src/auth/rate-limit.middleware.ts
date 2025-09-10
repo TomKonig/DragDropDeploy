@@ -11,6 +11,27 @@ export class RateLimitMiddleware implements NestMiddleware {
   private buckets = new Map<string, Bucket>();
   private capacity = Number(process.env.RATE_LIMIT_AUTH_CAPACITY || 5); // attempts
   private windowMs = Number(process.env.RATE_LIMIT_AUTH_WINDOW_MS || 60_000); // interval length
+  // Stale bucket TTL (same as window) and periodic cleanup handle unbounded growth risk
+  private cleanupInterval: NodeJS.Timeout;
+
+  constructor() {
+    // Periodically prune buckets that have not been touched for > 2 * window (generous grace)
+    const interval = Math.max(30_000, Math.min(5 * 60_000, this.windowMs));
+    this.cleanupInterval = setInterval(() => {
+      const now = Date.now();
+      const ttl = this.windowMs * 2;
+      for (const [key, bucket] of this.buckets.entries()) {
+        if (now - bucket.lastRefill > ttl) {
+          this.buckets.delete(key);
+        }
+      }
+    }, interval).unref?.();
+  }
+
+  // Allow graceful shutdown to clear timer (Nest calls onModuleDestroy for providers, but middleware isn't automatically)
+  public dispose() {
+    clearInterval(this.cleanupInterval);
+  }
 
   use(req: Request, res: Response, next: NextFunction) {
     // Apply only to auth login attempts (registration excluded so tests count only failed logins)
@@ -22,7 +43,7 @@ export class RateLimitMiddleware implements NestMiddleware {
   const emailRaw = (req.body?.email || '').toString().toLowerCase();
   const key = `${ip}:${emailRaw}`;
     const now = Date.now();
-    const bucket = this.buckets.get(key) || { tokens: this.capacity, lastRefill: now };
+  const bucket = this.buckets.get(key) || { tokens: this.capacity, lastRefill: now };
     // Refill
     const elapsed = now - bucket.lastRefill;
     if (elapsed > this.windowMs) {
@@ -44,7 +65,7 @@ export class RateLimitMiddleware implements NestMiddleware {
       });
       return; // do not call next()
     }
-    this.buckets.set(key, bucket);
+  this.buckets.set(key, bucket);
     next();
   }
 }

@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { UsersService } from '../users.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
 
 describe('UsersService', () => {
   let service: UsersService; let prisma: PrismaService;
