@@ -12,15 +12,29 @@ export class BuildQueueService {
    */
   async enqueue(projectId: string) {
     const job = await this.prisma.buildJob.create({ data: { projectId, status: BuildJobStatus.PENDING } });
-    setTimeout(() => {
-      this.prisma.buildJob.update({ where: { id: job.id }, data: { status: BuildJobStatus.RUNNING } })
-        .then(() => setTimeout(() => {
-          this.prisma.buildJob.update({ where: { id: job.id }, data: { status: BuildJobStatus.SUCCESS } })
-            .catch(e => this.logger.warn(`Final status update failed for job ${job.id}: ${e}`));
-        }, 75))
-        .catch(e => this.logger.warn(`RUNNING status update failed for job ${job.id}: ${e}`));
-    }, 25);
+    // Fire-and-forget lifecycle simulation (will be replaced by real queue worker)
+    this.simulateJobLifecycle(job.id).catch(e => this.logger.error(`Lifecycle simulation error for ${job.id}: ${e}`));
     return job;
+  }
+
+  private async simulateJobLifecycle(jobId: string) {
+    try {
+      await this.sleep(25);
+      await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.RUNNING } });
+    } catch (e) {
+      this.logger.warn(`RUNNING status update failed for job ${jobId}: ${e}`);
+      return; // abort further transitions
+    }
+    try {
+      await this.sleep(75);
+      await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.SUCCESS } });
+    } catch (e) {
+      this.logger.warn(`Final status update failed for job ${jobId}: ${e}`);
+    }
+  }
+
+  private sleep(ms: number) {
+    return new Promise<void>(resolve => setTimeout(resolve, ms));
   }
 
   async getJob(id: string) {
