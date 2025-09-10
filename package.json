@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "generate:locales": "node scripts/build-locales.cjs",
-    "build": "npm run generate:locales && npm run build -w backend && npm run build -w frontend",
+  "build": "npm run generate:locales && npm run build -w @dragdropdeploy/shared && npm run build -w backend && npm run build -w frontend",
     "i18n:analyze": "node scripts/check-i18n-usage.cjs",
     "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
     "lint": "eslint . --ext .ts,.tsx || true",

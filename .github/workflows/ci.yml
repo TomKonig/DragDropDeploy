@@ -49,6 +49,8 @@ jobs:
         run: npm test -w backend -- --runInBand
       - name: Build backend
         run: npm run build -w backend
+      - name: Build shared (explicit)
+        run: npm run build -w @dragdropdeploy/shared
       - name: Build frontend
         run: npm run build -w frontend
       # Placeholder lint (add ESLint when config present)
