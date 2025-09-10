@@ -1,0 +1,37 @@
+projects:
+  list:
+    title: Your Projects
+    empty: You have no projects yet.
+    create_button: New Project
+  create:
+    title: Create Project
+    name_label: Project Name
+    subdomain_label: Subdomain
+    source_label: Source Type
+    upload_option: Upload Files
+    git_option: Import from Git
+    build_settings: Build Settings
+    create_button: Create
+  detail:
+    overview_tab: Overview
+    deployments_tab: Deployments
+    domains_tab: Domains
+    snippet_tab: Snippet
+  deployment:
+    trigger_build: Build & Deploy
+    latest_status: Latest Status
+    logs: Build Logs
+    version: Version
+    no_deployments: No deployments yet.
+  domains:
+    title: Domains
+    add_custom: Add Custom Domain
+    verify_dns: Verify DNS
+    pending_verification: Pending verification
+  snippet:
+    title: Head Snippet
+    placeholder: Paste HTML to inject before </head>
+  delete:
+    title: Delete Project
+    confirm: Type the project name to confirm deletion.
+    button: Delete Project

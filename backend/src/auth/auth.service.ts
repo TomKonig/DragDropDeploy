@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/co
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { pluginManager } from '../plugins/plugin-manager';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,8 @@ export class AuthService {
     const existing = await this.users.findByEmail(email);
     if (existing) throw new ConflictException('Email already registered');
     const user = await this.users.create(email, password);
+  // Fire plugin hook (non-blocking best-effort)
+  pluginManager.emitUserCreated({ id: user.id, email: user.email }).catch(() => {});
   return this.tokenResponse(user.id, user.email, user.role);
   }
 

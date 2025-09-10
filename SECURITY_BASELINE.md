@@ -3,6 +3,7 @@
 This document will evolve. Current baseline principles applied or planned:
 
 ## Defense in Depth
+
 - Run behind Traefik with separate `internal` and `proxy` networks; Postgres & Redis only on `internal`.
 - No privileged containers; future hardening: read-only FS for frontend / minimal perms.
 - ACME automation for TLS (staging now, production later) + fallback self-signed for offline dev.

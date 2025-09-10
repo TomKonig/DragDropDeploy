@@ -45,10 +45,12 @@ Set these in Coolify for the `backend` service (Secrets section):
 ## 5. Volumes & Persistence
 
 Current compose maps named volumes:
+
 - `pgdata` (PostgreSQL data)
 - `redisdata` (Redis AOF data)
 
 Add (recommended) a volume for build artifacts & deployments (update compose later):
+
 - `deploydata:/data/storage`
 
 Then set `STORAGE_ROOT=/data/storage` to have persistent deployment artifacts.
@@ -99,6 +101,7 @@ Then set `STORAGE_ROOT=/data/storage` to have persistent deployment artifacts.
 ## 12. Rollback Procedure (Interim)
 
 Until automated rollback implemented:
+
 1. Keep previous deployment artifact directory (manual copy).
 2. If new deploy fails, manually restore old directory & restart backend service in Coolify.
 
@@ -116,6 +119,7 @@ Until automated rollback implemented:
 ## 15. Quick Validation
 
 After first deploy:
+
 - API: `curl https://app.example.com/health` -> expect `ok`.
 - DB connectivity: create a user/project via API (once implemented).
 - Verify volumes: inspect `pgdata` size grows after operations.

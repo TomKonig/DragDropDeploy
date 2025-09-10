@@ -9,6 +9,11 @@ yarn-error.log*
 dist
 build
 coverage
+tsconfig.tsbuildinfo
+**/tsconfig.tsbuildinfo
+shared/src/**/*.js
+shared/src/**/*.js.map
+shared/src/**/*.d.ts
 
 # Env
 .env

@@ -1,0 +1,20 @@
+admin:
+  dashboard:
+    title: Admin Dashboard
+  users:
+    title: Users
+    promote: Promote
+    demote: Demote
+    ban: Ban
+    unban: Unban
+    invite: Invite User
+  domains:
+    title: Base Domains
+    add: Add Domain
+  plans:
+    title: Plans
+    create: Create Plan
+  settings:
+    title: Platform Settings
+  metrics:
+    title: System Metrics
