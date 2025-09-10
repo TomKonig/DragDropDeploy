@@ -7,7 +7,8 @@ yarn-error.log*
 
 # Build outputs
 dist
-build
+# Keep generated root-level build artifacts ignored, but allow source folder backend/src/build
+/build/
 coverage
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
