@@ -3,13 +3,15 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "outDir": "dist",
-    "rootDir": "src",
+    // Allow source files from referenced project; don't force rootDir
     "composite": true,
-    "paths": {
-      "@dragdropdeploy/shared": ["../shared/dist"],
-      "@dragdropdeploy/shared/*": ["../shared/dist/*"]
-    }
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true
   },
+  "references": [
+    { "path": "../shared" }
+  ],
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
