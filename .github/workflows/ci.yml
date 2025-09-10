@@ -36,30 +36,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          # Monorepo uses a single root package-lock.json (npm workspaces) so we can cache it directly
           cache: 'npm'
-          cache-dependency-path: |
-            backend/package-lock.json
-            frontend/package-lock.json
-      - name: Install backend deps
-        working-directory: backend
+          cache-dependency-path: package-lock.json
+      - name: Install dependencies (workspace root)
         run: npm ci
       - name: Generate Prisma Client
-        working-directory: backend
-        run: npx prisma generate
+        run: npm run prisma:generate -w backend
       - name: Run backend tests
-        working-directory: backend
         env:
           DATABASE_URL: postgresql://ddd:ddd@localhost:5432/ddd
-        run: npm test -- --runInBand
+        run: npm test -w backend -- --runInBand
       - name: Build backend
-        working-directory: backend
-        run: npm run build
-      - name: Install frontend deps
-        working-directory: frontend
-        run: npm ci
+        run: npm run build -w backend
       - name: Build frontend
-        working-directory: frontend
-        run: npm run build
+        run: npm run build -w frontend
       # Placeholder lint (add ESLint when config present)
       # - name: Lint
       #   run: npm run lint
