@@ -1,0 +1,6 @@
+version: '3.9'
+
+services:
+  postgres:
+    ports:
+      - "5433:5432" # expose to host on 5433 to avoid collision with any local postgres
