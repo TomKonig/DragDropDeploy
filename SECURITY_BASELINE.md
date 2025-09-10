@@ -49,3 +49,70 @@ This document will evolve. Current baseline principles applied or planned:
 - Add automated dependency audit gating high severity vulnerabilities.
 - Re-enable docker internal network isolation for Postgres/Redis; provide host access via ephemeral migration sidecar.
 - Replace plaintext role passwords with secrets manager or Docker/K8s secrets.
+
+## Container Runtime Hardening: Seccomp & AppArmor (Reference)
+
+Baseline Docker defaults already apply a seccomp profile that blocks dangerous syscalls. For production we recommend:
+
+1. Keep default (docker/default) unless a specific required syscall is blocked.
+2. Introduce a restricted custom profile for statically served frontend & build workers once syscall set observed.
+
+### Seccomp
+
+Example `seccomp.json` (very small excerpt – allow common, explicitly deny ptrace):
+
+```json
+{
+	"defaultAction": "SCMP_ACT_ERRNO",
+	"archMap": [{ "architecture": "SCMP_ARCH_X86_64", "subArchitectures": ["SCMP_ARCH_X86", "SCMP_ARCH_X32"] }],
+	"syscalls": [
+		{ "names": ["read", "write", "exit", "futex", "clone", "execve", "openat", "close", "statx"], "action": "SCMP_ACT_ALLOW" },
+		{ "names": ["ptrace"], "action": "SCMP_ACT_ERRNO" }
+	]
+}
+```
+
+Compose usage (optional override):
+
+```yaml
+services:
+	api:
+		security_opt:
+			- seccomp:./hardening/seccomp-api.json
+	frontend:
+		security_opt:
+			- seccomp:unconfined # only temporarily during troubleshooting
+```
+
+### AppArmor
+
+On hosts with AppArmor (Ubuntu): create a profile `dragdropdeploy-api` limiting file paths and network:
+
+Example minimal profile snippet (not exhaustive):
+
+```text
+profile dragdropdeploy-api flags=(attach_disconnected) {
+	network,
+	capability net_bind_service,
+	file,
+	umount,
+	deny ptrace (trace),
+}
+```
+
+Compose reference:
+
+```yaml
+services:
+	api:
+		security_opt:
+			- apparmor:dragdropdeploy-api
+```
+
+### Operational Notes
+
+- Start with monitoring mode: run container with profile and watch denials (`journalctl -k | grep DENIED`).
+- Maintain separate profiles for: api, frontend (static), worker (broader build commands). Worker profile will loosen exec/bind mounts when build isolation enabled.
+- Document how to temporarily relax: set `seccomp:unconfined` or remove AppArmor opt, then revert and tighten profile after adding missing safe syscalls/files.
+
+These references satisfy the checklist item to provide an initial seccomp/AppArmor baseline without over-constraining early development.

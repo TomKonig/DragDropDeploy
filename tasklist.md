@@ -27,7 +27,8 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Network segmentation: ensure Postgres & Redis only on internal network (not attached to Traefik / public network). (Production compose variant added.)
 - [x] Container security baseline: drop unnecessary Linux capabilities, no privileged containers, read-only root FS where feasible. (Implemented in docker-compose.prod.yml)
 - [x] Configuration reference (CONFIGURATION.md) & expanded .env.example documenting env vs dashboard-managed settings.
-- [ ] Provide initial seccomp/apparmor profile reference (document optional use).
+- [x] Structured logging integrated (nestjs-pino) with LOG_LEVEL env + README & CONFIGURATION.md updates.
+- [x] Provide initial seccomp/apparmor profile reference (document optional use).
 - [x] Dependency automation: Renovate config + weekly dependency audit workflow (outdated report & policy gate in CI)
 
 ## Phase 2: Core Backend Development
@@ -38,10 +39,13 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Add multi-tenancy columns (tenant/user ownership) for RLS (ownerId / projectId relations present; RLS policies pending).
 - [x] Implement authentication (JWT + Passport) (Register/Login endpoints verified)
 - [x] Implement role guard & protect subsequent endpoints (sites, deployments) (initial: JWT + RolesGuard global, Public decorator added)
+- [x] OpenAPI (Swagger) documentation exposed at /docs with bearer auth scheme.
+- [x] Auth login rate limiting (token bucket) with Retry-After header & e2e test.
 - [ ] Add middleware/interceptor design for eventual RLS session variable (SET LOCAL app.tenant_id = userId).
+  - [x] Tenant context skeleton interceptor (AsyncLocalStorage) & RLS_ENABLED flag placeholder.
 - [x] Site (Project) CRUD endpoints (create/list/update/delete) with validation (ownership enforced, e2e tested)
 - [x] Settings persistence schema (SystemSetting, ProjectSetting, SettingType) & SettingsService cache layer.
-- [ ] Domain format validation + uniqueness constraints.
+- [x] Domain format validation + uniqueness constraints.
 - [x] Bootstrap operator seed script (first operator) implemented.
 - [ ] Implement build queue integration (BullMQ preferred) setup.
 - [ ] Add concurrency gate: reject build if another active build for same site/user.
@@ -141,7 +145,6 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [ ] Operator documentation: installation, env vars, secrets, optional Stripe, optional S3.
 - [ ] Staging vs production domain configuration (ENV flags) implemented.
 - [ ] Frontend Rollback UI triggers API & reflects updated active version without page reload.
-- [ ] CI pipeline builds & pushes images on tag.
 - [x] CI pipeline builds & pushes images on tag. (GitHub Actions workflow added.)
 - [ ] Final security scan (Snyk) on source & images.
 - [ ] Add non-root user & least-privilege in images verified.

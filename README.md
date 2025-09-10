@@ -15,6 +15,8 @@ Implemented (as of current branch):
 - Plugin scaffold with userCreated hook wired
 - i18n subsystem (YAML + ICU) shared across backend & plugins
 - In-memory auth rate limiting, Helmet, configurable CORS
+- Structured JSON logging (pino via nestjs-pino)
+- Auto-generated OpenAPI spec with Swagger UI at /docs
 
 Planned / Not Yet Implemented (described below):
 
@@ -76,10 +78,10 @@ After logging into the user dashboard, a user can create a new “Project” whi
 - Source Upload or Import: Two main options:
 	- Upload Files: Upload a folder or archive (ZIP) containing source or pre-built static files (drag-and-drop supported).
 	- Import from Git: Provide a public Git repository URL (future: OAuth for private repos).
-- Build Settings: User may specify generator or build command. Platform auto-detects common SSGs if unspecified, e.g.:
-	- package.json with build script → Node-based SSG (Next.js, Gatsby, Eleventy)
-	- config.toml / config.yaml → Hugo
-	- _config.yml → Jekyll
+	- Build Settings: User may specify generator or build command. Platform auto-detects common SSGs if unspecified, e.g.:
+		- package.json with build script → Node-based SSG (Next.js, Gatsby, Eleventy)
+		- config.toml / config.yaml → Hugo
+		- _config.yml → Jekyll
 		If detected, appropriate pipeline chosen; otherwise user selects from supported SSGs or enters custom command.
 - Trigger Build (Build & Deploy button): Backend performs:
 
@@ -137,8 +139,8 @@ The application will support multiple base domains for serving sites:
 	- Custom Domains (user-provided):
 		- User adds domain in project settings; instructions shown (CNAME to projectName.base-domain or A record to server IP).
 		- Requires wildcard/per-domain SSL via ACME (Traefik, Caddy, or Cloudflare edge certs).
-		- Ownership verified via DNS record before activation.
-		- Once verified, requests for custom domain serve project files.
+	- Ownership verified via DNS record before activation.
+	- Once verified, requests for custom domain serve project files.
 - Wildcard Subdomain Setup: Operator configures *.example.com DNS + wildcard cert so new subdomains work instantly.
 - Traefik: Wildcard Host rule (HostRegexp `{subdomain:.+}.example.com`) with automatic ACME; documented labels for routing + TLS.
 - Cloudflare Tunnel: Tunnel handles wildcard routing & edge TLS; app can serve HTTP internally.
@@ -166,14 +168,14 @@ Planned Spec:
 
 While the platform can be run for a single user (the operator), it also supports multi-user mode:
 
-						- Roles:
-							- Operator: Full control; first created/first OAuth login promoted automatically.
-							- Admin: Manages users/projects; limited access to critical operator-only settings.
-							- User: Manages only own projects.
-						- Authentication modes:
-							- Local auth (email/password) with bcrypt/argon2 hashing.
-							- OAuth providers (Google, GitHub, etc.) configurable via env; first OAuth login becomes operator if none exists.
-							- Multiple providers supported; can disable OAuth via env.
+				- Roles:
+					- Operator: Full control; first created/first OAuth login promoted automatically.
+					- Admin: Manages users/projects; limited access to critical operator-only settings.
+					- User: Manages only own projects.
+				- Authentication modes:
+					- Local auth (email/password) with bcrypt/argon2 hashing.
+					- OAuth providers (Google, GitHub, etc.) configurable via env; first OAuth login becomes operator if none exists.
+					- Multiple providers supported; can disable OAuth via env.
 
 - Registration policies: closed, open, or invite-only (invite codes managed by operator).
 - First-run hardening: Force admin password change; recovery/reset mechanism via env/CLI.
@@ -317,6 +319,22 @@ Key operational documents:
 This rationale closes the previously “rationale doc pending” task in Phase 1.
 
 Refer to these before tagging a release or performing production upgrades.
+
+## API Documentation (OpenAPI)
+
+The backend exposes Swagger UI at `/docs` with an auto-generated OpenAPI 3 specification (Bearer auth scheme included). This is always enabled currently; consider restricting access (reverse proxy auth or future `ENABLE_SWAGGER` flag) in hardened deployments.
+
+## Structured Logging
+
+Structured request/response logging is provided by `nestjs-pino`. Adjust verbosity with `LOG_LEVEL` (trace|debug|info|warn|error). Sensitive headers like `authorization` are redacted by default. For local development pretty printing is enabled automatically (disabled in production).
+
+Example environment snippet:
+
+```
+LOG_LEVEL=debug
+RATE_LIMIT_AUTH_CAPACITY=5
+RATE_LIMIT_AUTH_WINDOW_MS=60000
+```
 
 ## Continuous Integration (CI)
 
