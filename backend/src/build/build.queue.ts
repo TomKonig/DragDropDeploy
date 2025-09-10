@@ -11,8 +11,23 @@ export class BuildQueueService {
    * Enqueue a build. Without Redis yet, simulate PENDING -> RUNNING -> SUCCESS.
    */
   async enqueue(projectId: string) {
-    const job = await this.prisma.buildJob.create({ data: { projectId, status: BuildJobStatus.PENDING } });
-    // Fire-and-forget lifecycle simulation (will be replaced by real queue worker)
+    // Concurrency gate: reject if active build exists
+    const active = await this.prisma.buildJob.findFirst({
+      where: { projectId, status: { in: [BuildJobStatus.PENDING, BuildJobStatus.RUNNING] } },
+      select: { id: true }
+    });
+    if (active) {
+      return active as any; // Caller can decide to treat as existing active build (UI can poll)
+    }
+    // Determine next version (max existing version + 1) atomically in a transaction
+    const job = await this.prisma.$transaction(async (tx) => {
+      const maxVersion = await tx.buildJob.aggregate({
+        where: { projectId, version: { not: null } },
+        _max: { version: true }
+      });
+      const nextVersion = (maxVersion._max.version || 0) + 1;
+      return tx.buildJob.create({ data: { projectId, status: BuildJobStatus.PENDING, version: nextVersion } });
+    });
     this.simulateJobLifecycle(job.id).catch(e => this.logger.error(`Lifecycle simulation error for ${job.id}: ${e}`));
     return job;
   }
@@ -39,5 +54,13 @@ export class BuildQueueService {
 
   async getJob(id: string) {
     return this.prisma.buildJob.findUnique({ where: { id } });
+  }
+
+  async listProjectBuilds(projectId: string, limit: number) {
+    return this.prisma.buildJob.findMany({
+      where: { projectId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
   }
 }
