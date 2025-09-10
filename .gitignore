@@ -9,6 +9,11 @@ yarn-error.log*
 dist
 build
 coverage
+tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
+
+# Local debug logs
+debug.log
 
 # Env
 .env

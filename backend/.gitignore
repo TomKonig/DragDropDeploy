@@ -3,3 +3,10 @@ node_modules
 .env
 
 /src/generated/prisma
+
+# TS incremental build info (if generated inside backend later)
+tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
+
+# Local debug logs
+debug.log
