@@ -2,10 +2,10 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
-import { randomPassword } from '../../test/random-password';
+import { randomPassword, randomEmail } from '../../test/random-password';
 import { PrismaService } from '../../prisma/prisma.service';
 
-async function register(app: INestApplication, email: string) {
+async function register(app: INestApplication, email: string = randomEmail()) {
   const password = randomPassword();
   const res = await request(app.getHttpServer())
     .post('/auth/register')
@@ -23,8 +23,10 @@ describe('Health endpoints (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     prisma = app.get(PrismaService);
     await app.init();
-    await prisma.project.deleteMany();
-    await prisma.user.deleteMany();
+  // Clean in dependency order: deployments -> projects -> users
+  await (prisma as any).deployment.deleteMany();
+  await (prisma as any).project.deleteMany();
+  await (prisma as any).user.deleteMany();
   });
 
   afterAll(async () => {
@@ -41,7 +43,9 @@ describe('Health endpoints (e2e)', () => {
   });
 
   it('returns 403 for /health/internal with basic user token', async () => {
-    const token = await register(app, 'healthuser@example.com');
+  // Ensure first user (operator bootstrap) is created so the next user is plain USER
+  await register(app, 'health-bootstrap-op@example.com');
+  const token = await register(app, 'healthuser@example.com');
     await request(app.getHttpServer())
       .get('/health/internal')
       .set('Authorization', `Bearer ${token}`)

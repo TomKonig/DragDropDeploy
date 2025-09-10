@@ -15,7 +15,9 @@
   "useDefineForClassFields": false,
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["shared/src/*"]
+      "@shared/*": ["shared/src/*"],
+      "@dragdropdeploy/shared/*": ["shared/src/*"],
+      "@dragdropdeploy/shared": ["shared/src"]
     }
   }
 }
