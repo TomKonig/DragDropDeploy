@@ -2,45 +2,114 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/** ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main ]
+  workflow_dispatch: {}
 
 jobs:
   build-test:
+    name: Lint / Type Check / Test
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ddd
+          POSTGRES_PASSWORD: ddd
+          POSTGRES_DB: ddd
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U ddd" --health-interval=10s --health-timeout=5s --health-retries=5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
+      - uses: actions/checkout@v4
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-
-      - name: Install workspace deps
-        run: npm install
-
-      - name: Type check shared
-        run: npm run build -w shared
-
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+      - name: Generate Prisma Client
+        working-directory: backend
+        run: npx prisma generate
+      - name: Run backend tests
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://ddd:ddd@localhost:5432/ddd
+        run: npm test -- --runInBand
       - name: Build backend
-        run: npm run build -w backend
-
+        working-directory: backend
+        run: npm run build
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
       - name: Build frontend
-        run: npm run build -w frontend
-
+        working-directory: frontend
+        run: npm run build
+      # Placeholder lint (add ESLint when config present)
+      # - name: Lint
+      #   run: npm run lint
+      # Optional Snyk scans (enable with SNYK_TOKEN secret):
       # - name: Snyk Code Scan
       #   uses: snyk/actions/node@master
       #   with:
       #     command: test
       #   env:
       #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
       # - name: Snyk Open Source Scan
       #   uses: snyk/actions/node@master
       #   with:
       #     command: monitor
       #   env:
       #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  docker-images:
+    name: Build & Push Images
+    needs: build-test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract version
+        id: vars
+        run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+      - name: Build & Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/dragdropdeploy-backend:${{ steps.vars.outputs.TAG }}
+            ghcr.io/${{ github.repository_owner }}/dragdropdeploy-backend:latest
+      - name: Build & Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/dragdropdeploy-frontend:${{ steps.vars.outputs.TAG }}
+            ghcr.io/${{ github.repository_owner }}/dragdropdeploy-frontend:latest

@@ -1,0 +1,12 @@
+errors:
+  400: Bad request.
+  401: Authentication required.
+  403: You do not have permission to do that.
+  404: Resource not found.
+  409: Conflict detected.
+  422: Validation failed.
+  429: Too many requests. Please slow down.
+  500: Internal server error.
+  upload_too_large: Uploaded file is too large.
+  domain_verification_failed: Domain verification failed.
+  build_failed: Build failed. Check logs.

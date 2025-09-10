@@ -9,9 +9,10 @@
     "start": "node dist/main.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-  "db:seed": "ts-node-dev --transpile-only src/scripts/seed.ts",
-  "test": "jest --runInBand",
-  "test:watch": "jest --watch"
+    "db:seed": "ts-node-dev --transpile-only src/scripts/seed.ts",
+    "check:locales": "node scripts/check-locales.cjs",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",
@@ -23,14 +24,18 @@
   "passport": "^0.7.0",
   "passport-jwt": "^4.0.1",
     "@prisma/client": "^6.15.0",
-  "bcrypt": "^5.1.1",
+  "bcrypt": "^6.0.0",
     "joi": "^18.0.1",
   "multer": "^2.0.2",
   "class-validator": "^0.14.0",
   "class-transformer": "^0.5.1",
     "prisma": "^6.15.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+  "rxjs": "^7.8.1",
+  "yaml": "^2.5.1",
+  "intl-messageformat": "^10.5.11",
+  "helmet": "^7.1.0",
+  "cors": "^2.8.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
@@ -44,6 +49,7 @@
   "ts-jest": "^29.1.2",
   "testcontainers": "^10.10.3",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.0"
+  "typescript": "^5.4.0",
+  "@types/cors": "^2.8.17"
   }
 }

@@ -56,6 +56,28 @@ model Deployment {
   // Future: environment (preview|production) & domain mapping table
 }
 
+model SystemSetting {
+  key       String   @id
+  value     String
+  type      SettingType @default(STRING)
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectSetting {
+  projectId   String   @id
+  project     Project  @relation(fields: [projectId], references: [id])
+  userSnippet String?
+  spaMode     Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+}
+
+enum SettingType {
+  STRING
+  INT
+  BOOL
+  JSON
+}
+
 enum DeployStatus {
   PENDING
   BUILDING

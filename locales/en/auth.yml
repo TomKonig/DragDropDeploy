@@ -1,0 +1,18 @@
+auth:
+  login:
+    title: Sign In
+    email_label: Email
+    password_label: Password
+    submit: Sign In
+    forgot_password: Forgot password?
+    oauth_with: Sign in with {{provider}}
+  register:
+    title: Create Account
+    submit: Register
+  logout:
+    success: You have been logged out.
+  errors:
+    invalid_credentials: Invalid email or password.
+    account_locked: Your account is locked. Contact support.
+    oauth_failed: OAuth login failed.
+    unauthorized: You are not authorized to perform this action.

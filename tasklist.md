@@ -3,9 +3,10 @@
 Every actionable bullet is a checkbox. Check only when the deliverable truly meets the described acceptance. Narrative context retained where useful. Phases flow in build order; optional / stretch items are marked (Optional).
 
 ---
+
 ## Phase 1: Architecture & Environment Setup
 
-- [ ] Choose final stack (NestJS + TypeScript, React (Vite), PostgreSQL, Redis, Traefik, Docker Compose) and document rationale in README (stack chosen, rationale doc pending).
+- [x] Choose final stack (NestJS + TypeScript, React (Vite), PostgreSQL, Redis, Traefik, Docker Compose) and document rationale in README (rationale added).
 - [x] Initialize monorepo (root + `/backend` + `/frontend` + `/shared`).
 - [x] Scaffold NestJS project (`backend`).
 - [x] Scaffold React (Vite, TS) project (`frontend`).
@@ -20,11 +21,12 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Redis service (alpine) with persistence (AOF or snapshot) & healthcheck.
 - [x] Add Nest ConfigModule for environment & secret management.
 - [x] CI/CD pipeline skeleton (GitHub Actions): lint, type-check, test, Docker build.
-- [ ] Semantic version tagging strategy documented.
-- [ ] Rollback plan (tag-based or previous image reference) documented.
+- [x] Semantic version tagging strategy documented.
+- [x] Rollback plan (tag-based or previous image reference) documented.
 - [x] Coolify compatibility note: ensure service labels & environment variables align with Coolify (document one-click import steps).
-- [ ] Network segmentation: ensure Postgres & Redis only on internal network (not attached to Traefik / public network).
-- [ ] Container security baseline: drop unnecessary Linux capabilities, no privileged containers, read-only root FS where feasible.
+- [x] Network segmentation: ensure Postgres & Redis only on internal network (not attached to Traefik / public network). (Production compose variant added.)
+- [x] Container security baseline: drop unnecessary Linux capabilities, no privileged containers, read-only root FS where feasible. (Implemented in docker-compose.prod.yml)
+- [x] Configuration reference (CONFIGURATION.md) & expanded .env.example documenting env vs dashboard-managed settings.
 - [ ] Provide initial seccomp/apparmor profile reference (document optional use).
 - [x] Dependency automation: Renovate config + weekly dependency audit workflow (outdated report & policy gate in CI)
 
@@ -38,6 +40,7 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Implement role guard & protect subsequent endpoints (sites, deployments) (initial: JWT + RolesGuard global, Public decorator added)
 - [ ] Add middleware/interceptor design for eventual RLS session variable (SET LOCAL app.tenant_id = userId).
 - [x] Site (Project) CRUD endpoints (create/list/update/delete) with validation (ownership enforced, e2e tested)
+- [x] Settings persistence schema (SystemSetting, ProjectSetting, SettingType) & SettingsService cache layer.
 - [ ] Domain format validation + uniqueness constraints.
 - [x] Bootstrap operator seed script (first operator) implemented.
 - [ ] Implement build queue integration (BullMQ preferred) setup.
@@ -46,6 +49,7 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [ ] Build worker containerized logic placeholder (no actual SSG yet – stub success path).
 - [ ] API: enqueue build, fetch build status.
 - [ ] Deployment version record creation & retrieval.
+- [x] Initial deployment record creation on file upload (status PENDING) with e2e test.
 - [ ] Random staging subdomain generation logic (store).
 - [ ] Log capture structure (stdout/stderr -> file + DB summary fields).
 - [x] Database roles design: create roles (migrator, app_rw, app_ro) script added (`backend/prisma/db_roles.sql`).
@@ -57,10 +61,10 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 ### Core Drag & Drop Deploy Flow (Primary Value Proposition)
 
 - [ ] Backend: multipart upload endpoint `/deployments/upload` (accept .zip or raw directory upload) with:
-	- Size limit (configurable, reject > MAX_UPLOAD_MB)
-	- Content-type & extension validation
-	- Path traversal protection (no `..` segments, strip leading slashes)
-	- File count & compressed/uncompressed ratio guard (zip bomb mitigation)
+  - Size limit (configurable, reject > MAX_UPLOAD_MB)
+  - Content-type & extension validation
+  - Path traversal protection (no `..` segments, strip leading slashes)
+  - File count & compressed/uncompressed ratio guard (zip bomb mitigation)
 - [ ] Extraction pipeline: unzip to temp workspace, normalize line endings, sanitize filenames.
 - [ ] Static site default: if no build config detected, treat root as ready-to-serve artifact (copy directly -> version folder).
 - [ ] Deployment record creation (status: UPLOADING -> PROCESSING -> BUILDING -> ACTIVE/FAILED) persisted.
@@ -138,6 +142,7 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [ ] Staging vs production domain configuration (ENV flags) implemented.
 - [ ] Frontend Rollback UI triggers API & reflects updated active version without page reload.
 - [ ] CI pipeline builds & pushes images on tag.
+- [x] CI pipeline builds & pushes images on tag. (GitHub Actions workflow added.)
 - [ ] Final security scan (Snyk) on source & images.
 - [ ] Add non-root user & least-privilege in images verified.
 - [ ] Coolify deployment template / instructions validated (one-click run with Traefik & env setup).
@@ -146,14 +151,14 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 ### Post-MVP / Future Extensibility
 
 - [ ] Pluggable auth & data backend option (Experimental): Admin UI toggle to switch from local PostgreSQL (Prisma) to Convex or Supabase.
-	- Validate provided Convex/Supabase credentials & target project readiness.
-	- Provide one-way export (initial): snapshot relational data -> target schema with migration script.
-	- (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
-	- Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
-	- Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
-	- Security doc: token scopes, least privilege RLS/row policies, data residency implications.
-	- Feature flag: `EXPERIMENTAL_PLUGGABLE_BACKEND=true` gating all UI/actions.
-	- Clear disclaimer: Not required for MVP; high complexity & potential consistency trade-offs.
+  - Validate provided Convex/Supabase credentials & target project readiness.
+  - Provide one-way export (initial): snapshot relational data -> target schema with migration script.
+  - (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
+  - Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
+  - Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
+  - Security doc: token scopes, least privilege RLS/row policies, data residency implications.
+  - Feature flag: `EXPERIMENTAL_PLUGGABLE_BACKEND=true` gating all UI/actions.
+  - Clear disclaimer: Not required for MVP; high complexity & potential consistency trade-offs.
 
 ## References (Informational – Not Checkboxes)
 
