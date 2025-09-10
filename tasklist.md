@@ -49,11 +49,11 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Domain format validation + uniqueness constraints.
 - [x] Bootstrap operator seed script (first operator) implemented.
 - [ ] Implement build queue integration (BullMQ preferred) setup.
-- [ ] Add concurrency gate: reject build if another active build for same site/user.
+- [x] Add concurrency gate: return existing build if another active build for same site/user.
 - [x] Build job data model (status, logs pointer, artifact path, version index/hash) (initial enum + fields; cascade delete added).
 - [x] Build worker logic placeholder (in-memory simulated lifecycle PENDING→RUNNING→SUCCESS when no queue configured).
-- [x] API: enqueue build (POST /builds/:projectId) (status endpoint still pending).
-- [ ] Deployment version record creation & retrieval.
+- [x] API: enqueue build (POST /builds/:projectId) and status retrieval (GET /builds/:id).
+- [x] Deployment version record creation (simple incremental version) & retrieval via status/history endpoints.
 - [x] Initial deployment record creation on file upload (status PENDING) with e2e test.
 - [ ] Random staging subdomain generation logic (store).
 - [ ] Log capture structure (stdout/stderr -> file + DB summary fields).
@@ -65,12 +65,11 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 
 Immediate Next Focus (shortlist before starting full artifact pipeline):
 
-1. Build status retrieval endpoint(s) (GET /builds/:id and/or /projects/:id/builds latest) – required for UI polling.
-2. Enforce single active build per project (reject enqueue if RUNNING/PENDING exists) – concurrency safety baseline.
+1. (Done) Build status retrieval endpoint(s) (GET /builds/:id and project history) – UI polling.
+2. (Done) Enforce single active build per project (return existing active build) – concurrency safety.
 3. Introduce BullMQ (Redis) integration behind feature flag (if REDIS_URL present) – replace in-memory simulation.
-4. Basic build history listing (project scoped) – enables dashboard build timeline.
-5. Persist simple version counter on successful build – prerequisite for deployment linkage.
-
+4. (Done) Basic build history listing (project scoped) – dashboard build timeline.
+5. (Done) Persist simple version counter on build creation – deployment linkage.
 
 ### Core Drag & Drop Deploy Flow (Primary Value Proposition)
 
