@@ -24,7 +24,7 @@ export class AuthService {
   
   async me(userId: string) {
     const user = await this.users.findById(userId);
-    if (!user) throw new UnauthorizedException();
+    if (!user) throw new UnauthorizedException('User not found');
     const { passwordHash, ...rest } = user;
     return rest;
   }
