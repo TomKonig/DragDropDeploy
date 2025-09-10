@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
-import { randomPassword } from '../../test/random-password';
+import { randomPassword, randomEmail } from '../../test/random-password';
 import { PrismaService } from '../../prisma/prisma.service';
 
 describe('Auth & Roles (e2e)', () => {
@@ -30,7 +30,7 @@ describe('Auth & Roles (e2e)', () => {
   });
 
   it('registers a user and logs in', async () => {
-    const email = 'user@example.com';
+  const email = randomEmail();
   const password = randomPassword();
 
     const reg = await request(app.getHttpServer())
@@ -53,7 +53,7 @@ describe('Auth & Roles (e2e)', () => {
   await (prisma as any).deployment.deleteMany();
   await (prisma as any).project.deleteMany();
   await (prisma as any).user.deleteMany();
-    const email = 'first@bootstrap.test';
+  const email = randomEmail('bootstrap.test');
     const password = randomPassword();
     const reg = await request(app.getHttpServer())
       .post('/auth/register')
@@ -69,7 +69,7 @@ describe('Auth & Roles (e2e)', () => {
   });
 
   it('second user is plain USER role', async () => {
-    const email2 = 'second@bootstrap.test';
+  const email2 = randomEmail('bootstrap.test');
     const password2 = randomPassword();
     const reg2 = await request(app.getHttpServer())
       .post('/auth/register')
@@ -84,7 +84,7 @@ describe('Auth & Roles (e2e)', () => {
   });
 
   it('rate limits excessive login attempts', async () => {
-    const email = 'ratelimit@test.example';
+  const email = randomEmail('test.example');
     const password = randomPassword();
     await request(app.getHttpServer()).post('/auth/register').send({ email, password }).expect(201);
     // 6 failing attempts should exceed default capacity=5
@@ -103,7 +103,7 @@ describe('Auth & Roles (e2e)', () => {
 
   it('protects /status endpoint with role guard', async () => {
     // plain user should not access
-    const email = 'statusplain@example.com';
+  const email = randomEmail();
     const password = randomPassword();
     const reg = await request(app.getHttpServer())
       .post('/auth/register')
@@ -118,7 +118,7 @@ describe('Auth & Roles (e2e)', () => {
 
   it('blocks protected internal health without role', async () => {
     // new basic user
-    const email = 'plain@example.com';
+  const email = randomEmail();
   const password = randomPassword();
     const reg = await request(app.getHttpServer())
       .post('/auth/register')
@@ -133,7 +133,7 @@ describe('Auth & Roles (e2e)', () => {
   });
 
   it('returns current user profile via /auth/me', async () => {
-    const email = 'meuser@example.com';
+  const email = randomEmail();
     const password = randomPassword();
     const reg = await request(app.getHttpServer())
       .post('/auth/register')

@@ -2,10 +2,10 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
-import { randomPassword } from '../../test/random-password';
+import { randomPassword, randomEmail } from '../../test/random-password';
 import { PrismaService } from '../../prisma/prisma.service';
 
-async function register(app: INestApplication, email: string) {
+async function register(app: INestApplication, email: string = randomEmail()) {
   const password = randomPassword();
   const res = await request(app.getHttpServer())
     .post('/auth/register')
@@ -32,7 +32,7 @@ describe('Projects CRUD (e2e)', () => {
   });
 
   it('creates lists updates and deletes a project', async () => {
-    const { token } = await register(app, 'projuser@example.com');
+  const { token } = await register(app);
 
     const created = await request(app.getHttpServer())
       .post('/projects')
@@ -68,8 +68,8 @@ describe('Projects CRUD (e2e)', () => {
   });
 
   it('prevents cross-user project access', async () => {
-    const { token: tokenA } = await register(app, 'a@example.com');
-    const { token: tokenB } = await register(app, 'b@example.com');
+  const { token: tokenA } = await register(app);
+  const { token: tokenB } = await register(app);
 
     const createdA = await request(app.getHttpServer())
       .post('/projects')

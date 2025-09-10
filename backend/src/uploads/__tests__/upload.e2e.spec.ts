@@ -6,7 +6,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import { randomPassword } from '../../test/random-password';
+import { randomPassword, randomEmail } from '../../test/random-password';
 
 function tempFile(content: string) {
   const p = path.join(os.tmpdir(), `upload-test-${Date.now()}-${Math.random()}.txt`);
@@ -34,7 +34,7 @@ describe('Uploads -> Deployment creation (e2e)', () => {
   });
 
   it('creates a deployment record with PENDING status on upload', async () => {
-    const email = 'uploaduser@example.com';
+  const email = randomEmail();
     const password = randomPassword();
     const reg = await request(app.getHttpServer())
       .post('/auth/register')

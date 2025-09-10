@@ -70,6 +70,41 @@ jobs:
       #   env:
       #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
+  security-snyk:
+    name: Snyk Security Scan
+    needs: build-test
+    if: ${{ secrets.SNYK_TOKEN != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install dependencies
+        run: npm ci --omit=dev
+      - name: Snyk Code (SAST) Scan
+        uses: snyk/actions/node@master
+        with:
+          command: code test --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Snyk Open Source (SCA) Test
+        uses: snyk/actions/node@master
+        with:
+          command: test --all-projects --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Snyk Open Source Monitor (optional)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: snyk/actions/node@master
+        with:
+          command: monitor --all-projects
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
   docker-images:
     name: Build & Push Images
     needs: build-test

@@ -2,10 +2,10 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
-import { randomPassword } from '../../test/random-password';
+import { randomPassword, randomEmail } from '../../test/random-password';
 import { PrismaService } from '../../prisma/prisma.service';
 
-async function register(app: INestApplication, email: string) {
+async function register(app: INestApplication, email: string = randomEmail()) {
   const password = randomPassword();
   const res = await request(app.getHttpServer())
     .post('/auth/register')
