@@ -39,6 +39,7 @@ model Project {
   ownerId      String
   owner        User         @relation(fields: [ownerId], references: [id], name: "UserProjects")
   deployments  Deployment[]
+  settings     ProjectSetting?
   // TODO: build configuration JSON to store build plan in future (use JSONB)
 }
 
