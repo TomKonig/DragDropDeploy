@@ -1,11 +1,52 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BuildJobStatus } from '@prisma/client';
+import { Queue, QueueEvents, Worker, JobsOptions, Job } from 'bullmq';
+import IORedis from 'ioredis';
 
 @Injectable()
 export class BuildQueueService {
   private readonly logger = new Logger(BuildQueueService.name);
-  constructor(private readonly prisma: PrismaService) {}
+  private queue?: Queue;
+  private queueEvents?: QueueEvents;
+  private worker?: Worker;
+  private redis?: IORedis;
+  private useBull: boolean;
+
+  constructor(private readonly prisma: PrismaService) {
+    this.useBull = !!process.env.REDIS_URL;
+    if (this.useBull) {
+      this.initializeBull().catch(err => {
+        this.logger.error('Failed to initialize BullMQ, falling back to in-process simulation', err);
+        this.useBull = false; // degrade gracefully
+      });
+    }
+  }
+
+  private async initializeBull() {
+    // Lazy create Redis connection & queue
+    this.redis = new IORedis(process.env.REDIS_URL as string, { maxRetriesPerRequest: 3 });
+    this.queue = new Queue('builds', { connection: this.redis });
+    this.queueEvents = new QueueEvents('builds', { connection: this.redis });
+    // Worker processes jobs: update status transitions and mark success
+    this.worker = new Worker('builds', async job => {
+      const { buildJobId } = job.data as { buildJobId: string };
+      try {
+        await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.RUNNING } });
+        // Simulated build work placeholder
+        await new Promise(r => setTimeout(r, 75));
+        await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.SUCCESS } });
+      } catch (e) {
+        this.logger.error(`BullMQ worker error for build ${buildJobId}: ${e}`);
+        try { await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.FAILED } }); } catch {}
+        throw e;
+      }
+    }, { connection: this.redis });
+
+    this.worker.on('failed', (job, err) => {
+      this.logger.warn(`Build job failed (queue) id=${job?.id}: ${err.message}`);
+    });
+  }
 
   /**
    * Enqueue a build. Without Redis yet, simulate PENDING -> RUNNING -> SUCCESS.
@@ -28,8 +69,15 @@ export class BuildQueueService {
       const nextVersion = (maxVersion._max.version || 0) + 1;
       return tx.buildJob.create({ data: { projectId, status: BuildJobStatus.PENDING, version: nextVersion } });
     });
-    this.simulateJobLifecycle(job.id).catch(e => this.logger.error(`Lifecycle simulation error for ${job.id}: ${e}`));
-    return job;
+    if (this.useBull && this.queue) {
+      // Schedule job in BullMQ
+      const opts: JobsOptions = { removeOnComplete: 25, removeOnFail: 50 }; // retention caps
+      await this.queue.add('build', { buildJobId: job.id }, opts);
+      return job;
+    } else {
+      this.simulateJobLifecycle(job.id).catch(e => this.logger.error(`Lifecycle simulation error for ${job.id}: ${e}`));
+      return job;
+    }
   }
 
   private async simulateJobLifecycle(jobId: string) {

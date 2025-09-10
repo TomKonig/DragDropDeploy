@@ -310,7 +310,7 @@ Key operational documents:
 | Frontend Toolchain | React + Vite | React ubiquity for hiring & ecosystem; Vite offers fast dev server + optimized builds with minimal config overhead. |
 | Reverse Proxy / Edge | Traefik | Dynamic config via Docker labels, integrated ACME (Let’s Encrypt) automation, simpler multi-service routing & TLS than nginx for this use case. |
 | Container Orchestration (MVP) | Docker Compose | Lightweight, quick local + single-node prod deployment; forms a bridge to future Swarm/Kubernetes without early complexity. |
-| Build Queue Library | BullMQ (planned) | Redis-backed, robust job control, concurrency & rate limits built-in, familiar patterns for background processing. |
+| Build Queue Library | BullMQ (feature-flag) | Enabled automatically when `REDIS_URL` is set; falls back to in-process simulation if absent. Provides robust job control, concurrency & rate limits. |
 | Artifact Storage (MVP) | Local FS | Simplest path for early deploy iterations; defers complexity of S3-compatible object storage until scale demands. |
 | Future Object Storage | S3-compatible (MinIO / AWS S3) | Standard interface, enables horizontal scaling & CDN fronting later. |
 | Auth Tokens | JWT | Stateless scaling, easy integration with guards and future API consumers; short-lived access with potential refresh strategy later. |
