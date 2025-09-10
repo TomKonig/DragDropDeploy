@@ -20,8 +20,9 @@ describe('Auth & Roles (e2e)', () => {
 
     await app.init();
   // Clean in dependency order to avoid foreign key violations
-  await prisma.project.deleteMany();
-  await prisma.user.deleteMany();
+  await (prisma as any).deployment.deleteMany();
+  await (prisma as any).project.deleteMany();
+  await (prisma as any).user.deleteMany();
   });
 
   afterAll(async () => {
@@ -49,8 +50,9 @@ describe('Auth & Roles (e2e)', () => {
 
   it('promotes first user to operator role', async () => {
     // Reset DB to ensure first user scenario
-    await prisma.project.deleteMany();
-    await prisma.user.deleteMany();
+  await (prisma as any).deployment.deleteMany();
+  await (prisma as any).project.deleteMany();
+  await (prisma as any).user.deleteMany();
     const email = 'first@bootstrap.test';
     const password = randomPassword();
     const reg = await request(app.getHttpServer())

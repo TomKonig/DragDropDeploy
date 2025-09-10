@@ -23,8 +23,10 @@ describe('Health endpoints (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     prisma = app.get(PrismaService);
     await app.init();
-    await prisma.project.deleteMany();
-    await prisma.user.deleteMany();
+  // Clean in dependency order: deployments -> projects -> users
+  await (prisma as any).deployment.deleteMany();
+  await (prisma as any).project.deleteMany();
+  await (prisma as any).user.deleteMany();
   });
 
   afterAll(async () => {

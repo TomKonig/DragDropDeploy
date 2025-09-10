@@ -1,5 +1,5 @@
-import { Injectable, NestMiddleware, HttpException, HttpStatus } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { CanActivate, ExecutionContext, Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Request, Response } from 'express';
 
 interface Bucket {
   tokens: number;
@@ -7,18 +7,15 @@ interface Bucket {
 }
 
 @Injectable()
-export class RateLimitMiddleware implements NestMiddleware {
+export class RateLimitGuard implements CanActivate {
   private buckets = new Map<string, Bucket>();
   private capacity = Number(process.env.RATE_LIMIT_AUTH_CAPACITY || 5); // attempts
   private windowMs = Number(process.env.RATE_LIMIT_AUTH_WINDOW_MS || 60_000); // per minute
 
-  use(req: Request, res: Response, next: NextFunction) {
-    // Apply only to auth login attempts (registration excluded so tests count only failed logins)
-    if (!req.path.startsWith('/auth/login')) {
-      return next();
-    }
+  canActivate(context: ExecutionContext): boolean {
+    const req = context.switchToHttp().getRequest<Request>();
+    const res = context.switchToHttp().getResponse<Response>();
     const ip = ((req.headers['x-forwarded-for'] as string) || req.ip || 'unknown').split(',')[0].trim();
-    // Use email if present for login attempts, else just IP (for abuse resistance and test determinism)
     const email = req.body?.email || '';
     const key = `${ip}:${email}`;
     const now = Date.now();
@@ -29,16 +26,13 @@ export class RateLimitMiddleware implements NestMiddleware {
       bucket.tokens = this.capacity;
       bucket.lastRefill = now;
     }
-  // Add a custom header for test visibility
-  res.setHeader('X-RateLimit-Test', `${key}:${bucket.tokens}`);
-  const before = bucket.tokens;
-  bucket.tokens -= 1;
-  const after = bucket.tokens;
+    bucket.tokens -= 1;
     if (bucket.tokens < 0) {
       bucket.tokens = 0; // clamp
-      return next(new HttpException('Rate limit exceeded', HttpStatus.TOO_MANY_REQUESTS));
+      this.buckets.set(key, bucket);
+      throw new HttpException('Rate limit exceeded', HttpStatus.TOO_MANY_REQUESTS);
     }
     this.buckets.set(key, bucket);
-    next();
+    return true;
   }
 }

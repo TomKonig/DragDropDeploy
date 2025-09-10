@@ -23,9 +23,9 @@ async function bootstrap() {
   // CORS configuration (CORS_ORIGINS env comma separated). If empty, allow all for now.
   const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
   app.use(cors({ origin: allowedOrigins.length ? allowedOrigins : true, credentials: true }));
-  // Rate limit auth endpoints
+  // Rate limit only /auth/login endpoint for deterministic test and prod behavior
   const rateLimiter = new RateLimitMiddleware();
-  app.use(rateLimiter.use.bind(rateLimiter));
+  app.use('/auth/login', rateLimiter.use.bind(rateLimiter));
   // Load translations early
   i18n.load();
   // Initialize registered plugins (registration happens in AppModule or separate bootstrap file)
