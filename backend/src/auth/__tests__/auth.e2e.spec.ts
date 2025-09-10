@@ -95,10 +95,15 @@ describe('Auth & Roles (e2e)', () => {
         .expect(401);
     }
     // This one should trigger 429
-    await request(app.getHttpServer())
+    const limitRes = await request(app.getHttpServer())
       .post('/auth/login')
       .send({ email, password: 'wrong-final' })
       .expect(429);
+    expect(limitRes.status).toBe(429);
+    // Retry-After header should exist; if absent fail with diagnostic
+    if (!limitRes.headers['retry-after']) {
+      throw new Error('Expected Retry-After header on 429 rate limit response');
+    }
   });
 
   it('protects /status endpoint with role guard', async () => {

@@ -9,7 +9,7 @@ export class ProjectsController {
 
 	@Post()
 		create(@Request() req: any, @Body() dto: CreateProjectDto) {
-			return this.projects.create(req.user.sub, dto.name);
+			return this.projects.create(req.user.sub, dto.name, dto.domain);
 	}
 
 	@Get()

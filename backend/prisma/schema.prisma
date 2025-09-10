@@ -36,9 +36,11 @@ model Project {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   name         String
+  domain       String?      @unique
   ownerId      String
   owner        User         @relation(fields: [ownerId], references: [id], name: "UserProjects")
   deployments  Deployment[]
+  buildJobs    BuildJob[]
   settings     ProjectSetting?
   // TODO: build configuration JSON to store build plan in future (use JSONB)
 }
@@ -55,6 +57,25 @@ model Deployment {
   imageTag     String?
   buildLogsUrl String? // pointer to object storage or internal log retention
   // Future: environment (preview|production) & domain mapping table
+}
+
+model BuildJob {
+  id          String         @id @default(cuid())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  projectId   String
+  project     Project        @relation(fields: [projectId], references: [id])
+  status      BuildJobStatus @default(PENDING)
+  logsPath    String?
+  artifactPath String?
+  version     Int?
+}
+
+enum BuildJobStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
 }
 
 model SystemSetting {

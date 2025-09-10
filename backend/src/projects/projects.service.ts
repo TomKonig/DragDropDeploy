@@ -1,12 +1,19 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ProjectsService {
 	constructor(private prisma: PrismaService) {}
 
-		async create(ownerId: string, name: string) {
-			return this.prisma.project.create({ data: { ownerId, name } });
+		async create(ownerId: string, name: string, domain?: string) {
+			try {
+				return await this.prisma.project.create({ data: { ownerId, name, domain: domain?.toLowerCase() } });
+			} catch (e: any) {
+				if (e.code === 'P2002' && e.meta?.target?.includes('domain')) {
+					throw new BadRequestException('Domain already in use');
+				}
+				throw e;
+			}
 	}
 
 	async findAllForUser(userId: string) {
@@ -19,11 +26,18 @@ export class ProjectsService {
 		return project;
 	}
 
-		async update(userId: string, id: string, data: { name?: string }) {
+		async update(userId: string, id: string, data: { name?: string; domain?: string }) {
 		const existing = await this.prisma.project.findUnique({ where: { id } });
 		if (!existing) throw new NotFoundException('Project not found');
 		if (existing.ownerId !== userId) throw new ForbiddenException('Not owner');
-		return this.prisma.project.update({ where: { id }, data });
+			try {
+				return await this.prisma.project.update({ where: { id }, data: { ...data, domain: data.domain?.toLowerCase() } });
+			} catch (e: any) {
+				if (e.code === 'P2002' && e.meta?.target?.includes('domain')) {
+					throw new BadRequestException('Domain already in use');
+				}
+				throw e;
+			}
 	}
 
 	async remove(userId: string, id: string) {
