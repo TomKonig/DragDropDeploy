@@ -57,7 +57,7 @@ model Deployment {
   imageTag     String?
   buildLogsUrl String? // pointer to object storage or internal log retention
   artifactPath String? // path on disk where extracted artifact stored
-  buildJobId   String?  // associated build job driving this deployment
+  buildJobId   String?  // associated build job driving this deployment (nullable link added via migration 20250911191500)
   buildJob     BuildJob? @relation(fields: [buildJobId], references: [id])
   // Future: environment (preview|production) & domain mapping table
 }
