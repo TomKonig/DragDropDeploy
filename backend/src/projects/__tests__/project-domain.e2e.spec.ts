@@ -2,6 +2,7 @@ import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../app.module';
+import { registerTestApp } from '../../test/app-tracker';
 import { PrismaService } from '../../prisma/prisma.service';
 
 describe('Project Domain Validation (e2e)', () => {
@@ -13,7 +14,8 @@ describe('Project Domain Validation (e2e)', () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
-    await app.init();
+  await app.init();
+  registerTestApp(app);
     prisma = app.get(PrismaService);
 
     // register a user
@@ -25,7 +27,9 @@ describe('Project Domain Validation (e2e)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+  // Close Nest app first to stop incoming requests, then disconnect Prisma explicitly
+  await app.close();
+  await prisma.$disconnect();
   });
 
   it('rejects invalid domain format', async () => {
@@ -54,6 +58,7 @@ describe('Project Domain Validation (e2e)', () => {
       .set('Authorization', `Bearer ${authToken}`)
       .send({ name: 'First', domain });
     expect(first.status).toBe(201);
+    expect(first.body).toBeTruthy();
 
     const second = await request(app.getHttpServer())
       .post('/projects')

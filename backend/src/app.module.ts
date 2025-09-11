@@ -13,6 +13,7 @@ import { StatusModule } from './status/status.module';
 import { LoggerModule } from 'nestjs-pino';
 import { RateLimitMiddleware } from './auth/rate-limit.middleware';
 import { BuildModule } from './build/build.module';
+import { DeploymentsModule } from './deployments/deployments.module';
 
 @Module({
   imports: [
@@ -30,8 +31,9 @@ import { BuildModule } from './build/build.module';
     UsersModule,
     ProjectsModule,
     UploadsModule,
-    StatusModule,
+  StatusModule,
   BuildModule,
+  DeploymentsModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: TenantInterceptor },

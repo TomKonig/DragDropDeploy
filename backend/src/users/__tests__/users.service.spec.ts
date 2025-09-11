@@ -28,4 +28,8 @@ describe('UsersService', () => {
     expect(u.role).toBe('USER');
     expect(u.isOperator).toBe(false);
   });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
 });

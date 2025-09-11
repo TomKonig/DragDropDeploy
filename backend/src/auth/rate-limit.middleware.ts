@@ -17,6 +17,7 @@ export class RateLimitMiddleware implements NestMiddleware {
   constructor() {
     // Periodically prune buckets that have not been touched for > 2 * window (generous grace)
     const interval = Math.max(30_000, Math.min(5 * 60_000, this.windowMs));
+    // Store interval handle so we could clear it if dispose() is called; unref to avoid keeping event loop alive.
     this.cleanupInterval = setInterval(() => {
       const now = Date.now();
       const ttl = this.windowMs * 2;
@@ -25,7 +26,8 @@ export class RateLimitMiddleware implements NestMiddleware {
           this.buckets.delete(key);
         }
       }
-    }, interval).unref?.();
+    }, interval) as any;
+    (this.cleanupInterval as any)?.unref?.();
   }
 
   // Allow graceful shutdown to clear timer (Nest calls onModuleDestroy for providers, but middleware isn't automatically)
@@ -34,7 +36,7 @@ export class RateLimitMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction) {
-    // Apply only to auth login attempts (registration excluded so tests count only failed logins)
+  // Apply only to auth login attempts (registration excluded so tests count only failed logins)
     if (!req.path.startsWith('/auth/login')) {
       return next();
     }
@@ -50,8 +52,10 @@ export class RateLimitMiddleware implements NestMiddleware {
       bucket.tokens = this.capacity;
       bucket.lastRefill = now;
     }
-  // Add a custom header for test visibility
-    res.setHeader('X-RateLimit-Test', `${key}:${bucket.tokens}`);
+    // Add a custom header only during tests for visibility
+    if (process.env.NODE_ENV === 'test') {
+      res.setHeader('X-RateLimit-Test', `${key}:${bucket.tokens}`);
+    }
     bucket.tokens -= 1;
     if (bucket.tokens < 0) {
       bucket.tokens = 0; // clamp

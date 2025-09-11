@@ -1,9 +1,8 @@
-import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Public } from './public.decorator';
-import { RateLimitGuard } from './rate-limit.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +16,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
-  @UseGuards(RateLimitGuard)
+  // Rate limiting now handled solely by RateLimitMiddleware (see AppModule.configure).
   login(@Body() dto: LoginDto) {
     return this.auth.login(dto.email, dto.password);
   }

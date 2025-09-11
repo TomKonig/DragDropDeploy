@@ -2,6 +2,7 @@ import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../app.module';
+import { registerTestApp } from '../../test/app-tracker';
 import { PrismaService } from '../../prisma/prisma.service';
 
 describe('Build Queue (e2e)', () => {
@@ -14,7 +15,8 @@ describe('Build Queue (e2e)', () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-    await app.init();
+  await app.init();
+  registerTestApp(app);
     prisma = app.get(PrismaService);
 
     const email = `builder_${Date.now()}@example.com`;
@@ -28,7 +30,8 @@ describe('Build Queue (e2e)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+  await app.close();
+  await prisma.$disconnect();
   });
 
   it('queues (simulates) a build and creates SUCCESS job', async () => {
@@ -44,7 +47,7 @@ describe('Build Queue (e2e)', () => {
     while (Date.now() - start < 1000) {
       job = await (prisma as any).buildJob.findFirst({ where: { projectId }, orderBy: { createdAt: 'desc' } });
       if (job && job.status === 'SUCCESS') break;
-      await new Promise(r => setTimeout(r, 50));
+  await new Promise(r => { const t = setTimeout(r, 50); if (typeof (t as any).unref === 'function') (t as any).unref(); });
     }
     expect(job).toBeTruthy();
     expect(job.status).toBe('SUCCESS');

@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
+import { registerTestApp } from '../../test/app-tracker';
 import { randomPassword, randomEmail } from '../../test/random-password';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -22,7 +23,8 @@ describe('Health endpoints (e2e)', () => {
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     prisma = app.get(PrismaService);
-    await app.init();
+  await app.init();
+  registerTestApp(app);
   // Clean in dependency order: deployments -> projects -> users
   await (prisma as any).deployment.deleteMany();
   await (prisma as any).project.deleteMany();
@@ -31,6 +33,7 @@ describe('Health endpoints (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
+    await prisma.$disconnect();
   });
 
   it('returns 200 for public /health', async () => {
