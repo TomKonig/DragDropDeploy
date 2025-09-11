@@ -79,6 +79,12 @@ Security notes:
 * Directory listing disabled; only files or implicit `index.html` are served.
 * Deployment endpoints require authentication (JWT bearer). Future enhancement: role-based restrictions & per-project scopes.
 
+### Troubleshooting & Operations
+
+Operational diagnostics, schema drift remediation, build/deployment troubleshooting, and historical backfill procedures now live in the docs site:
+
+See: `docs/troubleshooting/` (e.g. [Schema Drift](docs/troubleshooting/schema-drift.md), [Missing Build Links](docs/troubleshooting/backfill-build-links.md)).
+
 ## Contributing
 
 PRs welcome. Keep this README short—put deep architectural details in `MAINTAINERS.md`.

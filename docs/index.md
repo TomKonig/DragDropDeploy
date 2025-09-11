@@ -28,6 +28,7 @@ Welcome to the documentation hub. This directory will evolve into a full docs si
 * [Plugins](extensibility/plugins.md)
 * [Internationalization](extensibility/i18n.md)
 * [Coolify Deployment Guide](operations/coolify.md)
+* [Troubleshooting](troubleshooting/index.md)
 * [Changelog](reference/changelog.md)
 
 ## Future

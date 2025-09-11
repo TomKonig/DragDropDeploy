@@ -1,0 +1,66 @@
+name: Schema Drift Check
+on:
+  pull_request:
+    paths:
+      - backend/prisma/schema.prisma
+      - backend/prisma/migrations/**
+      - .github/workflows/schema-drift-check.yml
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            shared/package-lock.json
+
+      - name: Install deps (backend)
+        working-directory: backend
+        run: npm ci
+
+      - name: Install deps (shared)
+        working-directory: shared
+        run: npm ci
+
+      - name: Generate Prisma Client
+        working-directory: backend
+        run: npx prisma generate
+
+      - name: Check schema vs migrations drift
+        id: drift
+        working-directory: backend
+        run: |
+          set -euo pipefail
+          TMP=$(mktemp -d)
+          SHADOW="$TMP/shadow.db"
+          DIFF=$(npx prisma migrate diff \
+            --from-migrations ./prisma/migrations \
+            --to-schema-datamodel ./prisma/schema.prisma \
+            --shadow-database-url "file:$SHADOW" \
+            --script || true)
+          echo "$DIFF" > $TMP/diff.sql
+          echo "diff_file=$TMP/diff.sql" >> $GITHUB_OUTPUT
+          if grep -qE "CREATE TABLE|ALTER TABLE|DROP TABLE|CREATE INDEX|ALTER INDEX" "$TMP/diff.sql"; then
+            echo "Drift detected between schema.prisma and migrations" >&2
+            sed -n '1,120p' "$TMP/diff.sql" >&2
+            echo "has_drift=true" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "No schema drift detected"
+            echo "has_drift=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload drift SQL (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+            name: prisma-schema-drift-sql
+            path: ${{ steps.drift.outputs.diff_file }}
