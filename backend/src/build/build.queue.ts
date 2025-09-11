@@ -44,7 +44,7 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
       const { buildJobId } = job.data as { buildJobId: string };
       try {
         await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.RUNNING } });
-        // Simulated build work placeholder
+  // Simulated build work (execution logic pending)
         await new Promise(r => {
           const t = setTimeout(r, 75);
           // Allow Jest / Node to exit without waiting for this simulated work

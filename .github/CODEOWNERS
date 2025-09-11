@@ -1,0 +1,8 @@
+# Code owners for automatic review requests. Adjust usernames/team handles as needed.
+# Sections: core docs, root key docs.
+/docs/* @TomKonig
+/docs/** @TomKonig
+
+/README.md @TomKonig
+/MAINTAINERS.md @TomKonig
+/CHANGELOG.md @TomKonig

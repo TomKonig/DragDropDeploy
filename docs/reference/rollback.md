@@ -1,21 +1,25 @@
-# Rollback Plan
+---
+title: Rollback Plan
+---
+
+## Rollback Plan
 
 Reliable reversibility is required for any production upgrade. This document defines the standard rollback playbook.
 
-## Core Principles
+### Core Principles
 
 1. Fast: Rollback must complete in minutes.
 2. Safe: No data loss beyond what the previous version already supported.
 3. Observable: Post-rollback health checks & logs confirm success.
 4. Immutable Artifacts: Rollback always targets a previously published immutable image tag (`vX.Y.Z`).
 
-## Prerequisites
+### Prerequisites
 
 - All releases are tagged using SemVer (`vMAJOR.MINOR.PATCH`).
 - Each release build stores container images in registry with immutable digest.
 - Database schema migrations are additive when possible (forward-compatible) to allow rolling back app code without immediate schema reversal.
 
-## High-Level Rollback Types
+### High-Level Rollback Types
 
 | Scenario | Action |
 |----------|--------|
@@ -24,7 +28,7 @@ Reliable reversibility is required for any production upgrade. This document def
 | Failed migration (partial) | Restore pre-upgrade DB backup, then re-deploy previous image |
 | Security hotfix faulty | Revert to last secure patch; assess exposure |
 
-## Release Preflight Checklist (Before Upgrading)
+### Release Preflight Checklist (Before Upgrading)
 
 1. Record current running image tag & git commit.
 2. Take database backup (e.g. `pg_dump` or snapshot). Store path + checksum.
@@ -32,7 +36,7 @@ Reliable reversibility is required for any production upgrade. This document def
 4. Confirm free disk space for temp artifacts.
 5. Confirm health endpoint (baseline) returns OK.
 
-## Standard Upgrade Procedure (Reference)
+### Standard Upgrade Procedure (Reference)
 
 1. Pull new version image: `docker compose pull` (or platform equivalent).
 2. Run migrations: `prisma migrate deploy` against DB.
@@ -42,7 +46,7 @@ Reliable reversibility is required for any production upgrade. This document def
 
 If any step irreparably fails proceed to rollback.
 
-## Rollback Procedure (App Logic Issue)
+### Rollback Procedure (App Logic Issue)
 
 1. Identify last known good version (LKG) tag (recorded in preflight step).
 2. Update deployment to use LKG image tag for affected services (backend + frontend).
@@ -51,7 +55,7 @@ If any step irreparably fails proceed to rollback.
 5. Run smoke tests against LKG version.
 6. Create incident note in CHANGELOG (Security or Fixed section of next release) if user impact occurred.
 
-## Rollback Procedure (Migration Failure / Incompatible Schema)
+### Rollback Procedure (Migration Failure / Incompatible Schema)
 
 1. Stop application services (to prevent writes) – leave DB running.
 2. Restore DB from backup taken during preflight.
@@ -60,13 +64,13 @@ If any step irreparably fails proceed to rollback.
 5. Run smoke tests.
 6. Capture root cause & update migration guidelines.
 
-## Artifacts & Retention
+### Artifacts & Retention
 
 - Retain last N (default 5) release images locally or guarantee registry retention.
 - Keep DB backups for at least 7 days or per operator policy.
 - Store backup metadata (timestamp, version, checksum) in an operator log file (`ops/backups.log`).
 
-## Smoke Test Suite (Minimal)
+### Smoke Test Suite (Minimal)
 
 Run immediately after rollback:
 
@@ -77,18 +81,17 @@ Run immediately after rollback:
 
 Automate when CI/CD integration is added.
 
-## Communication & Logging
+### Communication & Logging
 
 - Log a single structured line on rollback start: `{event: 'rollback_start', from: 'vX.Y.Z', to: 'vA.B.C'}`.
 - Log completion with success flag.
 - Annotate CHANGELOG under Unreleased -> Changed or Security if user-facing impact.
 
-## Future Enhancements (Optional)
+### Future Enhancements (Optional)
 
 - Automated canary deployment & auto-revert on error rate spike.
 - Continuous backups (WAL archiving) enabling point-in-time recovery.
 - Automated differential schema drift detection pre-upgrade.
 - Slack / webhook notification on rollback events.
 
----
 A disciplined rollback process turns deployment risk into a reversible experiment. Follow this document verbatim for every production rollback.

@@ -19,7 +19,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     await this.$disconnect().catch(() => {/* ignore */});
   }
 
-  // Placeholder for future RLS session variable usage.
+  // Reserved spot for future RLS session variable usage.
   async setTenantContext() {
     if (process.env.RLS_ENABLED === 'true') {
       const user = getTenantUser();

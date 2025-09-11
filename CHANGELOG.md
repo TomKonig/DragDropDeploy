@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## 0.0.2 - (date pending)
+
 ### Added
 
 - /auth/me endpoint returning current user profile (excludes passwordHash).
@@ -18,8 +20,18 @@ All notable changes to this project will be documented in this file.
 - Operator bootstrap: first registered user automatically elevated to OPERATOR (with role field persisted) and plugin userCreated hook invoked.
 - In-memory auth endpoint rate limiting (configurable via RATE_LIMIT_AUTH_CAPACITY / RATE_LIMIT_AUTH_WINDOW_MS env vars).
 - Settings persistence layer: SystemSetting & ProjectSetting tables + SettingType enum + SettingsService with in-memory cache.
-- Deployment record creation on upload (status PENDING) with basic e2e test coverage.
+- Deployment record creation on upload (now immediate transition to BUILDING with BuildJob creation) and e2e test coverage.
 - Security hardening middleware: Helmet + explicit CORS origins loading from CORS_ORIGINS env var.
+- Deployment archive upload endpoint (`POST /deployments/upload`):
+	- In-memory buffer handling & ZIP extraction (path traversal, file count, compression ratio, magic number guards)
+	- Artifact persisted to `ARTIFACTS_DIR` with recorded `artifactPath`
+	- Deployment status immediately set to BUILDING; BuildJob row created (PENDING)
+	- Configurable size via `MAX_UPLOAD_MB` (default 25) and storage root via `ARTIFACTS_DIR`
+	- E2E tests: happy path, build job creation, oversize rejection, traversal attempt, non-zip rejection
+
+### Partial / In Progress
+
+- Deployment build execution & final status transitions (BUILDING -> ACTIVE/FAILED) not yet implemented.
 
 ### Changed
 

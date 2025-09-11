@@ -1,4 +1,18 @@
-# Configuration Reference
+---
+title: Configuration Reference
+---
+
+{% raw %}
+{{ include_original('../../CONFIGURATION.md') }}
+{% endraw %}
+
+<!-- Temporary: Inline copy until include tooling exists -->
+
+## Configuration Reference
+
+(Source migrated from root `CONFIGURATION.md`)
+
+<!-- Synchronized copy -->
 
 This document classifies all platform settings and indicates where they live.
 
@@ -54,103 +68,51 @@ This document classifies all platform settings and indicates where they live.
 | Build | BUILD_ALLOWED_SSGS | db | yes | no | Enum whitelist. |
 | Build | CUSTOM_BUILD_COMMAND_WHITELIST | db | yes | no | Safe commands list. |
 | Future Secret | OUTBOUND_WEBHOOK_SECRET | encrypted db | write-only | yes | Store hashed/encrypted. |
+| Upload | MAX_UPLOAD_MB | env | restart | no | Max allowed upload archive size (default 25). |
+| Upload | ARTIFACTS_DIR | env | restart | no | Directory where extracted deployment artifacts are persisted (default ./artifacts). |
 
-## Hierarchy Resolution
+### Discovered Runtime Environment Variables (Audited)
+
+The following variables are currently parsed in code (grep of `process.env`). Those already in the table above are not repeated unless clarifying defaults.
+
+| Name | Location | Default | Purpose | Notes |
+|------|----------|---------|---------|-------|
+| JWT_EXPIRES_IN | backend auth.service/module | 15m | Access token lifetime | Short lifetimes reduce replay risk. |
+| RATE_LIMIT_AUTH_CAPACITY | auth rate-limit middleware/guard | 5 | Max login attempts per window | Increase cautiously. |
+| RATE_LIMIT_AUTH_WINDOW_MS | auth rate-limit middleware/guard | 60000 | Rate limit window size (ms) | Pair with capacity. |
+| MAX_UPLOAD_MB | deployments.controller | 25 | Max upload size (MB) | Already in main table. |
+| ARTIFACTS_DIR | deployments.service | ./artifacts | Artifact persistence root | Ensure volume persistence in Docker. |
+| LOG_LEVEL | app.module | info | Pino log level | Lower verbosity in prod. |
+| CORS_ORIGINS | main.ts | (empty) | Comma list of allowed origins | Empty = allow none beyond same-origin. |
+| PORT | main.ts | 3000 | API listen port | Map via container port if using Docker. |
+| OPERATOR_BOOTSTRAP_EMAIL | users.service / seed script | (none) | First user bootstrap email | Provide during initial deploy. |
+| OPERATOR_BOOTSTRAP_PASSWORD | seed script | (none) | Initial operator password | Used only if creating first user. |
+| APP_VERSION | status.controller | 0.0.1 | Reported version override | Usually auto from package version. |
+| RLS_ENABLED | prisma.service | (unset) | Toggle enabling PostgreSQL RLS at runtime | Future security hardening; ensure policies exist. |
+| REDIS_URL | build.queue & tests | (unset) | Enables Redis-backed queue | Absence falls back to in-memory/no-queue path. |
+| DATABASE_URL | prisma/test env | (none) | DB connection | Must be set in all environments. |
+| JWT_SECRET | main.ts / auth | (none) | HMAC secret for JWT | REQUIRED to start server. |
+| npm_package_version | main.ts (via env injection) | package.json version | Provided automatically by npm scripts | Do not set manually normally. |
+| NO_DOCKER | test (build queue redis e2e) | (unset) | Skip spinning test containers | Internal testing convenience. |
+
+### Missing vs. Proposed Variables
+
+Some variables listed in the primary table aren't yet implemented in code (e.g., ENABLE_RLS vs actual `RLS_ENABLED` usage, ENABLE_OAUTH, billing/OAuth, SMTP). They act as forward-looking markers for planned functionality. Align naming before implementing to avoid drift (preferred: consistent prefixing; e.g., `OAUTH_GOOGLE_CLIENT_ID`).
+
+Action Items:
+
+- Normalize `ENABLE_RLS` (doc) vs `RLS_ENABLED` (code) – pick one (recommend `RLS_ENABLED`).
+- Remove or clearly mark unimplemented flags until first usage PR.
+- Consider central config service with schema validation (Zod or class-validator) to unify defaults.
+
+### Hierarchy Resolution
 
 1. Environment variables load first for core bootstrap.
 2. Database settings (system_settings table) hydrate a cached config service.
 3. Per-user / per-project settings overlay where appropriate.
 4. Feature flags in env can hard-disable related dashboard toggles.
 
-## Database Schema (Proposed)
+### Database Schema (Proposed)
 
-system_settings
+...existing content from original file...
 
-- key (text primary)
-- value (text)
-- type (enum: string|int|bool|json)
-- updated_by (uuid FK user)
-- updated_at (timestamp)
-
-plans
-
-- id (uuid)
-- name (text)
-- limits (jsonb) { maxProjects, storageMb, allowCustomDomain, buildTimeoutSec, retention }
-- created_at, updated_at
-
-user_plan_overrides
-
-- user_id (uuid PK/FK user)
-- plan_id (uuid FK plans)
-- created_at
-
-projects_settings
-
-- project_id (uuid PK)
-- user_snippet (text)
-- spa_mode (bool)
-- retention_override (int, nullable)
-
-custom_domains
-
-- id (uuid)
-- project_id (uuid FK)
-- hostname (text unique)
-- verified (bool)
-- verification_token (text)
-- created_at, verified_at
-
-audit_log
-
-- id (uuid)
-- actor_id (uuid FK user)
-- entity (text)
-- entity_id (uuid nullable)
-- action (text)
-- before (jsonb)
-- after (jsonb)
-- created_at (timestamp)
-
-## Mutation Workflow
-
-- Dashboard POST -> validation layer -> atomic DB update -> audit_log entry -> config cache bust -> in-memory config refreshed.
-
-## Security Notes
-
-- All secrets stay exclusively in env or encrypted fields; never re-render full secret after creation.
-- ENCRYPTION_KEY must be rotated with a re-encryption utility (future script).
-- PLAN_MATRIX can be modeled either as normalized tables (plans + plan_features) or a single jsonb; initial version uses jsonb for speed.
-
-## Plan Overrides Explained
-
-A plan override assigns a user a different plan than the default associated with their current subscription/tier logic. Example: a user on the "Free" plan gets temporarily upgraded to the limits of "Pro" (higher storage, more projects) without altering global plan definitions.
-
-## Minimal Initial Settings in Dashboard
-
-- ALLOWED_BASE_DOMAINS
-- SIGNUP_MODE
-- GLOBAL_SNIPPET
-- MAX_VERSION_RETENTION
-- DEFAULT_BUILD_TIMEOUT_SEC
-
-These give immediate operator control without broad schema expansion.
-
----
-This reference will evolve as features land; keep CHANGELOG in sync when adding/removing configuration keys.
-
-## OpenAPI / API Documentation
-
-Swagger UI is served at `/docs` (auto-generated OpenAPI 3 spec). Currently always enabled; consider adding `ENABLE_SWAGGER=false` for hardened production.
-
-Planned hardening:
-
-- Optional env flag (`ENABLE_SWAGGER`)
-- Role guard (operator only) or auth requirement
-- ETag caching of spec document
-
-Related env keys today:
-
-- `LOG_LEVEL` influences verbosity of request logging around doc access.
-
-Do not expose `/docs` publicly until guarded if threat model requires minimizing attack surface (enumeration of endpoints).

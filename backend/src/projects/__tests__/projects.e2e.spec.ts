@@ -25,8 +25,12 @@ describe('Projects CRUD (e2e)', () => {
     prisma = app.get(PrismaService);
   await app.init();
   registerTestApp(app);
-    await prisma.project.deleteMany();
-    await prisma.user.deleteMany();
+  // Clean dependent relations first to avoid FK constraint errors
+  await prisma.deployment.deleteMany();
+  await prisma.buildJob.deleteMany();
+  await prisma.projectSetting.deleteMany();
+  await prisma.project.deleteMany();
+  await prisma.user.deleteMany();
   });
 
   afterAll(async () => {

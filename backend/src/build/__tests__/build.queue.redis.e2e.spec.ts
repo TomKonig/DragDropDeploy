@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
+import { randomPassword } from '../../test/random-password';
 import { registerTestApp } from '../../test/app-tracker';
 import { BuildQueueService } from '../build.queue';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -64,7 +65,7 @@ describe('Build Queue (BullMQ Redis) e2e', () => {
     const email = `redisq_${Date.now()}@example.com`;
     const register = await request(app.getHttpServer())
       .post('/auth/register')
-      .send({ email, password: 'password123', name: 'Redis User' })
+  .send({ email, password: randomPassword(), name: 'Redis User' })
       .expect(201);
     const token = register.body.accessToken;
 

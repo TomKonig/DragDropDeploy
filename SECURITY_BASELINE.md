@@ -1,4 +1,10 @@
-# Security Baseline (Initial Scaffold)
+# Security Baseline (Pointer)
+
+> Moved to `docs/reference/security-baseline.md`.
+
+Edit the version under `/docs`. This root file will be removed after first published docs site.
+
+---
 
 This document will evolve. Current baseline principles applied or planned:
 
@@ -91,13 +97,13 @@ On hosts with AppArmor (Ubuntu): create a profile `dragdropdeploy-api` limiting 
 Example minimal profile snippet (not exhaustive):
 
 ```text
-profile dragdropdeploy-api flags=(attach_disconnected) {
-	network,
-	capability net_bind_service,
-	file,
-	umount,
-	deny ptrace (trace),
-}
+	profile dragdropdeploy-api flags=(attach_disconnected) {
+		network,
+		capability net_bind_service,
+		file,
+		umount,
+		deny ptrace (trace),
+	}
 ```
 
 Compose reference:

@@ -2,6 +2,7 @@ import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../app.module';
+import { randomPassword } from '../../test/random-password';
 import { registerTestApp } from '../../test/app-tracker';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -25,7 +26,7 @@ describe('Build history & concurrency (e2e)', () => {
   async function registerAndAuth(email: string) {
     const res = await request(app.getHttpServer())
       .post('/auth/register')
-      .send({ email, password: 'Password123!', displayName: 'Test' })
+  .send({ email, password: randomPassword(), displayName: 'Test' })
       .expect(201);
   // Auth service returns { accessToken, tokenType, expiresIn }
   return res.body.accessToken;

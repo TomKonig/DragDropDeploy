@@ -2,6 +2,7 @@ import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../app.module';
+import { randomPassword } from '../../test/random-password';
 import { registerTestApp } from '../../test/app-tracker';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -19,8 +20,8 @@ describe('Build Queue (e2e)', () => {
   registerTestApp(app);
     prisma = app.get(PrismaService);
 
-    const email = `builder_${Date.now()}@example.com`;
-    const reg = await request(app.getHttpServer()).post('/auth/register').send({ email, password: 'Password123!' });
+  const email = `builder_${Date.now()}@example.com`;
+  const reg = await request(app.getHttpServer()).post('/auth/register').send({ email, password: randomPassword() });
     token = reg.body.accessToken;
     const proj = await request(app.getHttpServer())
       .post('/projects')

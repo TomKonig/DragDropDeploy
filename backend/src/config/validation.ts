@@ -8,8 +8,9 @@ export const configValidationSchema = Joi.object({
   JWT_EXPIRES_IN: Joi.string().default('15m'),
   RLS_ENABLED: Joi.string().valid('true', 'false').default('false'),
   BUILD_MODE: Joi.string().valid('local', 'docker').default('local'),
-  MAX_UPLOAD_MB: Joi.number().integer().min(1).max(500).default(25),
+  MAX_UPLOAD_MB: Joi.number().integer().min(1).max(500).default(25), // Ensure this is correctly validated
   STORAGE_ROOT: Joi.string().default('./data/storage'),
+  ARTIFACTS_DIR: Joi.string().default('./artifacts'),
   OPERATOR_BOOTSTRAP_PASSWORD: Joi.string().min(12).optional(),
   OPERATOR_BOOTSTRAP_EMAIL: Joi.string().email().optional(),
 });

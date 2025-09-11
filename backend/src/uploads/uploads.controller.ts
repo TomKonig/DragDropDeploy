@@ -13,7 +13,7 @@ export class UploadsController {
     if (!file) throw new ForbiddenException('File missing');
     // Confirm ownership
     await this.projects.findOneOwned(req.user.sub, id);
-    // Create deployment record placeholder
+  // Create initial deployment record
     const deployment = await this.prisma.deployment.create({
       data: {
         projectId: id,

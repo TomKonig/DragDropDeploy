@@ -42,7 +42,9 @@ export class RateLimitMiddleware implements NestMiddleware {
     }
     const ip = ((req.headers['x-forwarded-for'] as string) || req.ip || 'unknown').split(',')[0].trim();
     // Use email if present for login attempts, else just IP (for abuse resistance and test determinism)
-  const emailRaw = (req.body?.email || '').toString().toLowerCase();
+  // Coerce email to string only if primitive; avoid invoking toString on unexpected objects
+  const emailValue = req.body && typeof (req.body as any).email !== 'undefined' ? (req.body as any).email : '';
+  const emailRaw = typeof emailValue === 'string' ? emailValue.toLowerCase() : '';
   const key = `${ip}:${emailRaw}`;
     const now = Date.now();
   const bucket = this.buckets.get(key) || { tokens: this.capacity, lastRefill: now };

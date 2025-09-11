@@ -2,6 +2,8 @@
 
 Every actionable bullet is a checkbox. Check only when the deliverable truly meets the described acceptance. Narrative context retained where useful. Phases flow in build order; optional / stretch items are marked (Optional).
 
+Sync Note: When marking an item complete that corresponds to a high-level roadmap row in `docs/roadmap.md`, update that roadmap status in the same PR. CI will (future enhancement) flag divergence between checked items here and non-✅ roadmap rows.
+
 ---
 
 ## Phase 1: Architecture & Environment Setup
@@ -42,8 +44,8 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] OpenAPI (Swagger) documentation exposed at /docs with bearer auth scheme.
 - [x] Auth login rate limiting (token bucket) with Retry-After header & e2e test.
   - (Improved) Added stale bucket cleanup to prevent unbounded Map growth (memory leak mitigation).
-- [ ] Add middleware/interceptor design for eventual RLS session variable (SET LOCAL app.tenant_id = userId).
-  - [x] Tenant context skeleton interceptor (AsyncLocalStorage) & RLS_ENABLED flag placeholder.
+- [x] Add middleware/interceptor design for eventual RLS session variable (SET LOCAL app.tenant_id = userId). (Completed 2025-09-11: AsyncLocalStorage interceptor + documented ENABLE_RLS flag; future step will SET LOCAL app.user_id once policies added.)
+  - [x] Tenant context skeleton interceptor (AsyncLocalStorage) & RLS_ENABLED (documented as ENABLE_RLS) flag placeholder.
 - [x] Site (Project) CRUD endpoints (create/list/update/delete) with validation (ownership enforced, e2e tested)
 - [x] Settings persistence schema (SystemSetting, ProjectSetting, SettingType) & SettingsService cache layer.
 - [x] Domain format validation + uniqueness constraints.
@@ -52,6 +54,7 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Add concurrency gate: return existing build if another active build for same site/user.
 - [x] Build job data model (status, logs pointer, artifact path, version index/hash) (initial enum + fields; cascade delete added).
 - [x] Build worker logic placeholder (in-memory simulated lifecycle PENDING→RUNNING→SUCCESS when no queue configured).
+- [x] Build job creation on upload (roadmap evidence): uploading deployment now creates BuildJob and sets status to BUILDING.
 - [x] API: enqueue build (POST /builds/:projectId) and status retrieval (GET /builds/:id).
 - [x] Deployment version record creation (simple incremental version) & retrieval via status/history endpoints.
 - [x] Initial deployment record creation on file upload (status PENDING) with e2e test.
@@ -78,6 +81,7 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
   - Content-type & extension validation
   - Path traversal protection (no `..` segments, strip leading slashes)
   - File count & compressed/uncompressed ratio guard (zip bomb mitigation)
+  - (Partial 2025-09-11) Implemented initial ZIP path: size limit env (`MAX_UPLOAD_MB`), traversal & ratio guard, Deployment row creation (PENDING). Pending: content-type validation, raw directory path, actual artifact persistence/publish.
 - [ ] Extraction pipeline: unzip to temp workspace, normalize line endings, sanitize filenames.
   - (Skeleton controller `DeploymentsController` returns 501 for `/deployments/upload` placeholder.)
 - [ ] Static site default: if no build config detected, treat root as ready-to-serve artifact (copy directly -> version folder).
@@ -114,6 +118,8 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 - [ ] Concurrency load test for build queue; adjust BullMQ concurrency and rate limits.
 - [ ] Redis locking fairness (per-site) verification tests.
 - [ ] Security hardening: parameterized queries, sanitize shell exec inputs, Helmet, CORS config.
+- [x] Rate limiting middleware implemented (login endpoint token bucket + guard) (roadmap evidence).
+- [x] Structured logging integrated and redaction plan documented (roadmap evidence).
 - [ ] Build command deny/allow list & environment variable pass-through rules.
 - [ ] Add automated unit tests (Jest) for services & controllers.
 - [ ] Add integration tests (Supertest) for critical endpoints (site create, build trigger, rollback, domain verify placeholder).
@@ -163,16 +169,16 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 
 ### Post-MVP / Future Extensibility
 
- - [ ] Pluggable auth & data backend option (Experimental): Admin UI toggle to switch from local PostgreSQL (Prisma) to Convex or Supabase.
+- [ ] Pluggable auth & data backend option (Experimental): Admin UI toggle to switch from local PostgreSQL (Prisma) to Convex or Supabase.
    - Validate provided Convex/Supabase credentials & target project readiness.
    - Provide one-way export (initial): snapshot relational data -> target schema with migration script.
    - (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
-   - Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
-   - Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
-   - Security doc: token scopes, least privilege RLS/row policies, data residency implications.
-   - Feature flag: `EXPERIMENTAL_PLUGGABLE_BACKEND=true` gating all UI/actions.
-   - Clear disclaimer: Not required for MVP; high complexity & potential consistency trade-offs.
- - [ ] Eliminate need for `--forceExit` in test:ci by identifying and closing lingering Testcontainers/Docker stream handle so Jest exits cleanly without force exit. Acceptance: `npm test` finishes with no open handle warning and without `--forceExit` flag.
+  - Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
+  - Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
+  - Security doc: token scopes, least privilege RLS/row policies, data residency implications.
+  - Feature flag: `EXPERIMENTAL_PLUGGABLE_BACKEND=true` gating all UI/actions.
+  - Clear disclaimer: Not required for MVP; high complexity & potential consistency trade-offs.
+- [x] Eliminate need for `--forceExit` in test:ci by identifying and closing lingering Testcontainers/Docker stream handle so Jest exits cleanly without force exit. (Achieved 2025-09-11: teardown refinements allow natural Jest exit; script updated.) Acceptance: `npm test` finishes with no open handle warning and without `--forceExit` flag.
 
 ## References (Informational – Not Checkboxes)
 

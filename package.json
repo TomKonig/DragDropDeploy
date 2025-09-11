@@ -1,7 +1,8 @@
 {
   "name": "dragdropdeploy-monorepo",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "license": "MIT",
   "workspaces": [
     "backend",
     "frontend",
@@ -9,12 +10,26 @@
   ],
   "scripts": {
     "generate:locales": "node scripts/build-locales.cjs",
-  "build": "npm run generate:locales && npm run build -w @dragdropdeploy/shared && npm run build -w backend && npm run build -w frontend",
+    "build": "npm run generate:locales && npm run build -w @dragdropdeploy/shared && npm run build -w backend && npm run build -w frontend",
     "i18n:analyze": "node scripts/check-i18n-usage.cjs",
     "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
     "lint": "eslint . --ext .ts,.tsx || true",
     "typecheck": "tsc -b",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "docs:scan": "node scripts/docs/scan-placeholders.js",
+    "docs:env": "node scripts/docs/check-env-docs.js",
+    "docs:changelog": "node scripts/docs/check-changelog-sync.js",
+    "docs:roadmap": "node scripts/docs/check-roadmap-sync.js",
+    "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog && npm run docs:roadmap",
+    "release:patch": "node scripts/release/bump-version.js patch",
+    "release:minor": "node scripts/release/bump-version.js minor",
+  "release:major": "node scripts/release/bump-version.js major",
+  "release:patch:tag": "node scripts/release/bump-version.js patch --tag",
+  "release:minor:tag": "node scripts/release/bump-version.js minor --tag",
+  "release:major:tag": "node scripts/release/bump-version.js major --tag",
+  "release:patch:push": "node scripts/release/bump-version.js patch --push",
+  "release:minor:push": "node scripts/release/bump-version.js minor --push",
+  "release:major:push": "node scripts/release/bump-version.js major --push"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

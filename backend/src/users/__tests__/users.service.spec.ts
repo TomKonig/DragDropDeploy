@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { UsersService } from '../users.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { randomPassword } from '../../test/random-password';
 
 describe('UsersService', () => {
   let service: UsersService; let prisma: PrismaService;
@@ -18,13 +19,13 @@ describe('UsersService', () => {
   });
 
   it('first created user becomes operator', async () => {
-    const u = await service.create('first@example.com', 'Password123!');
+  const u = await service.create('first@example.com', randomPassword());
     expect(u.role).toBe('OPERATOR');
     expect(u.isOperator).toBe(true);
   });
 
   it('second user is plain USER', async () => {
-    const u = await service.create('second@example.com', 'Password123!');
+  const u = await service.create('second@example.com', randomPassword());
     expect(u.role).toBe('USER');
     expect(u.isOperator).toBe(false);
   });

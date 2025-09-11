@@ -16,6 +16,31 @@ tsconfig.build.tsbuildinfo
 # Local debug logs
 debug.log
 
+# Artifacts (deployment build outputs)
+backend/artifacts/
+
+# Prisma migration lock / temp
+backend/prisma/migrations/*/README.md
+backend/prisma/migrations/*/steps.json
+backend/prisma/migrations/*/schema.prisma
+
+# Coverage reports
+coverage/
+
+# MkDocs build output (if used locally)
+site/
+
+# Temp test outputs
+tmp/
+*.tmp
+
+# Local certificates & generated SSL
+traefik/dev-certs.yml
+certs/
+
+# Ignore generated docs directory if built separately
+docs/site/
+
 # Env
 .env
 .env.local

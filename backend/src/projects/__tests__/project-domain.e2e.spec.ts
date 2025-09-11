@@ -2,6 +2,7 @@ import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../app.module';
+import { randomPassword } from '../../test/random-password';
 import { registerTestApp } from '../../test/app-tracker';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -22,7 +23,7 @@ describe('Project Domain Validation (e2e)', () => {
     const email = `user_${Date.now()}@example.com`;
     const res = await request(app.getHttpServer())
       .post('/auth/register')
-      .send({ email, password: 'Password123!' });
+      .send({ email, password: randomPassword() });
   authToken = res.body.accessToken;
   });
 

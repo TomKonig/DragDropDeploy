@@ -1,0 +1,52 @@
+site_name: DragDropDeploy
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Overview: getting-started/overview.md
+      - Quickstart: getting-started/quickstart.md
+      - Local Development: getting-started/local-development.md
+      - First Deployment Deep Dive: getting-started/first-deployment.md
+  - Reference:
+      - Configuration: reference/configuration.md
+      - Versioning: reference/versioning.md
+      - Rollback: reference/rollback.md
+      - Security Baseline: reference/security-baseline.md
+  - API Authentication: reference/api-auth.md
+  - Changelog: reference/changelog.md
+  - Architecture: architecture/spec.md
+  - Architecture Deep Dives:
+    - Build Pipeline: architecture/build-pipeline.md
+    - Database: architecture/database.md
+  - Extensibility:
+      - Plugins: extensibility/plugins.md
+      - Internationalization: extensibility/i18n.md
+  - Operations:
+      - Coolify Deployment: operations/coolify.md
+    - Docker Compose: operations/docker-compose.md
+    - Manual Install: operations/manual-install.md
+    - Release Process: operations/release-process.md
+  - Development:
+    - Testing: development/testing.md
+    - Contributing: development/contributing.md
+  - Security:
+    - Threat Model: security/threat-model.md
+  - Planning:
+    - Roadmap: roadmap.md
+theme:
+  name: material
+  features:
+    - navigation.tracking
+    - navigation.sections
+    - content.code.copy
+markdown_extensions:
+  - toc:
+      permalink: true
+  - tables
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - codehilite
+extra:
+  repo_url: https://github.com/TomKonig/DragDropDeploy
+  version: unreleased
