@@ -1,4 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
 import { PrismaService } from '../prisma/prisma.service';
 import { BuildJobStatus } from '@prisma/client';
 import { Queue, QueueEvents, Worker, JobsOptions, Job } from 'bullmq';
@@ -42,16 +44,26 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
     // Worker processes jobs: update status transitions and mark success
     this.worker = new Worker('builds', async job => {
       const { buildJobId } = job.data as { buildJobId: string };
+      const logsDir = this.ensureLogsDir();
+      const logFile = path.join(logsDir, `${buildJobId}.log`);
+      const append = (line: string) => {
+        try { fs.appendFileSync(logFile, line + '\n'); } catch (e) { this.logger.warn(`Failed to append log: ${e}`); }
+      };
       try {
-        await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.RUNNING } });
-  // Simulated build work (execution logic pending)
-        await new Promise(r => {
-          const t = setTimeout(r, 75);
-          // Allow Jest / Node to exit without waiting for this simulated work
-          if (typeof (t as any).unref === 'function') (t as any).unref();
-        });
+        append(`[start] build ${buildJobId}`);
+        await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.RUNNING, logsPath: logFile } });
+        append('status: RUNNING');
+        // Simulated steps
+        append('step: detect build configuration (simulated)');
+        await this.simulatedWork(50);
+        append('step: install dependencies (simulated)');
+        await this.simulatedWork(50);
+        append('step: build output (simulated)');
+        await this.simulatedWork(50);
+        append('status: SUCCESS');
         await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.SUCCESS } });
       } catch (e) {
+        append('status: FAILED');
         this.logger.error(`BullMQ worker error for build ${buildJobId}: ${e}`);
         try { await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.FAILED } }); } catch {}
         throw e;
@@ -98,15 +110,20 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
   private async simulateJobLifecycle(jobId: string) {
     try {
       await this.sleep(25);
-      await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.RUNNING } });
+  const logFile = this.createLogFile(jobId);
+  await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.RUNNING, logsPath: logFile } });
+  this.appendLog(jobId, '[start] build ' + jobId);
+  this.appendLog(jobId, 'status: RUNNING');
     } catch (e) {
       this.logger.warn(`RUNNING status update failed for job ${jobId}: ${e}`);
       return; // abort further transitions
     }
     try {
       await this.sleep(75);
-      await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.SUCCESS } });
+  this.appendLog(jobId, 'status: SUCCESS');
+  await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.SUCCESS } });
     } catch (e) {
+  this.appendLog(jobId, 'status: FAILED');
       this.logger.warn(`Final status update failed for job ${jobId}: ${e}`);
     }
   }
@@ -129,6 +146,43 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
       take: limit,
     });
   }
+
+  async getLogs(buildId: string, tail?: number) {
+    const job = await this.getJob(buildId);
+    if (!job || !job.logsPath) return '';
+    try {
+      const data = fs.readFileSync(job.logsPath, 'utf8');
+      if (tail) {
+        const lines = data.trimEnd().split(/\r?\n/);
+        return lines.slice(-tail).join('\n');
+      }
+      return data;
+    } catch (e) {
+      this.logger.warn(`Unable to read logs for ${buildId}: ${e}`);
+      return '';
+    }
+  }
+
+  private logsBaseDir() {
+    return path.join(process.cwd(), 'backend', 'artifacts', 'build-logs');
+  }
+  private ensureLogsDir() {
+    const dir = this.logsBaseDir();
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    return dir;
+  }
+  private createLogFile(buildId: string) {
+    const dir = this.ensureLogsDir();
+    const file = path.join(dir, `${buildId}.log`);
+    fs.writeFileSync(file, '');
+    return file;
+  }
+  private appendLog(buildId: string, line: string) {
+    const dir = this.ensureLogsDir();
+    const file = path.join(dir, `${buildId}.log`);
+    try { fs.appendFileSync(file, line + '\n'); } catch {}
+  }
+  private async simulatedWork(ms: number) { await this.sleep(ms); }
 
   async onModuleDestroy() {
     // Ensure initialization settled before attempting shutdown

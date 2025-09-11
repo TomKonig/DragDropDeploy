@@ -24,7 +24,7 @@ Status legend: ✅ done · 🟡 in progress · 🔜 planned · 🧪 experimental
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Build worker implementation | 🔜 | Async processing, logs capture |
+| Build worker implementation | � | Basic worker & log capture implemented (simulated steps); real build execution pending |
 | Redeploy / versioned artifacts | 🔜 | Keep N versions + rollback pointer |
 | Domain & wildcard routing | 🔜 | Map hostnames to deployments |
 | OAuth provider integration | 🔜 | GitHub / Google minimal scopes |

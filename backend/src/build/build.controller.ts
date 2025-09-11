@@ -26,4 +26,12 @@ export class BuildController {
     const builds = await this.buildQueue.listProjectBuilds(projectId, parseInt(limit, 10) || 20);
     return builds;
   }
+
+  @Get(':id/logs')
+  async getLogs(@Param('id') id: string, @Query('tail') tail?: string) {
+    const job = await this.buildQueue.getJob(id);
+    if (!job) throw new NotFoundException('Build not found');
+    const txt = await this.buildQueue.getLogs(id, tail ? parseInt(tail, 10) : undefined);
+    return { id, logs: txt };
+  }
 }

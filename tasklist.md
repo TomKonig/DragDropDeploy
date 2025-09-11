@@ -87,7 +87,7 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 - [ ] Static site default: if no build config detected, treat root as ready-to-serve artifact (copy directly -> version folder).
 - [ ] Deployment record creation (status: UPLOADING -> PROCESSING -> BUILDING -> ACTIVE/FAILED) persisted.
 - [ ] Status polling endpoint (lightweight JSON) for dashboard progress.
-- [ ] Logs endpoint (tail + full) with redaction hook placeholder.
+- [x] Logs endpoint (tail + full) with redaction hook placeholder (basic file-based, redaction TBD).
 - [ ] Atomic publish step (symlink or pointer swap) to avoid partial deploy state.
 - [ ] Immediate staging URL returned in initial response (even if build pending) for eventual live check.
 - [ ] Tests: upload happy path, oversize rejection, zip bomb heuristic, path traversal rejection.
@@ -171,8 +171,8 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 ### Post-MVP / Future Extensibility
 
 - [ ] Pluggable auth & data backend option (Experimental): Admin UI toggle to switch from local PostgreSQL (Prisma) to Convex or Supabase.
-   - Validate provided Convex/Supabase credentials & target project readiness.
-   - Provide one-way export (initial): snapshot relational data -> target schema with migration script.
+  - Validate provided Convex/Supabase credentials & target project readiness.
+  - Provide one-way export (initial): snapshot relational data -> target schema with migration script.
   - (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
   - Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
   - Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
