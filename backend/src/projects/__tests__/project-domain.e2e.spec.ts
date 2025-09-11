@@ -59,9 +59,6 @@ describe('Project Domain Validation (e2e)', () => {
       .send({ name: 'First', domain });
     expect(first.status).toBe(201);
     expect(first.body).toBeTruthy();
-    if (first.status !== 201) {
-      throw new Error('Failed to create first project for duplicate domain test');
-    }
 
     const second = await request(app.getHttpServer())
       .post('/projects')
