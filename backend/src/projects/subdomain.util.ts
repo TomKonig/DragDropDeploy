@@ -18,12 +18,7 @@ export function generateStagingSubdomain(length = 12): string {
   for (let i = 0; i < raw.length && out.length < length; i++) {
     const c = raw[i];
     if (/[a-f0-9]/.test(c)) {
-      // map a-f to letters, 0-9 keep digits
-      if (/[a-f]/.test(c)) {
-        out += c; // already a-f -> letter subset
-      } else {
-        out += c; // digit
-      }
+      out += c;
     }
   }
   // Ensure starts with letter
