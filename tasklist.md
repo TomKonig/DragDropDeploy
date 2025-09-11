@@ -162,6 +162,7 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 - [ ] Staging vs production domain configuration (ENV flags) implemented.
 - [ ] Frontend Rollback UI triggers API & reflects updated active version without page reload.
 - [x] CI pipeline builds & pushes images on tag. (GitHub Actions workflow added.)
+- [x] Release process automation: manual dispatch workflow creates version bump, tag, release.
 - [ ] Final security scan (Snyk) on source & images.
 - [ ] Add non-root user & least-privilege in images verified.
 - [ ] Coolify deployment template / instructions validated (one-click run with Traefik & env setup).
@@ -172,7 +173,7 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 - [ ] Pluggable auth & data backend option (Experimental): Admin UI toggle to switch from local PostgreSQL (Prisma) to Convex or Supabase.
    - Validate provided Convex/Supabase credentials & target project readiness.
    - Provide one-way export (initial): snapshot relational data -> target schema with migration script.
-   - (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
+  - (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
   - Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
   - Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
   - Security doc: token scopes, least privilege RLS/row policies, data residency implications.

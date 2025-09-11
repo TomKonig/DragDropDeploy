@@ -18,7 +18,7 @@ Status legend: ✅ done · 🟡 in progress · 🔜 planned · 🧪 experimental
 | Expanded configuration reference | ✅ | Env matrix & audited vars added |
 | API auth reference | ✅ | JWT structure, endpoints, examples |
 | Documentation validation CI | ✅ | Doc quality gates (env vars, changelog consistency) |
-| Release process automation (scripts) | 🔜 | Tag + version bump automation pending |
+| Release process automation (scripts) | ✅ | Manual dispatch workflow + automated bump/tag/release implemented |
 
 ### Mid-Term (3–6 Releases)
 
