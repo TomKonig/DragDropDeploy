@@ -10,6 +10,8 @@ Drag & drop a ZIP → get a live site (workflow in progress). This project is ea
 * Project creation + secure ZIP upload (deployment enters BUILDING)
 * Artifact persistence (`ARTIFACTS_DIR`)
 * Build jobs with simulated or real execution (feature-flagged)
+* Deployment activation (symlink) & static file serving endpoint
+* Rollback to previous deployment (most recent inactive or explicit ID)
 * Settings + config validation
 * i18n foundation (shared YAML locales)
 * OpenAPI docs at `/docs`
@@ -62,6 +64,20 @@ curl -H "Authorization: Bearer <token>" http://localhost:3000/builds/<buildId>/l
 ```
 
 Optional query `?tail=200` returns the last N lines. Basic redaction masks bearer tokens and obvious secret patterns. Future work: sandboxing & SSG detection.
+
+### Deployment & Rollback (MVP)
+
+1. Upload a deployment artifact ZIP: `POST /deployments/upload` (multipart fields: `projectId`, `file`)
+2. (If build executor enabled) wait for build success; else manually activate with `POST /deployments/{deploymentId}/activate`.
+3. Serve site root: `GET /deployments/project/{projectId}/site/` (serves `index.html` of active artifact). Append a path segment to fetch a file.
+4. New deployment activation auto-inactivates the previous active deployment.
+5. Rollback: `POST /deployments/project/{projectId}/rollback` (body optional: `{ "targetDeploymentId": "..." }`).
+
+Security notes:
+
+* Path traversal blocked during extraction & serving (realpath + prefix checks).
+* Directory listing disabled; only files or implicit `index.html` are served.
+* Deployment endpoints require authentication (JWT bearer). Future enhancement: role-based restrictions & per-project scopes.
 
 ## Contributing
 

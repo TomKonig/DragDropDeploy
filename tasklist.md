@@ -88,6 +88,10 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 - [ ] Deployment record creation (status: UPLOADING -> PROCESSING -> BUILDING -> ACTIVE/FAILED) persisted.
 - [ ] Status polling endpoint (lightweight JSON) for dashboard progress.
 - [x] Logs endpoint (tail + full) with redaction hook placeholder (basic file-based, redaction TBD).
+- [ ] Static asset minification + disable toggle
+  - Acceptance: HTML/CSS/JS (where applicable) minified by default during build or serve path; per-project DB setting `optOutMinify` stored & reflected via API; host-level env `FORCE_MINIFY=1|0` overrides project preference; e2e test proves toggle on/off; minification step skips already minified assets (heuristic) to avoid double-processing.
+- [ ] Custom per-deployment build flags
+  - Acceptance: Allow-list of supported SSGs (e.g. HUGO, ASTRO) may receive user-provided extra flags; invalid / disallowed flags rejected with 400 & clear message; persisted with build record; redaction of any secrets (no `--token=` style leakage) verified in logs test.
 - [ ] Atomic publish step (symlink or pointer swap) to avoid partial deploy state.
 - [ ] Immediate staging URL returned in initial response (even if build pending) for eventual live check.
 - [ ] Tests: upload happy path, oversize rejection, zip bomb heuristic, path traversal rejection.
@@ -145,6 +149,10 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 - [ ] Deletion & retention info display.
 - [ ] Error/loading states with consistent UX.
 - [ ] Minimal yet polished UI styling (Tailwind / component lib) with accessible components.
+- [ ] Lean dashboard baseline (essential views only)
+  - Acceptance: Only necessary navigation entries (Sites, Builds, Deployments/History, Auth) present; no placeholder empty pages; Lighthouse perf ≥ 90 (desktop) on sample project; unused component imports removed (no dead bundle weight > small threshold TBD).
+- [ ] Theming-ready CSS architecture
+  - Acceptance: Central tokens (CSS variables or Tailwind config tokens) defined; documentation of naming & override strategy; modifying a token propagates across at least 3 components in dev build; stylelint (or Tailwind lint) passes; no hardcoded hex colors outside token layer (exceptions documented).
 - [ ] Admin view toggles (if user is admin/operator) for site/user management panels.
 - [ ] Localization placeholder (English default only).
 
@@ -161,6 +169,10 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 - [ ] Operator documentation: installation, env vars, secrets, optional Stripe, optional S3.
 - [ ] Staging vs production domain configuration (ENV flags) implemented.
 - [ ] Frontend Rollback UI triggers API & reflects updated active version without page reload.
+- [ ] Password protection for sites (optional + host enforce)
+  - Acceptance: Per-project setting enabling HTTP Basic or token-based gate (decide simplest secure first); credentials hashed (if Basic) or random token stored; env `FORCE_SITE_AUTH=1` enforces protection for all projects; e2e test: protected site returns 401 until credentials provided; logs do not leak credential attempts.
+- [ ] Coolify + Traefik deployment validation
+  - Acceptance: Run stack via Coolify template; document required labels & env; confirm Traefik routing & TLS issuance; update README / COOLIFY.md with working example; manual validation notes captured in PR.
 - [x] CI pipeline builds & pushes images on tag. (GitHub Actions workflow added.)
 - [x] Release process automation: manual dispatch workflow creates version bump, tag, release.
 - [ ] Final security scan (Snyk) on source & images.
@@ -180,6 +192,12 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
   - Feature flag: `EXPERIMENTAL_PLUGGABLE_BACKEND=true` gating all UI/actions.
   - Clear disclaimer: Not required for MVP; high complexity & potential consistency trade-offs.
 - [x] Eliminate need for `--forceExit` in test:ci by identifying and closing lingering Testcontainers/Docker stream handle so Jest exits cleanly without force exit. (Achieved 2025-09-11: teardown refinements allow natural Jest exit; script updated.) Acceptance: `npm test` finishes with no open handle warning and without `--forceExit` flag.
+- [ ] External SSL strategy matrix (Cloudflare / ACME / self-cert)
+  - Acceptance: Abstraction layer with provider enum; configuration via env + documented precedence; stub implementations returning simulated cert metadata; switching provider requires only env change + restart; fallback self-signed documented; security note about key storage path.
+- [ ] Theme override upload mechanism
+  - Acceptance: Authenticated UI/API to upload zip of theme partials/assets; validation rejects archives with executables or disallowed extensions; overrides extracted into project-specific dir; precedence order (override -> default) documented; test ensures override supersedes base asset.
+- [ ] Automatic page health checks registry
+  - Acceptance: After activation, background job crawls site (depth & rate limited) storing status code & latency; dashboard table with last run timestamp & aggregate pass/fail; opt-out flag per project; failing pages raise warning badge on project list.
 
 ## References (Informational – Not Checkboxes)
 

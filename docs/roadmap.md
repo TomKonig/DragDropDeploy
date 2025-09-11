@@ -19,6 +19,12 @@ Status legend: ✅ done · 🟡 in progress · 🔜 planned · 🧪 experimental
 | API auth reference | ✅ | JWT structure, endpoints, examples |
 | Documentation validation CI | ✅ | Doc quality gates (env vars, changelog consistency) |
 | Release process automation (scripts) | ✅ | Manual dispatch workflow + automated bump/tag/release implemented |
+| Lean dashboard baseline (minimal UI, only essential components) | 🔜 | Strip to core deploy/build/rollback views before styling pass |
+| Static asset minification & optional user disable toggle | 🔜 | HTML/CSS/JS minify at serve/build; per-project setting + host override |
+| Custom per-deployment build flags | 🔜 | Allow user-defined extra args (validated allow-list) appended to SSG command |
+| Theming-ready CSS architecture | 🔜 | Tokenized variables + utility classes to enable future theme packs |
+| Password protection for sites (optional + host enforce) | 🔜 | Basic HTTP auth / token gate for staging & prod toggled per project |
+| Coolify + Traefik deployment validation | 🔜 | Run end-to-end deploy behind Traefik on Coolify template |
 
 ### Mid-Term (3–6 Releases)
 
@@ -33,6 +39,9 @@ Status legend: ✅ done · 🟡 in progress · 🔜 planned · 🧪 experimental
 | Structured logging + redaction | ✅ | Pino integrated; redaction plan documented |
 | Metrics endpoint (Prometheus) | 🔜 | Basic counters (requests, builds) |
 | Test coverage reporting | 🔜 | Add coverage thresholds |
+| External SSL strategy matrix (Cloudflare / ACME / self-cert) | 🔜 | Configurable provider + host-level enforcement policy |
+| Theme override upload mechanism | 🔜 | Zip partials / CSS bundle overriding default theme assets |
+| Automatic page health checks registry | 🔜 | Crawl built pages, record status & latency for dashboard |
 
 ### Long-Term (6+ Releases)
 

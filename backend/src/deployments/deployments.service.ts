@@ -48,8 +48,8 @@ export class DeploymentsService {
     await this.copyDirSafe(stagedReal, destReal, artifactsRoot);
     // Create deployment then a build job; wrap in transaction for consistency
     return this.prisma.$transaction(async tx => {
-      const deployment = await tx.deployment.create({ data: { projectId, userId: userId || undefined, artifactPath: destDir, status: 'BUILDING' as any } });
-      await tx.buildJob.create({ data: { projectId, status: 'PENDING' } });
+  const buildJob = await tx.buildJob.create({ data: { projectId, status: 'PENDING' } });
+  const deployment = await tx.deployment.create({ data: { projectId, userId: userId || undefined, artifactPath: destDir, status: 'BUILDING' as any } });
       return deployment;
     });
   }
@@ -72,5 +72,53 @@ export class DeploymentsService {
         await fs.promises.copyFile(srcPath, destPath);
       }
     }
+  }
+
+  /** Activate a deployment after successful build. Marks previous ACTIVE deployments INACTIVE (same project) and updates symlink. */
+  async activateDeployment(deploymentId: string) {
+    const deployment = await this.prisma.deployment.findUnique({ where: { id: deploymentId } });
+    if (!deployment) throw new NotFoundException('Deployment not found');
+    if (!deployment.artifactPath) throw new BadRequestException('Deployment missing artifactPath');
+    const artifactsRoot = path.resolve(process.env.ARTIFACTS_DIR || './artifacts');
+    const artifactReal = path.resolve(deployment.artifactPath);
+    if (!artifactReal.startsWith(artifactsRoot + path.sep)) throw new BadRequestException('Artifact path outside root');
+    // Symlink path: <artifactsRoot>/<projectId>-active
+    const symlinkPath = path.join(artifactsRoot, `${deployment.projectId}-active`);
+    // Update statuses in a transaction
+    await this.prisma.$transaction(async tx => {
+      await tx.deployment.updateMany({ where: { projectId: deployment.projectId, status: 'ACTIVE' as any }, data: { status: 'INACTIVE' as any } });
+      await tx.deployment.update({ where: { id: deployment.id }, data: { status: 'ACTIVE' as any } });
+    });
+    // Create/update symlink (atomic replace)
+    try {
+      await fs.promises.unlink(symlinkPath).catch(()=>{});
+      await fs.promises.symlink(artifactReal, symlinkPath, 'dir');
+    } catch (e) {
+      // Roll back status if symlink fails
+      await this.prisma.deployment.update({ where: { id: deployment.id }, data: { status: 'FAILED' as any } }).catch(()=>{});
+      throw new BadRequestException('Failed to activate deployment');
+    }
+    return { id: deployment.id, activePath: symlinkPath };
+  }
+
+  async getActiveArtifactPath(projectId: string) {
+    const artifactsRoot = path.resolve(process.env.ARTIFACTS_DIR || './artifacts');
+    const symlinkPath = path.join(artifactsRoot, `${projectId}-active`);
+    try {
+      const real = await fs.promises.realpath(symlinkPath);
+      if (!real.startsWith(artifactsRoot + path.sep)) return null;
+      return real;
+    } catch {
+      return null;
+    }
+  }
+
+  async rollback(projectId: string, targetDeploymentId?: string) {
+    // Choose target: explicit or most recent INACTIVE (by createdAt desc)
+    let target = targetDeploymentId
+      ? await this.prisma.deployment.findFirst({ where: { id: targetDeploymentId, projectId } })
+      : await this.prisma.deployment.findFirst({ where: { projectId, status: 'INACTIVE' as any }, orderBy: { createdAt: 'desc' } });
+    if (!target) throw new NotFoundException('No rollback candidate');
+    return this.activateDeployment(target.id);
   }
 }

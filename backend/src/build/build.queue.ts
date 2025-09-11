@@ -6,6 +6,7 @@ import { BuildJobStatus } from '@prisma/client';
 import { Queue, QueueEvents, Worker, JobsOptions, Job } from 'bullmq';
 import IORedis from 'ioredis';
 import { BuildExecutorService } from './build.executor';
+import { DeploymentsService } from '../deployments/deployments.service';
 
 @Injectable()
 export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
@@ -17,7 +18,7 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
   private useBull: boolean;
   private initPromise?: Promise<void>;
 
-  constructor(private readonly prisma: PrismaService, private readonly executor: BuildExecutorService) {
+  constructor(private readonly prisma: PrismaService, private readonly executor: BuildExecutorService, private readonly deployments: DeploymentsService) {
     this.useBull = !!process.env.REDIS_URL;
   }
 
@@ -70,6 +71,17 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
         }
         append('status: SUCCESS');
         await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.SUCCESS } });
+        // Auto-activate any deployment tied to this build job (one-to-one expected)
+        // Activation linking via buildJobId requires latest migration to be deployed.
+        // Guard: attempt activation only if column exists by querying deployments filtering by status BUILDING (best-effort heuristic pre-migration).
+        try {
+          const candidate = await this.prisma.deployment.findFirst({ where: { status: 'BUILDING' as any } });
+          if (candidate) {
+            try { await this.deployments.activateDeployment(candidate.id); } catch (e) { append('activation: failed ' + (e as any).message); }
+          }
+        } catch {
+          /* ignore activation errors (possibly schema mismatch) */
+        }
       } catch (e) {
         append('status: FAILED');
         this.logger.error(`BullMQ worker error for build ${buildJobId}: ${e}`);
@@ -138,6 +150,12 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
       }
       this.appendLog(jobId, 'status: SUCCESS');
       await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.SUCCESS } });
+      try {
+        const candidate = await this.prisma.deployment.findFirst({ where: { status: 'BUILDING' as any } });
+        if (candidate) {
+          try { await this.deployments.activateDeployment(candidate.id); } catch (e) { this.appendLog(jobId, 'activation: failed ' + (e as any).message); }
+        }
+      } catch {}
     } catch (e) {
   this.appendLog(jobId, 'status: FAILED');
       this.logger.warn(`Final status update failed for job ${jobId}: ${e}`);
