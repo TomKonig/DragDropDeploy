@@ -67,6 +67,7 @@ This document classifies all platform settings and indicates where they live.
 | Build | QUEUE_CONCURRENCY | db | yes | no | Worker concurrency hint. |
 | Build | BUILD_ALLOWED_SSGS | db | yes | no | Enum whitelist. |
 | Build | CUSTOM_BUILD_COMMAND_WHITELIST | db | yes | no | Safe commands list. |
+| Build | BUILD_EXECUTION_ENABLED | env | restart | no | When 'true', enables real executor (npm build) instead of simulation. |
 | Future Secret | OUTBOUND_WEBHOOK_SECRET | encrypted db | write-only | yes | Store hashed/encrypted. |
 | Upload | MAX_UPLOAD_MB | env | restart | no | Max allowed upload archive size (default 25). |
 | Upload | ARTIFACTS_DIR | env | restart | no | Directory where extracted deployment artifacts are persisted (default ./artifacts). |
@@ -94,6 +95,7 @@ The following variables are currently parsed in code (grep of `process.env`). Th
 | JWT_SECRET | main.ts / auth | (none) | HMAC secret for JWT | REQUIRED to start server. |
 | npm_package_version | main.ts (via env injection) | package.json version | Provided automatically by npm scripts | Do not set manually normally. |
 | NO_DOCKER | test (build queue redis e2e) | (unset) | Skip spinning test containers | Internal testing convenience. |
+| BUILD_EXECUTION_ENABLED | build.executor/build.queue | false | Enable real build execution (npm run build) | Feature flag; otherwise simulated steps. |
 
 ### Missing vs. Proposed Variables
 
