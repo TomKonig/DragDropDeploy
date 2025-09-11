@@ -24,7 +24,7 @@ Status legend: ✅ done · 🟡 in progress · 🔜 planned · 🧪 experimental
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Build worker implementation | � | Basic worker & log capture implemented (simulated steps); real build execution pending |
+| Build worker implementation | 🟡 | Basic worker, file-based logs & feature-flagged real execution (`BUILD_EXECUTION_ENABLED`) added; extended SSG detection & sandbox pending |
 | Redeploy / versioned artifacts | 🔜 | Keep N versions + rollback pointer |
 | Domain & wildcard routing | 🔜 | Map hostnames to deployments |
 | OAuth provider integration | 🔜 | GitHub / Google minimal scopes |

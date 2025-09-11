@@ -59,7 +59,7 @@ Sync Note: When marking an item complete that corresponds to a high-level roadma
 - [x] Deployment version record creation (simple incremental version) & retrieval via status/history endpoints.
 - [x] Initial deployment record creation on file upload (status PENDING) with e2e test.
 - [x] Random staging subdomain generation logic (store). (Utility `generateStagingSubdomain()` added; DB persistence pending integration with deployments.)
-- [ ] Log capture structure (stdout/stderr -> file + DB summary fields).
+- [x] Log capture structure (stdout/stderr -> file + DB pointer) (2025-09-11: file-based logs with tail endpoint; redaction baseline & executor flag added).
 - [x] Database roles design: create roles (migrator, app_rw, app_ro) script added (`backend/prisma/db_roles.sql`).
 - [ ] JIT admin access plan: script or doc to create ephemeral elevated role with TTL for maintenance (out-of-band).
 - [ ] Document credential rotation procedure (DB + JWT secret + OAuth credentials).

@@ -9,7 +9,7 @@ Drag & drop a ZIP → get a live site (workflow in progress). This project is ea
 * Email/password auth (first user becomes operator)
 * Project creation + secure ZIP upload (deployment enters BUILDING)
 * Artifact persistence (`ARTIFACTS_DIR`)
-* Build job skeleton (execution pending)
+* Build jobs with simulated or real execution (feature-flagged)
 * Settings + config validation
 * i18n foundation (shared YAML locales)
 * OpenAPI docs at `/docs`
@@ -46,6 +46,22 @@ Open <http://localhost:3000> and register; first account becomes operator.
 | ARTIFACTS_DIR | (optional) Where deployment artifacts persist |
 
 See `CONFIGURATION.md` for the full list.
+
+### Build System & Logs
+
+Builds are queued per project. Without Redis, an in-memory simulation runs. With `REDIS_URL` set, BullMQ processes jobs. Build execution defaults to simulated steps unless you set:
+
+```bash
+export BUILD_EXECUTION_ENABLED=true
+```
+
+When enabled, the executor runs `npm run build --if-present` at the repo root, capturing stdout/stderr to a file under `backend/artifacts/build-logs/<buildId>.log`. Logs are retrievable via:
+
+```bash
+curl -H "Authorization: Bearer <token>" http://localhost:3000/builds/<buildId>/logs
+```
+
+Optional query `?tail=200` returns the last N lines. Basic redaction masks bearer tokens and obvious secret patterns. Future work: sandboxing & SSG detection.
 
 ## Contributing
 

@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BuildJobStatus } from '@prisma/client';
 import { Queue, QueueEvents, Worker, JobsOptions, Job } from 'bullmq';
 import IORedis from 'ioredis';
+import { BuildExecutorService } from './build.executor';
 
 @Injectable()
 export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
@@ -16,7 +17,7 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
   private useBull: boolean;
   private initPromise?: Promise<void>;
 
-  constructor(private readonly prisma: PrismaService) {
+  constructor(private readonly prisma: PrismaService, private readonly executor: BuildExecutorService) {
     this.useBull = !!process.env.REDIS_URL;
   }
 
@@ -53,13 +54,20 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
         append(`[start] build ${buildJobId}`);
         await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.RUNNING, logsPath: logFile } });
         append('status: RUNNING');
-        // Simulated steps
-        append('step: detect build configuration (simulated)');
-        await this.simulatedWork(50);
-        append('step: install dependencies (simulated)');
-        await this.simulatedWork(50);
-        append('step: build output (simulated)');
-        await this.simulatedWork(50);
+        if (this.executor.isEnabled()) {
+          append('executor: enabled - starting real build');
+          const result = await this.executor.runBuild(job.data.projectId || 'unknown', logFile);
+          append(`executor: result success=${result.success} code=${result.exitCode}`);
+          if (!result.success) throw new Error('Real build failed');
+        } else {
+          // Simulated steps
+          append('step: detect build configuration (simulated)');
+          await this.simulatedWork(50);
+          append('step: install dependencies (simulated)');
+          await this.simulatedWork(50);
+          append('step: build output (simulated)');
+          await this.simulatedWork(50);
+        }
         append('status: SUCCESS');
         await this.prisma.buildJob.update({ where: { id: buildJobId }, data: { status: BuildJobStatus.SUCCESS } });
       } catch (e) {
@@ -102,7 +110,7 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
       await this.queue.add('build', { buildJobId: job.id }, opts);
       return job;
     } else {
-      this.simulateJobLifecycle(job.id).catch(e => this.logger.error(`Lifecycle simulation error for ${job.id}: ${e}`));
+  this.simulateJobLifecycle(job.id).catch(e => this.logger.error(`Lifecycle simulation error for ${job.id}: ${e}`));
       return job;
     }
   }
@@ -119,9 +127,17 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
       return; // abort further transitions
     }
     try {
-      await this.sleep(75);
-  this.appendLog(jobId, 'status: SUCCESS');
-  await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.SUCCESS } });
+      if (this.executor.isEnabled()) {
+        this.appendLog(jobId, 'executor: enabled - starting real build');
+        const logFile = path.join(this.logsBaseDir(), `${jobId}.log`);
+        const result = await this.executor.runBuild('simulation-project', logFile);
+        this.appendLog(jobId, `executor: result success=${result.success} code=${result.exitCode}`);
+        if (!result.success) throw new Error('Real build failed (in-memory path)');
+      } else {
+        await this.sleep(75);
+      }
+      this.appendLog(jobId, 'status: SUCCESS');
+      await this.prisma.buildJob.update({ where: { id: jobId }, data: { status: BuildJobStatus.SUCCESS } });
     } catch (e) {
   this.appendLog(jobId, 'status: FAILED');
       this.logger.warn(`Final status update failed for job ${jobId}: ${e}`);
