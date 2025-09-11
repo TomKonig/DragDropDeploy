@@ -330,7 +330,7 @@ Structured request/response logging is provided by `nestjs-pino`. Adjust verbosi
 
 Example environment snippet:
 
-```
+```bash
 LOG_LEVEL=debug
 RATE_LIMIT_AUTH_CAPACITY=5
 RATE_LIMIT_AUTH_WINDOW_MS=60000
@@ -347,6 +347,24 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
 - Optional (commented): Enable Snyk scans by adding `SNYK_TOKEN` and uncommenting steps.
 
 Tagging a release (`vX.Y.Z`) will automatically publish new images consistent with `VERSIONING.md`.
+
+## Testing & Open Handle Note
+
+The backend Jest test suite runs with `--runInBand` and (in CI) `--forceExit` via the `test:ci` script. Rationale:
+
+- Testcontainers (ephemeral Postgres/Redis) occasionally leaves a lingering Docker log/stream handle that causes Jest to warn about open handles even after all resources are closed.
+- Functional cleanup (Nest apps closed, Prisma disconnected, BullMQ workers shut down) is verified; remaining handle is cosmetic and does not indicate a production leak.
+- `--forceExit` keeps CI fast and noise-free while we defer deeper elimination of the residual handle to a post‑MVP task.
+
+Investigating locally (optional):
+
+```bash
+DETECT_OPEN_HANDLES=1 npm test -- --detectOpenHandles
+```
+
+You can also temporarily reintroduce `why-is-node-running` by setting `DETECT_OPEN_HANDLES=1` (see conditional in `jest.config.js`). This prints active handles so future hardening can remove the need for `--forceExit`.
+
+Acceptance criteria for removing `--forceExit` later: All suites pass with `jest --runInBand` and exit with zero open handle warnings without forcing exit.
 
 Sources:
 

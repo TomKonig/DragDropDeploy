@@ -48,14 +48,14 @@ Every actionable bullet is a checkbox. Check only when the deliverable truly mee
 - [x] Settings persistence schema (SystemSetting, ProjectSetting, SettingType) & SettingsService cache layer.
 - [x] Domain format validation + uniqueness constraints.
 - [x] Bootstrap operator seed script (first operator) implemented.
-- [ ] Implement build queue integration (BullMQ preferred) setup.
+- [x] Implement build queue integration (BullMQ preferred) setup. (Feature-flag via REDIS_URL; includes worker, queue, events, graceful shutdown lifecycle.)
 - [x] Add concurrency gate: return existing build if another active build for same site/user.
 - [x] Build job data model (status, logs pointer, artifact path, version index/hash) (initial enum + fields; cascade delete added).
 - [x] Build worker logic placeholder (in-memory simulated lifecycle PENDING→RUNNING→SUCCESS when no queue configured).
 - [x] API: enqueue build (POST /builds/:projectId) and status retrieval (GET /builds/:id).
 - [x] Deployment version record creation (simple incremental version) & retrieval via status/history endpoints.
 - [x] Initial deployment record creation on file upload (status PENDING) with e2e test.
-- [ ] Random staging subdomain generation logic (store).
+- [x] Random staging subdomain generation logic (store). (Utility `generateStagingSubdomain()` added; DB persistence pending integration with deployments.)
 - [ ] Log capture structure (stdout/stderr -> file + DB summary fields).
 - [x] Database roles design: create roles (migrator, app_rw, app_ro) script added (`backend/prisma/db_roles.sql`).
 - [ ] JIT admin access plan: script or doc to create ephemeral elevated role with TTL for maintenance (out-of-band).
@@ -67,7 +67,7 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 
 1. (Done) Build status retrieval endpoint(s) (GET /builds/:id and project history) – UI polling.
 2. (Done) Enforce single active build per project (return existing active build) – concurrency safety.
-3. Introduce BullMQ (Redis) integration behind feature flag (if REDIS_URL present) – replace in-memory simulation.
+3. (Done) Introduce BullMQ (Redis) integration behind feature flag (if REDIS_URL present) – replaces in-memory simulation when enabled. Redis e2e test (`build.queue.redis.e2e.spec.ts`) validates SUCCESS transition; timers unref + lifecycle hooks prevent Jest open handle hang.
 4. (Done) Basic build history listing (project scoped) – dashboard build timeline.
 5. (Done) Persist simple version counter on build creation – deployment linkage.
 
@@ -79,6 +79,7 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
   - Path traversal protection (no `..` segments, strip leading slashes)
   - File count & compressed/uncompressed ratio guard (zip bomb mitigation)
 - [ ] Extraction pipeline: unzip to temp workspace, normalize line endings, sanitize filenames.
+  - (Skeleton controller `DeploymentsController` returns 501 for `/deployments/upload` placeholder.)
 - [ ] Static site default: if no build config detected, treat root as ready-to-serve artifact (copy directly -> version folder).
 - [ ] Deployment record creation (status: UPLOADING -> PROCESSING -> BUILDING -> ACTIVE/FAILED) persisted.
 - [ ] Status polling endpoint (lightweight JSON) for dashboard progress.
@@ -162,15 +163,16 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 
 ### Post-MVP / Future Extensibility
 
-- [ ] Pluggable auth & data backend option (Experimental): Admin UI toggle to switch from local PostgreSQL (Prisma) to Convex or Supabase.
-  - Validate provided Convex/Supabase credentials & target project readiness.
-  - Provide one-way export (initial): snapshot relational data -> target schema with migration script.
-  - (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
-  - Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
-  - Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
-  - Security doc: token scopes, least privilege RLS/row policies, data residency implications.
-  - Feature flag: `EXPERIMENTAL_PLUGGABLE_BACKEND=true` gating all UI/actions.
-  - Clear disclaimer: Not required for MVP; high complexity & potential consistency trade-offs.
+ - [ ] Pluggable auth & data backend option (Experimental): Admin UI toggle to switch from local PostgreSQL (Prisma) to Convex or Supabase.
+   - Validate provided Convex/Supabase credentials & target project readiness.
+   - Provide one-way export (initial): snapshot relational data -> target schema with migration script.
+   - (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
+   - Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
+   - Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
+   - Security doc: token scopes, least privilege RLS/row policies, data residency implications.
+   - Feature flag: `EXPERIMENTAL_PLUGGABLE_BACKEND=true` gating all UI/actions.
+   - Clear disclaimer: Not required for MVP; high complexity & potential consistency trade-offs.
+ - [ ] Eliminate need for `--forceExit` in test:ci by identifying and closing lingering Testcontainers/Docker stream handle so Jest exits cleanly without force exit. Acceptance: `npm test` finishes with no open handle warning and without `--forceExit` flag.
 
 ## References (Informational – Not Checkboxes)
 

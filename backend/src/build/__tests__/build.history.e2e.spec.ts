@@ -2,6 +2,7 @@ import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../app.module';
+import { registerTestApp } from '../../test/app-tracker';
 import { PrismaService } from '../../prisma/prisma.service';
 
 describe('Build history & concurrency (e2e)', () => {
@@ -12,11 +13,13 @@ describe('Build history & concurrency (e2e)', () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
     app = moduleRef.createNestApplication();
     prisma = moduleRef.get(PrismaService);
-    await app.init();
+  await app.init();
+  registerTestApp(app);
   });
 
   afterAll(async () => {
-    await app.close();
+  await app.close();
+  await prisma.$disconnect();
   });
 
   async function registerAndAuth(email: string) {
@@ -52,7 +55,7 @@ describe('Build history & concurrency (e2e)', () => {
     expect(b2.body.id).toBe(b1.body.id); // concurrency gate returns same active build
 
     // Wait for lifecycle to finish
-    await new Promise(r => setTimeout(r, 160));
+  await new Promise(r => { const t = setTimeout(r, 160); if (typeof (t as any).unref === 'function') (t as any).unref(); });
 
     // Enqueue second build after first completes
     const b3 = await request(app.getHttpServer())

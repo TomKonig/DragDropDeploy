@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
+import { registerTestApp } from '../../test/app-tracker';
 import { PrismaService } from '../../prisma/prisma.service';
 import path from 'path';
 import fs from 'fs';
@@ -23,7 +24,8 @@ describe('Uploads -> Deployment creation (e2e)', () => {
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     prisma = app.get(PrismaService);
-    await app.init();
+  await app.init();
+  registerTestApp(app);
     await prisma.deployment.deleteMany();
     await prisma.project.deleteMany();
     await prisma.user.deleteMany();
@@ -31,6 +33,7 @@ describe('Uploads -> Deployment creation (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
+    await prisma.$disconnect();
   });
 
   it('creates a deployment record with PENDING status on upload', async () => {
