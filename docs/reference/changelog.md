@@ -60,11 +60,11 @@ All notable changes (mirrored from root) are listed below.
 - Deployment record creation on upload (now immediate transition to BUILDING with BuildJob creation) and e2e test coverage.
 - Security hardening middleware: Helmet + explicit CORS origins loading from CORS_ORIGINS env var.
 - Deployment archive upload endpoint (`POST /deployments/upload`):
-  - In-memory buffer handling & ZIP extraction (path traversal, file count, compression ratio, magic number guards)
-  - Artifact persisted to `ARTIFACTS_DIR` with recorded `artifactPath`
-  - Deployment status immediately set to BUILDING; BuildJob row created (PENDING)
-  - Configurable size via `MAX_UPLOAD_MB` (default 25) and storage root via `ARTIFACTS_DIR`
-  - E2E tests: happy path, build job creation, oversize rejection, traversal attempt, non-zip rejection
+- In-memory buffer handling & ZIP extraction (path traversal, file count, compression ratio, magic number guards)
+- Artifact persisted to `ARTIFACTS_DIR` with recorded `artifactPath`
+- Deployment status immediately set to BUILDING; BuildJob row created (PENDING)
+- Configurable size via `MAX_UPLOAD_MB` (default 25) and storage root via `ARTIFACTS_DIR`
+- E2E tests: happy path, build job creation, oversize rejection, traversal attempt, non-zip rejection
 
 ### Partial / In Progress
 
