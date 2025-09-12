@@ -25,15 +25,17 @@ function minifyHtml(src: string): string {
 
 @Injectable()
 export class MinifyService {
-  // Read FORCE_MINIFY dynamically so tests (and runtime) can adjust between builds.
-  private get force() { return process.env.FORCE_MINIFY; }
+  // FORCE_MINIFY evaluation strategy:
+  // - In test environment we re-read process.env each call so tests can mutate FORCE_MINIFY between invocations without rebuilding DI graph.
+  // - In non-test environments we cache the value at construction time for minor perf gain & to avoid surprises from late mutation.
+  private readonly cachedForce = process.env.NODE_ENV === 'test' ? undefined : process.env.FORCE_MINIFY;
+  private get force() { return this.cachedForce !== undefined ? this.cachedForce : process.env.FORCE_MINIFY; }
   private artifactsRoot = process.env.ARTIFACTS_DIR || './artifacts';
   constructor(private readonly prisma: PrismaService) {}
 
   async maybeMinifyProject(projectId: string, log: (line: string)=>void) {
     const projectDir = path.join(this.artifactsRoot, projectId);
     if (!fs.existsSync(projectDir)) { log(`minify: project artifacts not found path=${projectDir}`); return; }
-    // Evaluate flags precedence: FORCE_MINIFY=1 forces enable; FORCE_MINIFY=0 forces disable.
     if (this.force === '0') { log('minify: globally disabled by FORCE_MINIFY=0'); return; }
     let optOut = false;
     try {

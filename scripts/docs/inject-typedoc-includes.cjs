@@ -25,6 +25,16 @@
 const fs = require('fs');
 const path = require('path');
 
+// Collapsing heuristic constants (replaces prior magic numbers):
+// - LONG_UNION_LENGTH_THRESHOLD: minimum raw string length inside backticks before considering collapsing
+// - UNION_COLLAPSE_HEAD: number of initial union segments to keep when collapsing
+// - UNION_COLLAPSE_MIN_TOTAL: only collapse if total segments exceed this count
+// - UNION_COLLAPSE_TAIL: number of trailing union segments to retain
+const LONG_UNION_LENGTH_THRESHOLD = 400;
+const UNION_COLLAPSE_HEAD = 6;
+const UNION_COLLAPSE_MIN_TOTAL = 12;
+const UNION_COLLAPSE_TAIL = 3;
+
 // Simple deterministic slugify tuned for headings & code identifiers:
 // - Lowercase
 // - Strip surrounding backticks
@@ -108,11 +118,10 @@ function transformFragment(raw, key) {
   out = out.replace(/^## (.+)$/gm, '#### $1');
   // Collapse extremely long pipe unions (like translation key lists) for readability
   out = out.replace(/`((?:[^`]|`(?!`))+?)`/g, (m, inner) => {
-    if (inner.length > 400 && inner.includes('|')) {
-      // Keep first ~6 segments then ellipsis
+    if (inner.length > LONG_UNION_LENGTH_THRESHOLD && inner.includes('|')) {
       const parts = inner.split('|').map(s => s.trim());
-      if (parts.length > 12) {
-        return '`' + parts.slice(0, 6).join(' | ') + ' | … | ' + parts.slice(-3).join(' | ') + '`';
+      if (parts.length > UNION_COLLAPSE_MIN_TOTAL) {
+        return '`' + parts.slice(0, UNION_COLLAPSE_HEAD).join(' | ') + ' | … | ' + parts.slice(-UNION_COLLAPSE_TAIL).join(' | ') + '`';
       }
     }
     return m;

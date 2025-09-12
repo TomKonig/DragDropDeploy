@@ -59,19 +59,21 @@ describe('Build history & concurrency (e2e)', () => {
       .expect(201);
     expect(b2.body.id).toBe(b1.body.id); // concurrency gate returns same active build
     
-    // Poll for build completion instead of relying on a fixed sleep which was causing flakiness
+    // Bounded polling for build completion (avoid unbounded while(true))
+    const MAX_WAIT_MS = 8000;
+    const FIRST_DELAY_MS = 60;
+    const POLL_INTERVAL_MS = 150;
+    await new Promise(r => { const t = setTimeout(r, FIRST_DELAY_MS); if (typeof (t as any).unref === 'function') (t as any).unref(); });
     const pollStart = Date.now();
-    await new Promise(r => { const t = setTimeout(r, 60); if (typeof (t as any).unref === 'function') (t as any).unref(); });
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    for (;;) {
       const res = await request(app.getHttpServer())
         .get(`/builds/${b1.body.id}`)
         .set('Authorization', `Bearer ${token}`);
       if (res.status === 200 && ['SUCCESS', 'FAILED'].includes(res.body.status)) break;
-      if (Date.now() - pollStart > 8000) {
+      if (Date.now() - pollStart > MAX_WAIT_MS) {
         throw new Error(`Timed out waiting for initial build to finish (last status=${res.body?.status})`);
       }
-      await new Promise(r => { const t = setTimeout(r, 150); if (typeof (t as any).unref === 'function') (t as any).unref(); });
+      await new Promise(r => { const t = setTimeout(r, POLL_INTERVAL_MS); if (typeof (t as any).unref === 'function') (t as any).unref(); });
     }
 
     // Enqueue second build after first completes
