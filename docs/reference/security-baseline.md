@@ -18,11 +18,9 @@ Related: See `../security/threat-model.md` for assets, threats, and mitigations 
 
 - Future: dedicated roles (migrator, app_rw, app_ro). Runtime will *not* use superuser.
 - RLS to be enabled after schema stabilization; tenant scoping via session variable.
-- Document JIT elevated role procedure for maintenance.
-    - See: ../operations/jit-admin-access.md (JIT elevation design & runbook)
+- Document JIT elevated role procedure for maintenance. (See: ../operations/jit-admin-access.md for design & runbook)
 - Roles script added at `backend/prisma/db_roles.sql`; production to run via isolated migration job, not app container.
-- Separate DATABASE_URLs: one for migrations (migrator), one for runtime (app_rw), optional reporting (app_ro).
-    - See: ../operations/credential-rotation.md for rotation runbook.
+- Separate DATABASE_URLs: one for migrations (migrator), one for runtime (app_rw), optional reporting (app_ro). (See: ../operations/credential-rotation.md for rotation runbook)
 
 ### Secrets & Config
 
