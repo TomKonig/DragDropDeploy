@@ -12,10 +12,12 @@ describe('UsersService', () => {
     }).compile();
     service = moduleRef.get(UsersService);
     prisma = moduleRef.get(PrismaService);
-    // Cleanup tables
-    await (prisma as any).deployment.deleteMany();
-    await (prisma as any).project.deleteMany();
-    await (prisma as any).user.deleteMany();
+  // Cleanup tables honoring FK constraints: deployments -> buildJobs -> projectSetting -> projects -> users
+  await (prisma as any).deployment.deleteMany();
+  await (prisma as any).buildJob.deleteMany();
+  await (prisma as any).projectSetting.deleteMany();
+  await (prisma as any).project.deleteMany();
+  await (prisma as any).user.deleteMany();
   });
 
   it('first created user becomes operator', async () => {

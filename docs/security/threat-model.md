@@ -1,8 +1,9 @@
 ---
 title: Threat Model
 ---
+ 
+## Threat Model
 
-## Threat Model  
 **Status:** Shipped (baseline) – future items labeled Planned
 
 High-level assessment of assets, actors, attack surfaces, and mitigations. Complements `reference/security-baseline.md`.

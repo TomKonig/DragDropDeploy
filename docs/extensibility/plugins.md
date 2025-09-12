@@ -26,8 +26,8 @@ More hooks can be added as needs emerge (domain verification, build lifecycle, s
 
 ```text
 backend/src/plugins/
-	types.ts            # Hook and context type definitions
-	plugin-manager.ts   # Registration + dispatch
+    types.ts            # Hook and context type definitions
+    plugin-manager.ts   # Registration + dispatch
 ```
 
 Plugins can be authored locally under `backend/src/plugins/custom/` or loaded dynamically later (future work: directory scan + enable list).
@@ -40,14 +40,14 @@ Create a file like `backend/src/plugins/custom/sample-plugin.ts`:
 import { Plugin } from '../types';
 
 export const samplePlugin: Plugin = {
-	name: 'sample-plugin',
-	version: '0.0.1',
-	async init(ctx) {
-		console.log('[sample-plugin] init');
-	},
-	async onUserCreated(ctx, user) {
-		console.log('[sample-plugin] user created', user.id);
-	}
+    name: 'sample-plugin',
+    version: '0.0.1',
+    async init(ctx) {
+        console.log('[sample-plugin] init');
+    },
+    async onUserCreated(ctx, user) {
+        console.log('[sample-plugin] user created', user.id);
+    }
 };
 ```
 

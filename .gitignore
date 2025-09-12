@@ -40,6 +40,10 @@ certs/
 
 # Ignore generated docs directory if built separately
 docs/site/
+docs/.generated/
+
+# OpenAPI spec output (regenerated)
+backend/openapi.json
 
 # Env
 .env

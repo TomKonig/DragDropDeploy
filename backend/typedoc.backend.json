@@ -1,0 +1,23 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "tsconfig": "tsconfig.json",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "hideGenerator": true,
+  "categorizeByGroup": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": false,
+  "out": "../docs/.generated/api/backend",
+  "githubPages": false,
+  "skipErrorChecking": true,
+  "navigation": {
+    "includeCategories": true
+  },
+  "exclude": [
+    "**/generated/prisma/runtime/**",
+    "**/generated/prisma/namespaces/Prisma/**"
+  ]
+}

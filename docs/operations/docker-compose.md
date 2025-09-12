@@ -2,7 +2,8 @@
 title: Docker Compose Deployment
 ---
 
-\n## Docker Compose Deployment  
+## Docker Compose Deployment  
+
 **Status:** Shipped (baseline) – resource limits & automated rollback Planned
 
 Standard self-host deployment using the provided `docker-compose.yml` (includes Traefik reverse proxy, Postgres, Redis, backend, optional frontend).
@@ -75,6 +76,7 @@ docker compose ps
 ```bash
 curl -k https://app.example.com/health
 ```
+
 Expect JSON or simple OK depending on implementation.
 
 ### Persistent Data
@@ -102,15 +104,15 @@ services:
 1. Rebuild / pull images (once CI publishes images; interim: `docker compose build backend frontend`).
 1. Run migrations:
 
-  ```bash
-  docker compose exec backend npx prisma migrate deploy
-  ```
+```bash
+docker compose exec backend npx prisma migrate deploy
+```
 
 1. Restart stack (if not using recreate on pull):
 
-  ```bash
-  docker compose up -d
-  ```
+```bash
+docker compose up -d
+```
 
 1. Validate health endpoint.
 

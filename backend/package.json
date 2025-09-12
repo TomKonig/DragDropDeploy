@@ -15,7 +15,8 @@
     "test:watch": "jest --watch",
     "test:ci": "LOG_LEVEL=warn jest --runInBand",
     "backfill:deploy-build": "ts-node scripts/backfill-deployment-build-links.ts",
-    "openapi:gen": "node scripts/generate-openapi-wrapper.cjs"
+  "openapi:gen": "node scripts/generate-openapi-wrapper.cjs",
+  "typedoc": "typedoc --options typedoc.backend.json"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",
@@ -67,6 +68,8 @@
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "typedoc": "^0.28.12",
+    "typedoc-plugin-markdown": "^4.8.1",
     "typescript": "^5.4.0"
   },
   "optionalDependencies": {

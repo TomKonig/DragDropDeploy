@@ -1,4 +1,5 @@
-# Project Build Flags  
+# Project Build Flags
+
 **Status:** Shipped
 
 Project build flags let you append predefined CLI flags to the build command (`npm run build`). They are stored once per project and automatically applied to all future builds, keeping deployments consistent and avoiding per-deployment reconfiguration.
@@ -59,4 +60,3 @@ npm run build --if-present -- --modern --token=REDACTED
 - UI surface to edit allowed flags per installation.
 - Per-framework smart defaults (e.g., React, Next.js, SvelteKit) resolved to canonical flags.
 - Audit log entries when flags mutate.
-

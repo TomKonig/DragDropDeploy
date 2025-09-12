@@ -23,7 +23,8 @@ describe('Minify toggle (e2e)', () => {
     const password = 'Passw0rd!test';
     await request(app.getHttpServer()).post('/auth/register').send({ email, password }).expect(201);
     const login = await request(app.getHttpServer()).post('/auth/login').send({ email, password }).expect(201);
-    token = login.body.access_token;
+  // Auth service returns camelCase accessToken (not snake_case)
+  token = login.body.accessToken;
     const proj = await request(app.getHttpServer()).post('/projects').set('Authorization', `Bearer ${token}`).send({ name: 'p1' }).expect(201);
     projectId = proj.body.id;
     // seed artifact directory

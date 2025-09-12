@@ -1,18 +1,17 @@
-docker compose up -d
-git add .
-git commit -m "chore(release): vX.Y.Z"
-git tag vX.Y.Z
-git push origin main --tags
 
 # DragDropDeploy
 
-![DragDropDeploy Logo](./docs/assets/logo.svg)
-
-[![Build](https://img.shields.io/github/actions/workflow/status/TomKonig/DragDropDeploy/ci.yml?style=flat-square)](https://github.com/TomKonig/DragDropDeploy/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](./LICENSE)
-[![Changelog](https://img.shields.io/badge/Changelog-keep--a--changelog-blue?style=flat-square)](./CHANGELOG.md)
-[![Roadmap](https://img.shields.io/badge/Roadmap-Now%2FNext%2FLater-purple?style=flat-square)](./docs/roadmap.md)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](https://github.com/TomKonig/DragDropDeploy/issues)
+<!-- Project Logo -->
+<p align="center">
+<img src="./docs/assets/logo.jpg" alt="DragDropDeploy Logo" width="480" />
+</p>
+<p align="center">
+	<a href="https://github.com/TomKonig/DragDropDeploy/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/TomKonig/DragDropDeploy/ci.yml?style=flat-square" alt="Build" /></a>
+	<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License: MIT" /></a>
+	<a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Changelog-keep--a--changelog-blue?style=flat-square" alt="Changelog" /></a>
+	<a href="./docs/roadmap.md"><img src="https://img.shields.io/badge/Roadmap-Now%2FNext%2FLater-purple?style=flat-square" alt="Roadmap" /></a>
+	<a href="https://github.com/TomKonig/DragDropDeploy/issues"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome" /></a>
+</p>
 
 Self‑hosted, lightweight static (and future hybrid) site hosting — drop in your site and share the link. An open alternative to closed platforms like Tiiny.host, Cloudflare Pages, and Netlify, designed for people who want control, customization, and low resource usage.
 
@@ -102,6 +101,8 @@ Simple service layout: API (NestJS), optional Redis queue, Postgres DB, reverse 
 
 We welcome contributions: new integrations, themes, plugins, locales, docs improvements, and core features.
 
+Branch workflow: open PRs against `develop` (integration branch). Production releases are cut from `main`. See detailed guidance in `docs/development/branching-strategy.md`.
+
 1. Check open issues or propose an idea via a discussion.
 2. Fork & create a feature branch.
 3. Add/adjust tests for behavior changes.
@@ -139,3 +140,9 @@ MIT — permissive for commercial & private use. See `LICENSE`.
 
 ---
 Early stage software: expect iteration. Feedback welcome.
+
+<br/>
+<div align="center">
+<img src="./docs/assets/icon.jpg" alt="DragDropDeploy Icon" width="96" />
+<p><sub>DragDropDeploy</sub></p>
+</div>

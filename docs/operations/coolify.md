@@ -2,7 +2,8 @@
 title: Coolify Deployment Guide
 ---
 
-\n## Coolify Deployment Guide  
+## Coolify Deployment Guide
+
 **Status:** Shipped (base deployment) – multi-domain & automated rollback Planned
 
 This guide shows how to deploy DragDropDeploy on Coolify using the provided `docker-compose.coolify.yml` (no embedded Traefik – Coolify manages proxy, TLS, and domains).
@@ -27,8 +28,8 @@ Optional: `.env` (values can instead be set via Coolify UI secrets)
 2. Select repository (Git) & branch.
 3. Provide path: `/docker-compose.coolify.yml` (root).
 4. Coolify parses services; choose which to expose publicly:
-	- Expose `backend` (port 3000). Optionally map a domain or subdomain.
-	- Optionally expose `frontend` (port 5173) if keeping a separate dev UI; for production you will likely serve a static build via backend or nginx.
+    - Expose `backend` (port 3000). Optionally map a domain or subdomain.
+    - Optionally expose `frontend` (port 5173) if keeping a separate dev UI; for production you will likely serve a static build via backend or nginx.
 5. Leave `postgres` and `redis` unexposed (internal only). Do NOT publish their ports.
 6. Save & deploy.
 
