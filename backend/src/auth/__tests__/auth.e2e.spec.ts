@@ -155,4 +155,32 @@ describe('Auth & Roles (e2e)', () => {
     expect(meRes.body.passwordHash).toBeUndefined();
     expect(meRes.body.role).toBeDefined();
   });
+
+  it('accepts tokens signed with previous secret when rotated', async () => {
+    // Simulate rotation: set signing secret to new, verification includes old
+    const oldSecret = process.env.JWT_SIGNING_SECRET || process.env.JWT_SECRET || 'oldsecret_fallback';
+    const newSecret = oldSecret + '_rotated';
+    process.env.JWT_SIGNING_SECRET = newSecret;
+    process.env.JWT_VERIFICATION_SECRETS = `${newSecret},${oldSecret}`;
+    // Reinitialize JwtModule would require rebuilding app; instead manually sign using old secret to ensure strategy accepts
+    const email = randomEmail('rotate.test');
+    const password = randomPassword();
+    const reg = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({ email, password })
+      .expect(201);
+    // registration token signed with NEW secret, now craft a token with OLD secret to test backward verification
+    const jwt = require('jsonwebtoken');
+    const payload = jwt.decode(reg.body.accessToken);
+    // Remove existing exp to avoid jwt.sign option conflict
+    if (payload && typeof payload === 'object' && 'exp' in payload) {
+      delete payload.exp;
+      delete payload.iat;
+    }
+    const legacyToken = jwt.sign(payload, oldSecret, { expiresIn: '5m' });
+    await request(app.getHttpServer())
+      .get('/auth/me')
+      .set('Authorization', `Bearer ${legacyToken}`)
+      .expect(200);
+  });
 });

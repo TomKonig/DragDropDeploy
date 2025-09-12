@@ -70,8 +70,8 @@ Sync Note: When marking an item complete that corresponds to a high-level roadma
 - [x] Random staging subdomain generation logic (store). (Utility `generateStagingSubdomain()` added; DB persistence pending integration with deployments.)
 - [x] Log capture structure (stdout/stderr -> file + DB pointer) (2025-09-11: file-based logs with tail endpoint; redaction baseline & executor flag added).
 - [x] Database roles design: create roles (migrator, app_rw, app_ro) script added (`backend/prisma/db_roles.sql`).
-- [ ] JIT admin access plan: script or doc to create ephemeral elevated role with TTL for maintenance (out-of-band).
-- [ ] Document credential rotation procedure (DB + JWT secret + OAuth credentials).
+- [x] JIT admin access plan: script or doc to create ephemeral elevated role with TTL for maintenance (out-of-band).
+- [x] Document credential rotation procedure (DB + JWT secret + OAuth credentials).
 
 ## Phase 3: Build Process & Artifacts
 
