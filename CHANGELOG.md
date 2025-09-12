@@ -15,21 +15,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Build executor now appends project build flags after `--` and redacts sensitive values in logs.
-- Preparatory refactors for upcoming build job orchestration (internal only).
-- Upgrade TypeScript to 5.9.x and @typescript-eslint toolchain to 8.x (removes parser version warning and aligns workspace).
-- Enforce CI gate: lint + typecheck now required before tests/build (`ci:all` script & Husky pre-push hook) (#115)
-- Strengthen dependency integrity: repaired corrupted installed packages (missing `dist` directories for NestJS ecosystem, bullmq, rxjs, react-router-dom, vitest, yaml) and added manual verification procedure (#115)
-- Add explicit UsersService public projection and internal interfaces for clearer typing and fix lint (require-await, role enum) (#none)
+- Local full CI parity script (`ci:full`) and enhanced pre-push hook (runs docs:check, Prisma client generation, coverage, builds) to catch documentation/API drift pre-push.
 
 ### Security
 
-- Expanded log redaction to include `--token=`, `--secret=`, `--key=`, `--password=` patterns.
-- Upgraded dev toolchain (vite 7.x, vitest 3.x, @vitest/coverage-v8 3.x, markdownlint-cli 0.45.0) to remediate moderate advisories (esbuild, vitest/vite, smol-toml) – zero known vulnerabilities remaining.
-
-### Fixed
-
-- Normalize bootstrap error logging with safe Error coercion (removes unsafe stack access) and add strong ZIP extraction typing eliminating remaining `any` usages in upload pathway.
+- Replace pre-push `ci:all` with `ci:full` including docs and coverage for local failure parity with GitHub workflow.
 - Resolve widespread TypeScript module resolution failures caused by incomplete package installations (restored proper `dist` contents via tarball extraction) (#115)
 
 ## 0.0.2 - 2025-09-12

@@ -6,5 +6,12 @@ if [ "$SKIP_HOOKS" = "1" ]; then
   exit 0
 fi
 
-echo "[husky] Running full CI pipeline (ci:all) locally..."
-npm run ci:all || exit 1
+echo "[husky] Ensuring base branch fetched (develop)..."
+git fetch origin develop:refs/remotes/origin/develop --depth=1 || true
+
+if [ -z "$GH_TOKEN" ]; then
+  echo "[husky] GH_TOKEN not set – docs:check may skip GitHub-auth steps or fail if required." >&2
+fi
+
+echo "[husky] Running full CI parity pipeline (ci:full) locally..."
+npm run ci:full || exit 1

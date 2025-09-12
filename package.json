@@ -41,6 +41,7 @@
     "release:minor:push": "node scripts/release/bump-version.js minor --push",
     "release:major:push": "node scripts/release/bump-version.js major --push",
     "ci:all": "npm run lint && npm run typecheck && npm test -w backend -- --runInBand && npm test -w frontend && npm run build -w @dragdropdeploy/shared && npm run build -w backend && npm run build -w frontend",
+    "ci:full": "npm run lint && npm run typecheck && npm run prisma:generate -w backend && npm run docs:check && npm test -w backend -- --runInBand && npm test -w frontend && npm run coverage:backend && npm run coverage:frontend && npm run build -w backend && npm run build -w @dragdropdeploy/shared && npm run build -w frontend",
     "prepare": "husky"
   },
   "lint-staged": {
