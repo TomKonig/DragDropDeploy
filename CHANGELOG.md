@@ -6,7 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- No user-visible additions since last release.
+- Comprehensive issue cross-reference audit identifying duplicate and resolved issues.
+- Maintenance script for systematic issue cleanup (`scripts/maintenance/cleanup-resolved-issues.js`).
+- Issue audit documentation (`docs/development/issue-audit-2025-09-12.md`).
 
 ### Changed
 
