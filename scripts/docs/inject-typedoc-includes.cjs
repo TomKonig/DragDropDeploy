@@ -30,6 +30,8 @@ const GENERATED_ROOT = path.join(root, 'docs', '.generated', 'api');
 const TARGET_DIR = path.join(root, 'docs', 'reference');
 
 const INCLUDE_REGEX = /<!--\s*include:typedoc\s+path="([^"]+)"\s*-->/g;
+// Already included block pattern to allow re-transforming when transform logic changes
+const INCLUDED_BLOCK_REGEX = /<!-- begin:included ([^ ]+) -->[\s\S]*?<!-- end:included \1 -->/g;
 
 function readAllGeneratedFiles() {
   const index = {}; // key -> { content, headings: [{line, text, slug}] }
@@ -102,9 +104,29 @@ function transformFragment(raw, key) {
   });
   // Specific tweak for shared translation helper: shorten the giant key union section heading to a single sentence if present
   if (/shared\/functions\/t\.md$/.test(key)) {
-    out = out.replace(/### key[\s\S]*?## Parameters/, match => {
-      return '#### Keys\nLarge union of i18n keys omitted for brevity (see full generated docs for complete list).\n\n## Parameters';
-    });
+    // Replace giant union code span with an ellipsis summary
+    out = out.replace(/### key[\s\S]*?## Parameters/, () => '#### Keys\nLarge union of i18n keys omitted for brevity (see full generated docs).\n\n## Parameters');
+    out = out.replace(/`"actions\.cancel"[\s\S]*?"validation\.required"`/, '`<many i18n keys omitted>`');
+  }
+  // If PrismaService, drop massive inherited method documentation after first custom method heading to reduce noise.
+  if (/prisma\/prisma\.service\/classes\/PrismaService\.md$/.test(key)) {
+    // Keep until first "### enableShutdownHooks" (custom) and subsequent custom methods, remove large delegate property listings beyond a threshold.
+    const lines = out.split(/\n/);
+    const keep = [];
+    let pruning = false; let keptCustom = false; let retained = 0;
+    for (let i=0;i<lines.length;i++) {
+      const line = lines[i];
+      if (/### enableShutdownHooks/.test(line)) { pruning = false; keptCustom = true; }
+      // Start pruning after a large inherited block marker (heuristic: backticks example lines referencing prisma.$queryRaw)
+      if (/`prisma\.projectSetting`/.test(line)) pruning = true;
+      if (pruning && !/enableShutdownHooks|onModuleInit|onModuleDestroy|setTenantContext/.test(line)) {
+        // Skip verbose inherited chunk
+        continue;
+      }
+      keep.push(line);
+      retained++;
+    }
+    out = keep.join('\n');
   }
   // Wrap with markdownlint disable/enable for duplicate headings etc.
   const lintDisable = '<!-- markdownlint-disable MD024 MD025 MD032 -->';
@@ -136,6 +158,19 @@ function processFile(mdPath, index) {
   const frag = transformFragment(rawFrag, key);
     changed = true;
     return `\n<!-- begin:included ${key} -->\n${frag}\n<!-- end:included ${key} -->\n`;
+  });
+  // Re-transform existing included blocks (idempotent) so improvements apply without manually restoring tokens
+  content = content.replace(INCLUDED_BLOCK_REGEX, (block, key) => {
+    try {
+      const { entry, anchor } = resolveKey(key, index);
+      const rawFrag = extractFragment(entry, anchor);
+      const frag = transformFragment(rawFrag, key);
+      changed = true;
+      return `<!-- begin:included ${key} -->\n${frag}\n<!-- end:included ${key} -->`;
+    } catch (e) {
+      // If resolution fails, keep original block so we don't destroy content
+      return block;
+    }
   });
   if (changed) {
     fs.writeFileSync(mdPath, content, 'utf8');

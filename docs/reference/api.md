@@ -48,15 +48,16 @@ Below snippets are injected from TypeDoc output. Follow links within each snippe
 ### Auth Service
 
 <!-- begin:included api/backend/auth/auth.service/classes/AuthService.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
 ***
 
 [@dragdropdeploy/backend](../../../README.md) / [auth/auth.service](../README.md) / AuthService
 
-# Class: AuthService
+### Class: AuthService
 
-Defined in: [backend/src/auth/auth.service.ts:20](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/auth/auth.service.ts#L20)
+Defined in: [backend/src/auth/auth.service.ts:20](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/auth/auth.service.ts#L20)
 
 Authentication and token issuance service.
 
@@ -69,13 +70,13 @@ Notes:
 - Refresh tokens are not yet implemented; callers must re-auth after expiry.
 - Emits a best-effort plugin hook on user creation; failures are swallowed to avoid blocking auth flow.
 
-## Constructors
+#### Constructors
 
 ### Constructor
 
 > **new AuthService**(`users`, `jwt`): `AuthService`
 
-Defined in: [backend/src/auth/auth.service.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/auth/auth.service.ts#L21)
+Defined in: [backend/src/auth/auth.service.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/auth/auth.service.ts#L21)
 
 #### Parameters
 
@@ -91,13 +92,13 @@ Defined in: [backend/src/auth/auth.service.ts:21](https://github.com/TomKonig/Dr
 
 `AuthService`
 
-## Methods
+#### Methods
 
 ### login()
 
 > **login**(`email`, `password`): `Promise`\<\{ `accessToken`: `string`; `expiresIn`: `string`; `tokenType`: `string`; \}\>
 
-Defined in: [backend/src/auth/auth.service.ts:48](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/auth/auth.service.ts#L48)
+Defined in: [backend/src/auth/auth.service.ts:48](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/auth/auth.service.ts#L48)
 
 Validate credentials and issue an access token.
 
@@ -131,7 +132,7 @@ UnauthorizedException on invalid credentials
 
 > **me**(`userId`): `Promise`\<\{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
 
-Defined in: [backend/src/auth/auth.service.ts:62](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/auth/auth.service.ts#L62)
+Defined in: [backend/src/auth/auth.service.ts:62](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/auth/auth.service.ts#L62)
 
 Retrieve a sanitized user profile (excludes password hash).
 
@@ -157,7 +158,7 @@ UnauthorizedException if user not found (treat as stale token)
 
 > **register**(`email`, `password`): `Promise`\<\{ `accessToken`: `string`; `expiresIn`: `string`; `tokenType`: `string`; \}\>
 
-Defined in: [backend/src/auth/auth.service.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/auth/auth.service.ts#L31)
+Defined in: [backend/src/auth/auth.service.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/auth/auth.service.ts#L31)
 
 Register a new user by email + password.
 
@@ -184,34 +185,36 @@ Access token response for immediate authentication
 #### Throws
 
 ConflictException if email already exists
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/auth/auth.service/classes/AuthService.md -->
 
 
 ### Build Queue Service
 
 <!-- begin:included api/backend/build/build.queue/classes/BuildQueueService.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
 ***
 
 [@dragdropdeploy/backend](../../../README.md) / [build/build.queue](../README.md) / BuildQueueService
 
-# Class: BuildQueueService
+### Class: BuildQueueService
 
-Defined in: [backend/src/build/build.queue.ts:12](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/build/build.queue.ts#L12)
+Defined in: [backend/src/build/build.queue.ts:12](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.queue.ts#L12)
 
-## Implements
+#### Implements
 
 - `OnModuleDestroy`
 - `OnModuleInit`
 
-## Constructors
+#### Constructors
 
 ### Constructor
 
 > **new BuildQueueService**(`prisma`, `executor`, `deployments`): `BuildQueueService`
 
-Defined in: [backend/src/build/build.queue.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/build/build.queue.ts#L21)
+Defined in: [backend/src/build/build.queue.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.queue.ts#L21)
 
 #### Parameters
 
@@ -231,13 +234,13 @@ Defined in: [backend/src/build/build.queue.ts:21](https://github.com/TomKonig/Dr
 
 `BuildQueueService`
 
-## Methods
+#### Methods
 
 ### enqueue()
 
 > **enqueue**(`projectId`): `Promise`\<`any`\>
 
-Defined in: [backend/src/build/build.queue.ts:105](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/build/build.queue.ts#L105)
+Defined in: [backend/src/build/build.queue.ts:105](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.queue.ts#L105)
 
 Enqueue a build. Without Redis yet, simulate PENDING -> RUNNING -> SUCCESS.
 
@@ -257,7 +260,7 @@ Enqueue a build. Without Redis yet, simulate PENDING -> RUNNING -> SUCCESS.
 
 > **getJob**(`id`): `Promise`\<`null` \| \{ `artifactPath`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `logsPath`: `null` \| `string`; `projectId`: `string`; `status`: `BuildJobStatus`; `updatedAt`: `Date`; `version`: `null` \| `number`; \}\>
 
-Defined in: [backend/src/build/build.queue.ts:176](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/build/build.queue.ts#L176)
+Defined in: [backend/src/build/build.queue.ts:176](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.queue.ts#L176)
 
 #### Parameters
 
@@ -275,7 +278,7 @@ Defined in: [backend/src/build/build.queue.ts:176](https://github.com/TomKonig/D
 
 > **getLogs**(`buildId`, `tail?`): `Promise`\<`string`\>
 
-Defined in: [backend/src/build/build.queue.ts:188](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/build/build.queue.ts#L188)
+Defined in: [backend/src/build/build.queue.ts:188](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.queue.ts#L188)
 
 #### Parameters
 
@@ -297,7 +300,7 @@ Defined in: [backend/src/build/build.queue.ts:188](https://github.com/TomKonig/D
 
 > **listProjectBuilds**(`projectId`, `limit`): `Promise`\<`object`[]\>
 
-Defined in: [backend/src/build/build.queue.ts:180](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/build/build.queue.ts#L180)
+Defined in: [backend/src/build/build.queue.ts:180](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.queue.ts#L180)
 
 #### Parameters
 
@@ -319,7 +322,7 @@ Defined in: [backend/src/build/build.queue.ts:180](https://github.com/TomKonig/D
 
 > **onModuleDestroy**(): `Promise`\<`void`\>
 
-Defined in: [backend/src/build/build.queue.ts:225](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/build/build.queue.ts#L225)
+Defined in: [backend/src/build/build.queue.ts:225](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.queue.ts#L225)
 
 #### Returns
 
@@ -335,7 +338,7 @@ Defined in: [backend/src/build/build.queue.ts:225](https://github.com/TomKonig/D
 
 > **onModuleInit**(): `Promise`\<`void`\>
 
-Defined in: [backend/src/build/build.queue.ts:29](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/build/build.queue.ts#L29)
+Defined in: [backend/src/build/build.queue.ts:29](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.queue.ts#L29)
 
 #### Returns
 
@@ -344,29 +347,31 @@ Defined in: [backend/src/build/build.queue.ts:29](https://github.com/TomKonig/Dr
 #### Implementation of
 
 `OnModuleInit.onModuleInit`
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/build/build.queue/classes/BuildQueueService.md -->
 
 
 ### I18n Service
 
 <!-- begin:included api/backend/i18n/i18n.service/classes/I18nService.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
 ***
 
 [@dragdropdeploy/backend](../../../README.md) / [i18n/i18n.service](../README.md) / I18nService
 
-# Class: I18nService
+### Class: I18nService
 
-Defined in: [backend/src/i18n/i18n.service.ts:8](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/i18n/i18n.service.ts#L8)
+Defined in: [backend/src/i18n/i18n.service.ts:8](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/i18n/i18n.service.ts#L8)
 
-## Constructors
+#### Constructors
 
 ### Constructor
 
 > **new I18nService**(`baseDir`): `I18nService`
 
-Defined in: [backend/src/i18n/i18n.service.ts:13](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/i18n/i18n.service.ts#L13)
+Defined in: [backend/src/i18n/i18n.service.ts:13](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/i18n/i18n.service.ts#L13)
 
 #### Parameters
 
@@ -378,13 +383,13 @@ Defined in: [backend/src/i18n/i18n.service.ts:13](https://github.com/TomKonig/Dr
 
 `I18nService`
 
-## Methods
+#### Methods
 
 ### load()
 
 > **load**(): `void`
 
-Defined in: [backend/src/i18n/i18n.service.ts:15](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/i18n/i18n.service.ts#L15)
+Defined in: [backend/src/i18n/i18n.service.ts:15](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/i18n/i18n.service.ts#L15)
 
 #### Returns
 
@@ -396,7 +401,7 @@ Defined in: [backend/src/i18n/i18n.service.ts:15](https://github.com/TomKonig/Dr
 
 > **t**(`key`, `params?`, `locale?`): `string`
 
-Defined in: [backend/src/i18n/i18n.service.ts:33](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/backend/src/i18n/i18n.service.ts#L33)
+Defined in: [backend/src/i18n/i18n.service.ts:33](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/i18n/i18n.service.ts#L33)
 
 #### Parameters
 
@@ -415,31 +420,33 @@ Defined in: [backend/src/i18n/i18n.service.ts:33](https://github.com/TomKonig/Dr
 #### Returns
 
 `string`
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/i18n/i18n.service/classes/I18nService.md -->
 
 
 ### Shared Translation Helper `t()`
 
 <!-- begin:included api/shared/functions/t.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/shared**](../README.md)
 
 ***
 
 [@dragdropdeploy/shared](../README.md) / t
 
-# Function: t()
+### Function: t()
 
 > **t**(`key`, `params?`, `locale?`): `string`
 
-Defined in: [i18n.ts:17](https://github.com/TomKonig/DragDropDeploy/blob/6f8cb70b6f7772da3670e1c1c6b6d60a0c702a18/shared/src/i18n.ts#L17)
+Defined in: [i18n.ts:17](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/shared/src/i18n.ts#L17)
 
 Runtime translation helper bound to the currently active locale.
 
-## Parameters
+#### Parameters
 
 ### key
 
-`"actions.cancel"` | `"actions.close"` | `"actions.create"` | `"actions.delete"` | `"actions.edit"` | `"actions.save"` | `"actions.update"` | `"admin.dashboard.title"` | `"admin.domains.add"` | `"admin.domains.title"` | `"admin.metrics.title"` | `"admin.plans.create"` | `"admin.plans.title"` | `"admin.settings.title"` | `"admin.users.ban"` | `"admin.users.demote"` | `"admin.users.invite"` | `"admin.users.promote"` | `"admin.users.title"` | `"admin.users.unban"` | `"app.name"` | `"auth.errors.account_locked"` | `"auth.errors.invalid_credentials"` | `"auth.errors.oauth_failed"` | `"auth.errors.unauthorized"` | `"auth.login.email_label"` | `"auth.login.forgot_password"` | `"auth.login.oauth_with"` | `"auth.login.password_label"` | `"auth.login.submit"` | `"auth.login.title"` | `"auth.logout.success"` | `"auth.register.submit"` | `"auth.register.title"` | `"errors.400"` | `"errors.401"` | `"errors.403"` | `"errors.404"` | `"errors.409"` | `"errors.422"` | `"errors.429"` | `"errors.500"` | `"errors.build_failed"` | `"errors.domain_verification_failed"` | `"errors.upload_too_large"` | `"messages.confirm_delete"` | `"messages.unsaved_changes"` | `"nav.admin"` | `"nav.dashboard"` | `"nav.logout"` | `"nav.projects"` | `"nav.settings"` | `"projects.create.build_settings"` | `"projects.create.create_button"` | `"projects.create.git_option"` | `"projects.create.name_label"` | `"projects.create.source_label"` | `"projects.create.subdomain_label"` | `"projects.create.title"` | `"projects.create.upload_option"` | `"projects.delete.button"` | `"projects.delete.confirm"` | `"projects.delete.title"` | `"projects.deployment.latest_status"` | `"projects.deployment.logs"` | `"projects.deployment.no_deployments"` | `"projects.deployment.trigger_build"` | `"projects.deployment.version"` | `"projects.detail.deployments_tab"` | `"projects.detail.domains_tab"` | `"projects.detail.overview_tab"` | `"projects.detail.snippet_tab"` | `"projects.domains.add_custom"` | `"projects.domains.pending_verification"` | `"projects.domains.title"` | `"projects.domains.verify_dns"` | `"projects.list.create_button"` | `"projects.list.empty"` | `"projects.list.title"` | `"projects.snippet.placeholder"` | `"projects.snippet.title"` | `"status.error"` | `"status.loading"` | `"status.success"` | `"validation.invalid_email"` | `"validation.required"`
+`<many i18n keys omitted>`
 
 ### params?
 
@@ -449,30 +456,32 @@ Runtime translation helper bound to the currently active locale.
 
 `string`
 
-## Returns
+#### Returns
 
 `string`
 
-## Remarks
+#### Remarks
 
 These functions are thin re-exports so consumer packages only need the shared bundle.
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/shared/functions/t.md -->
 
 ### Deployments Controller
 
 
 <!-- begin:included api/backend/deployments/deployments.controller/classes/DeploymentsController.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
 ***
 
 [@dragdropdeploy/backend](../../../README.md) / [deployments/deployments.controller](../README.md) / DeploymentsController
 
-# Class: DeploymentsController
+### Class: DeploymentsController
 
 Defined in: [backend/src/deployments/deployments.controller.ts:19](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/deployments/deployments.controller.ts#L19)
 
-## Constructors
+#### Constructors
 
 ### Constructor
 
@@ -494,7 +503,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:20](https://githu
 
 `DeploymentsController`
 
-## Methods
+#### Methods
 
 ### activate()
 
@@ -577,6 +586,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:25](https://githu
 #### Returns
 
 `Promise`\<`UploadResponse`\>
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/deployments/deployments.controller/classes/DeploymentsController.md -->
 
 
@@ -584,17 +594,18 @@ Defined in: [backend/src/deployments/deployments.controller.ts:25](https://githu
 
 
 <!-- begin:included api/backend/deployments/deployments.service/classes/DeploymentsService.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
 ***
 
 [@dragdropdeploy/backend](../../../README.md) / [deployments/deployments.service](../README.md) / DeploymentsService
 
-# Class: DeploymentsService
+### Class: DeploymentsService
 
 Defined in: [backend/src/deployments/deployments.service.ts:9](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/deployments/deployments.service.ts#L9)
 
-## Constructors
+#### Constructors
 
 ### Constructor
 
@@ -612,7 +623,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:10](https://github.c
 
 `DeploymentsService`
 
-## Methods
+#### Methods
 
 ### activateDeployment()
 
@@ -714,6 +725,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:116](https://github.
 #### Returns
 
 `Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/deployments/deployments.service/classes/DeploymentsService.md -->
 
 
@@ -721,17 +733,18 @@ Defined in: [backend/src/deployments/deployments.service.ts:116](https://github.
 
 
 <!-- begin:included api/backend/projects/projects.controller/classes/ProjectsController.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
 ***
 
 [@dragdropdeploy/backend](../../../README.md) / [projects/projects.controller](../README.md) / ProjectsController
 
-# Class: ProjectsController
+### Class: ProjectsController
 
 Defined in: [backend/src/projects/projects.controller.ts:7](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/projects/projects.controller.ts#L7)
 
-## Constructors
+#### Constructors
 
 ### Constructor
 
@@ -749,7 +762,7 @@ Defined in: [backend/src/projects/projects.controller.ts:8](https://github.com/T
 
 `ProjectsController`
 
-## Methods
+#### Methods
 
 ### create()
 
@@ -858,6 +871,7 @@ Defined in: [backend/src/projects/projects.controller.ts:26](https://github.com/
 #### Returns
 
 `Promise`\<`object` & `object`\>
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/projects/projects.controller/classes/ProjectsController.md -->
 
 
@@ -865,17 +879,18 @@ Defined in: [backend/src/projects/projects.controller.ts:26](https://github.com/
 
 
 <!-- begin:included api/backend/projects/projects.service/classes/ProjectsService.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
 ***
 
 [@dragdropdeploy/backend](../../../README.md) / [projects/projects.service](../README.md) / ProjectsService
 
-# Class: ProjectsService
+### Class: ProjectsService
 
 Defined in: [backend/src/projects/projects.service.ts:5](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/projects/projects.service.ts#L5)
 
-## Constructors
+#### Constructors
 
 ### Constructor
 
@@ -893,7 +908,7 @@ Defined in: [backend/src/projects/projects.service.ts:6](https://github.com/TomK
 
 `ProjectsService`
 
-## Methods
+#### Methods
 
 ### create()
 
@@ -1020,6 +1035,7 @@ Defined in: [backend/src/projects/projects.service.ts:29](https://github.com/Tom
 #### Returns
 
 `Promise`\<`object` & `object`\>
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/projects/projects.service/classes/ProjectsService.md -->
 
 
@@ -1027,13 +1043,14 @@ Defined in: [backend/src/projects/projects.service.ts:29](https://github.com/Tom
 
 
 <!-- begin:included api/backend/users/users.service/classes/UsersService.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
 ***
 
 [@dragdropdeploy/backend](../../../README.md) / [users/users.service](../README.md) / UsersService
 
-# Class: UsersService
+### Class: UsersService
 
 Defined in: [backend/src/users/users.service.ts:12](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/users/users.service.ts#L12)
 
@@ -1042,7 +1059,7 @@ Data-layer service for user retrieval and creation.
 Handles bootstrap operator promotion logic for the first user or a
 specifically designated bootstrap email (via OPERATOR_BOOTSTRAP_EMAIL).
 
-## Constructors
+#### Constructors
 
 ### Constructor
 
@@ -1060,7 +1077,7 @@ Defined in: [backend/src/users/users.service.ts:13](https://github.com/TomKonig/
 
 `UsersService`
 
-## Methods
+#### Methods
 
 ### create()
 
@@ -1137,6 +1154,7 @@ User UUID
 #### Returns
 
 `Promise`\<`null` \| \{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `passwordHash`: `null` \| `string`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+<!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/users/users.service/classes/UsersService.md -->
 
 ### Prisma Service
@@ -1299,447 +1317,6 @@ Defined in: backend/node\_modules/.prisma/client/index.d.ts:248
 > **get** **projectSetting**(): `ProjectSettingDelegate`\<`ExtArgs`\>
 
 Defined in: backend/node\_modules/.prisma/client/index.d.ts:288
-
-`prisma.projectSetting`: Exposes CRUD operations for the **ProjectSetting** model.
- * Example usage:
- * ```ts
- * // Fetch zero or more ProjectSettings
- * const projectSettings = await prisma.projectSetting.findMany()
- * ```
-
-##### Returns
-
-`ProjectSettingDelegate`\<`ExtArgs`\>
-
-#### Inherited from
-
-`PrismaClient.projectSetting`
-
-***
-
-### systemSetting
-
-#### Get Signature
-
-> **get** **systemSetting**(): `SystemSettingDelegate`\<`ExtArgs`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:278
-
-`prisma.systemSetting`: Exposes CRUD operations for the **SystemSetting** model.
- * Example usage:
- * ```ts
- * // Fetch zero or more SystemSettings
- * const systemSettings = await prisma.systemSetting.findMany()
- * ```
-
-##### Returns
-
-`SystemSettingDelegate`\<`ExtArgs`\>
-
-#### Inherited from
-
-`PrismaClient.systemSetting`
-
-***
-
-### user
-
-#### Get Signature
-
-> **get** **user**(): `UserDelegate`\<`ExtArgs`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:238
-
-`prisma.user`: Exposes CRUD operations for the **User** model.
- * Example usage:
- * ```ts
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
- * ```
-
-##### Returns
-
-`UserDelegate`\<`ExtArgs`\>
-
-#### Inherited from
-
-`PrismaClient.user`
-
-#### Methods
-
-### $connect()
-
-> **$connect**(): `Promise`\<`void`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:150
-
-Connect with the database
-
-#### Returns
-
-`Promise`\<`void`\>
-
-#### Inherited from
-
-`PrismaClient.$connect`
-
-***
-
-### $disconnect()
-
-> **$disconnect**(): `Promise`\<`void`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:155
-
-Disconnect from the database
-
-#### Returns
-
-`Promise`\<`void`\>
-
-#### Inherited from
-
-`PrismaClient.$disconnect`
-
-***
-
-### $executeRaw()
-
-> **$executeRaw**\<`T`\>(`query`, ...`values`): `PrismaPromise`\<`number`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:173
-
-Executes a prepared raw query and returns the number of affected rows.
-
-#### Type Parameters
-
-##### T
-
-`T` = `unknown`
-
-#### Parameters
-
-##### query
-
-`TemplateStringsArray` | `Sql`
-
-##### values
-
-...`any`[]
-
-#### Returns
-
-`PrismaPromise`\<`number`\>
-
-#### Example
-
-```
-const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
-```
-
-Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-
-#### Inherited from
-
-`PrismaClient.$executeRaw`
-
-***
-
-### $executeRawUnsafe()
-
-> **$executeRawUnsafe**\<`T`\>(`query`, ...`values`): `PrismaPromise`\<`number`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:185
-
-Executes a raw query and returns the number of affected rows.
-Susceptible to SQL injections, see documentation.
-
-#### Type Parameters
-
-##### T
-
-`T` = `unknown`
-
-#### Parameters
-
-##### query
-
-`string`
-
-##### values
-
-...`any`[]
-
-#### Returns
-
-`PrismaPromise`\<`number`\>
-
-#### Example
-
-```
-const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
-```
-
-Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-
-#### Inherited from
-
-`PrismaClient.$executeRawUnsafe`
-
-***
-
-### $on()
-
-> **$on**\<`V`\>(`eventType`, `callback`): `void`
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:145
-
-#### Type Parameters
-
-##### V
-
-`V` *extends* `never`
-
-#### Parameters
-
-##### eventType
-
-`V`
-
-##### callback
-
-(`event`) => `void`
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-`PrismaClient.$on`
-
-***
-
-### $queryRaw()
-
-> **$queryRaw**\<`T`\>(`query`, ...`values`): `PrismaPromise`\<`T`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:196
-
-Performs a prepared raw query and returns the `SELECT` data.
-
-#### Type Parameters
-
-##### T
-
-`T` = `unknown`
-
-#### Parameters
-
-##### query
-
-`TemplateStringsArray` | `Sql`
-
-##### values
-
-...`any`[]
-
-#### Returns
-
-`PrismaPromise`\<`T`\>
-
-#### Example
-
-```
-const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
-```
-
-Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-
-#### Inherited from
-
-`PrismaClient.$queryRaw`
-
-***
-
-### $queryRawUnsafe()
-
-> **$queryRawUnsafe**\<`T`\>(`query`, ...`values`): `PrismaPromise`\<`T`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:208
-
-Performs a raw query and returns the `SELECT` data.
-Susceptible to SQL injections, see documentation.
-
-#### Type Parameters
-
-##### T
-
-`T` = `unknown`
-
-#### Parameters
-
-##### query
-
-`string`
-
-##### values
-
-...`any`[]
-
-#### Returns
-
-`PrismaPromise`\<`T`\>
-
-#### Example
-
-```
-const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
-```
-
-Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-
-#### Inherited from
-
-`PrismaClient.$queryRawUnsafe`
-
-***
-
-### $transaction()
-
-#### Call Signature
-
-> **$transaction**\<`P`\>(`arg`, `options?`): `Promise`\<`UnwrapTuple`\<`P`\>\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:223
-
-Allows the running of a sequence of read/write operations that are guaranteed to either succeed or fail as a whole.
-
-##### Type Parameters
-
-###### P
-
-`P` *extends* `PrismaPromise`\<`any`\>[]
-
-##### Parameters
-
-###### arg
-
-\[`...P[]`\]
-
-###### options?
-
-###### isolationLevel?
-
-`TransactionIsolationLevel`
-
-##### Returns
-
-`Promise`\<`UnwrapTuple`\<`P`\>\>
-
-##### Example
-
-```
-const [george, bob, alice] = await prisma.$transaction([
-  prisma.user.create({ data: { name: 'George' } }),
-  prisma.user.create({ data: { name: 'Bob' } }),
-  prisma.user.create({ data: { name: 'Alice' } }),
-])
-```
-
-Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
-
-##### Inherited from
-
-`PrismaClient.$transaction`
-
-#### Call Signature
-
-> **$transaction**\<`R`\>(`fn`, `options?`): `Promise`\<`R`\>
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:225
-
-Allows the running of a sequence of read/write operations that are guaranteed to either succeed or fail as a whole.
-
-##### Type Parameters
-
-###### R
-
-`R`
-
-##### Parameters
-
-###### fn
-
-(`prisma`) => `Promise`\<`R`\>
-
-###### options?
-
-###### isolationLevel?
-
-`TransactionIsolationLevel`
-
-###### maxWait?
-
-`number`
-
-###### timeout?
-
-`number`
-
-##### Returns
-
-`Promise`\<`R`\>
-
-##### Example
-
-```
-const [george, bob, alice] = await prisma.$transaction([
-  prisma.user.create({ data: { name: 'George' } }),
-  prisma.user.create({ data: { name: 'Bob' } }),
-  prisma.user.create({ data: { name: 'Alice' } }),
-])
-```
-
-Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
-
-##### Inherited from
-
-`PrismaClient.$transaction`
-
-***
-
-### ~~$use()~~
-
-> **$use**(`cb`): `void`
-
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:162
-
-Add a middleware
-
-#### Parameters
-
-##### cb
-
-`Middleware`
-
-#### Returns
-
-`void`
-
-#### Deprecated
-
-since 4.16.0. For new code, prefer client extensions instead.
-
-#### See
-
-https://pris.ly/d/extensions
-
-#### Inherited from
-
-`PrismaClient.$use`
-
-***
 
 ### enableShutdownHooks()
 

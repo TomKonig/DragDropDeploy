@@ -22,7 +22,8 @@
     "docs:roadmap": "node scripts/docs/check-roadmap-sync.js",
   "docs:api": "npm run openapi:gen -w backend && node scripts/docs/generate-openapi-md.cjs && npm run docs:typedoc && npm run docs:includes",
   "docs:includes": "node scripts/docs/inject-typedoc-includes.cjs",
-  "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog && npm run docs:roadmap && npm run docs:api",
+  "docs:lint": "markdownlint --config .markdownlint.json \"docs/**/*.md\" --ignore docs/.generated",
+  "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog && npm run docs:roadmap && npm run docs:api && npm run docs:lint",
   "docs:typedoc": "npm run typedoc -w @dragdropdeploy/shared && npm run typedoc -w backend",
   "coverage:backend": "npm run test:ci -w backend -- --coverage",
   "coverage:frontend": "npm run test:coverage -w frontend",
@@ -41,6 +42,7 @@
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "glob": "^11.0.3",
+  "markdownlint-cli": "^0.41.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.0",
     "yaml": "^2.5.1"
