@@ -1,0 +1,59 @@
+[**@dragdropdeploy/backend**](../../../../../README.md)
+
+***
+
+[@dragdropdeploy/backend](../../../../../README.md) / [generated/prisma](../../../README.md) / [Prisma](../README.md) / ProjectFindUniqueOrThrowArgs
+
+# Type Alias: ProjectFindUniqueOrThrowArgs\<ExtArgs\>
+
+> **ProjectFindUniqueOrThrowArgs**\<`ExtArgs`\> = `object`
+
+Defined in: backend/src/generated/prisma/index.d.ts:2921
+
+Project findUniqueOrThrow
+
+## Type Parameters
+
+### ExtArgs
+
+`ExtArgs` *extends* [`InternalArgs`](../../../runtime/library/type-aliases/InternalArgs.md) = [`DefaultArgs`](../../../runtime/library/type-aliases/DefaultArgs.md)
+
+## Properties
+
+### include?
+
+> `optional` **include**: [`ProjectInclude`](ProjectInclude.md)\<`ExtArgs`\> \| `null`
+
+Defined in: backend/src/generated/prisma/index.d.ts:2933
+
+Choose, which related nodes to fetch as well
+
+***
+
+### omit?
+
+> `optional` **omit**: [`ProjectOmit`](ProjectOmit.md)\<`ExtArgs`\> \| `null`
+
+Defined in: backend/src/generated/prisma/index.d.ts:2929
+
+Omit specific fields from the Project
+
+***
+
+### select?
+
+> `optional` **select**: [`ProjectSelect`](ProjectSelect.md)\<`ExtArgs`\> \| `null`
+
+Defined in: backend/src/generated/prisma/index.d.ts:2925
+
+Select specific fields to fetch from the Project
+
+***
+
+### where
+
+> **where**: [`ProjectWhereUniqueInput`](ProjectWhereUniqueInput.md)
+
+Defined in: backend/src/generated/prisma/index.d.ts:2937
+
+Filter, which Project to fetch.

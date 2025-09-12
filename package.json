@@ -22,6 +22,7 @@
     "docs:roadmap": "node scripts/docs/check-roadmap-sync.js",
   "docs:api": "npm run openapi:gen -w backend && node scripts/docs/generate-openapi-md.cjs",
   "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog && npm run docs:roadmap && npm run docs:api",
+  "docs:typedoc": "npm run typedoc -w @dragdropdeploy/shared && npm run typedoc -w backend",
   "coverage:backend": "npm run test:ci -w backend -- --coverage",
   "coverage:frontend": "npm run test:coverage -w frontend",
   "coverage": "npm run coverage:backend && npm run coverage:frontend",
