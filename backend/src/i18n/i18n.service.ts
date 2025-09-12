@@ -4,7 +4,7 @@ import path from "path";
 import IntlMessageFormat from "intl-messageformat"; // eslint-disable-line import/no-named-as-default -- library exports both
 // Alias to avoid rule complaining about using exported name as default
 const MessageFormatter = IntlMessageFormat;
-import yaml from "yaml";
+import * as yaml from "yaml";
 
 // LocaleStore can contain nested objects or leaf strings.
 export type LocaleLeaf = string;

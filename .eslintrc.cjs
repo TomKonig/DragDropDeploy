@@ -22,7 +22,22 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:import/typescript"
   ],
-  settings: { },
+  settings: {
+    // Ensure import plugin resolves TS path aliases across workspaces
+    'import/resolver': {
+      typescript: {
+        // Root tsconfig plus per-package configs for accurate path + type info
+        project: [
+          './tsconfig.json',
+          './backend/tsconfig.json',
+          './backend/tsconfig.build.json',
+          './frontend/tsconfig.json',
+          './shared/tsconfig.json'
+        ],
+        alwaysTryTypes: true
+      }
+    }
+  },
   rules: {
     "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: { attributes: false } }],
     "@typescript-eslint/explicit-function-return-type": "off",

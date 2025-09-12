@@ -9,6 +9,7 @@
     "shared"
   ],
   "scripts": {
+    "prelint": "npm run prisma:generate -w backend || true",
     "generate:locales": "node scripts/build-locales.cjs",
     "build": "npm run generate:locales && npm run build -w @dragdropdeploy/shared && npm run build -w backend && npm run build -w frontend",
     "i18n:analyze": "node scripts/check-i18n-usage.cjs",
@@ -59,6 +60,7 @@
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-import-resolver-typescript": "^3.6.3",
     "glob": "^11.0.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.6",
