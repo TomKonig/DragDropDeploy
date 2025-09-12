@@ -13,7 +13,7 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     if (process.env.SKIP_DB_CONNECT_FOR_DOCS === "1") {
       return; // skip DB initialization for documentation generation
     }
@@ -25,13 +25,13 @@ export class PrismaService
     }
   }
 
-  enableShutdownHooks(app: INestApplication) {
+  enableShutdownHooks(app: INestApplication): void {
     process.on("beforeExit", () => {
       void app.close();
     });
   }
 
-  async onModuleDestroy() {
+  async onModuleDestroy(): Promise<void> {
     // Ensure we release the PG pool when Nest shuts down.
     await this.$disconnect().catch(() => {
       /* ignore */
@@ -39,7 +39,7 @@ export class PrismaService
   }
 
   // Reserved spot for future RLS session variable usage.
-  setTenantContext() {
+  setTenantContext(): void {
     if (process.env.RLS_ENABLED === "true") {
       const user = getTenantUser();
       if (user) {

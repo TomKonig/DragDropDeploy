@@ -7,6 +7,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import { Deployment } from "@prisma/client";
 
 import { PrismaService } from "../prisma/prisma.service";
 import { getTenantUser } from "../prisma/tenant-context";
@@ -29,7 +30,7 @@ const STATUS: Record<DeploymentStatus, DeploymentStatus> = {
 export class DeploymentsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createPending(projectId: string) {
+  async createPending(projectId: string): Promise<Deployment> {
     if (!projectId) throw new BadRequestException("projectId required");
     const project = await this.prisma.project.findUnique({
       where: { id: projectId },
@@ -45,7 +46,10 @@ export class DeploymentsService {
    * Persist a staged (temp) directory produced by the upload extraction into the artifacts root
    * and create a pending deployment that references it.
    */
-  async createWithArtifact(projectId: string, stagedPath: string) {
+  async createWithArtifact(
+    projectId: string,
+    stagedPath: string,
+  ): Promise<Deployment> {
     if (!stagedPath) throw new BadRequestException("stagedPath required");
     // Normalize and ensure stagedPath is an existing directory produced by our extraction logic.
     const stagedReal = path.resolve(stagedPath);
@@ -90,7 +94,11 @@ export class DeploymentsService {
     });
   }
 
-  private async copyDirSafe(src: string, dest: string, root: string) {
+  private async copyDirSafe(
+    src: string,
+    dest: string,
+    root: string,
+  ): Promise<void> {
     const entries = await fs.promises.readdir(src, { withFileTypes: true });
     for (const entry of entries) {
       // Prevent copying unexpected hidden parent references even if present post-extraction.
@@ -113,7 +121,9 @@ export class DeploymentsService {
   }
 
   /** Activate a deployment after successful build. Marks previous ACTIVE deployments INACTIVE (same project) and updates symlink. */
-  async activateDeployment(deploymentId: string) {
+  async activateDeployment(
+    deploymentId: string,
+  ): Promise<{ id: string; activePath: string }> {
     const deployment = await this.prisma.deployment.findUnique({
       where: { id: deploymentId },
     });
@@ -159,7 +169,7 @@ export class DeploymentsService {
     return { id: deployment.id, activePath: symlinkPath };
   }
 
-  async getActiveArtifactPath(projectId: string) {
+  async getActiveArtifactPath(projectId: string): Promise<string | null> {
     const artifactsRoot = path.resolve(
       process.env.ARTIFACTS_DIR || "./artifacts",
     );
@@ -173,7 +183,10 @@ export class DeploymentsService {
     }
   }
 
-  async rollback(projectId: string, targetDeploymentId?: string) {
+  async rollback(
+    projectId: string,
+    targetDeploymentId?: string,
+  ): Promise<{ id: string; activePath: string }> {
     // Choose target: explicit or most recent INACTIVE (by createdAt desc)
     const target = targetDeploymentId
       ? await this.prisma.deployment.findFirst({

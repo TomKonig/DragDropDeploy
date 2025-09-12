@@ -5,6 +5,7 @@ import {
   BadRequestException,
   Logger,
 } from "@nestjs/common";
+import { Project, ProjectSetting } from "@prisma/client";
 
 import { PrismaService } from "../prisma/prisma.service";
 
@@ -24,7 +25,11 @@ export class ProjectsService {
   private readonly logger = new Logger("ProjectsService");
   constructor(private prisma: PrismaService) {}
 
-  async create(ownerId: string, name: string, domain?: string) {
+  async create(
+    ownerId: string,
+    name: string,
+    domain?: string,
+  ): Promise<Project> {
     try {
       const created = await this.prisma.project.create({
         data: { ownerId, name, domain: domain?.toLowerCase() },
@@ -42,7 +47,9 @@ export class ProjectsService {
     }
   }
 
-  async findAllForUser(userId: string) {
+  async findAllForUser(
+    userId: string,
+  ): Promise<(Project & { settings: ProjectSetting | null })[]> {
     return this.prisma.project.findMany({
       where: { ownerId: userId },
       orderBy: { createdAt: "desc" },
@@ -50,7 +57,10 @@ export class ProjectsService {
     });
   }
 
-  async findOneOwned(userId: string, id: string) {
+  async findOneOwned(
+    userId: string,
+    id: string,
+  ): Promise<Project & { settings: ProjectSetting | null }> {
     const project = await this.prisma.project.findFirst({
       where: { id, ownerId: userId },
       include: { settings: true },
@@ -68,7 +78,7 @@ export class ProjectsService {
       optOutMinify?: boolean;
       buildFlags?: string[];
     },
-  ) {
+  ): Promise<Project & { settings: ProjectSetting | null }> {
     const existing = await this.prisma.project.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException("Project not found");
     if (existing.ownerId !== userId) throw new ForbiddenException("Not owner");
@@ -113,7 +123,7 @@ export class ProjectsService {
     }
   }
 
-  async remove(userId: string, id: string) {
+  async remove(userId: string, id: string): Promise<{ deleted: true }> {
     const existing = await this.prisma.project.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException("Project not found");
     if (existing.ownerId !== userId) throw new ForbiddenException("Not owner");

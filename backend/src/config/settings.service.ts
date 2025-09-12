@@ -51,7 +51,7 @@ export class SettingsService {
     key: string,
     value: ParsedValue<T>,
     type: T = "STRING" as T,
-  ) {
+  ): Promise<ParsedValue<T>> {
     const toStore = this.serialize(value as unknown, type);
     const rec = await this.prisma.systemSetting.upsert({
       where: { key },
@@ -63,7 +63,7 @@ export class SettingsService {
     return parsed as ParsedValue<T>;
   }
 
-  invalidate(key: string) {
+  invalidate(key: string): void {
     this.cache.delete(key);
   }
 

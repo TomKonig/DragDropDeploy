@@ -7,7 +7,7 @@ import {
   OnModuleDestroy,
   OnModuleInit,
 } from "@nestjs/common";
-import { BuildJobStatus } from "@prisma/client";
+import { BuildJobStatus, BuildJob } from "@prisma/client";
 import { Queue, QueueEvents, Worker, JobsOptions } from "bullmq";
 import IORedis from "ioredis";
 
@@ -159,7 +159,17 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
   /**
    * Enqueue a build. Without Redis yet, simulate PENDING -> RUNNING -> SUCCESS.
    */
-  async enqueue(projectId: string) {
+  async enqueue(
+    projectId: string,
+  ): Promise<
+    | BuildJob
+    | {
+        id: string;
+        projectId: string;
+        status: BuildJobStatus | null;
+        version: number | null;
+      }
+  > {
     // Concurrency gate: reject if active build exists
     const active = await this.prisma.buildJob.findFirst({
       where: {
@@ -168,7 +178,10 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
       },
       select: { id: true, projectId: true, status: true },
     });
-    if (active) return active; // existing active build
+    if (active) {
+      // Conform to declared return type union (active already satisfies BuildJob)
+      return active as BuildJob;
+    }
     // Determine next version (max existing version + 1) atomically in a transaction
     const job = await this.prisma.$transaction(async (tx) => {
       const maxVersion = await tx.buildJob.aggregate({
@@ -245,7 +258,9 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
     }
   }
 
-  private async attemptActivation(append: (line: string) => void) {
+  private async attemptActivation(
+    append: (line: string) => void,
+  ): Promise<void> {
     // Activation is best-effort: ignore schema errors or missing rows
     try {
       // Deployment activation seeks deployments currently in BUILDING state
@@ -267,18 +282,18 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
     }
   }
 
-  private sleep(ms: number) {
-    return new Promise<void>((resolve) => {
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => {
       const t = setTimeout(resolve, ms);
       t.unref?.();
     });
   }
 
-  async getJob(id: string) {
+  getJob(id: string): Promise<BuildJob | null> {
     return this.prisma.buildJob.findUnique({ where: { id } });
   }
 
-  async listProjectBuilds(projectId: string, limit: number) {
+  listProjectBuilds(projectId: string, limit: number): Promise<BuildJob[]> {
     return this.prisma.buildJob.findMany({
       where: { projectId },
       orderBy: { createdAt: "desc" },
@@ -286,7 +301,7 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
     });
   }
 
-  async getLogs(buildId: string, tail?: number) {
+  async getLogs(buildId: string, tail?: number): Promise<string> {
     const job = await this.getJob(buildId);
     if (!job || !job.logsPath) return "";
     try {
@@ -304,21 +319,21 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
     }
   }
 
-  private logsBaseDir() {
+  private logsBaseDir(): string {
     return path.join(process.cwd(), "backend", "artifacts", "build-logs");
   }
-  private ensureLogsDir() {
+  private ensureLogsDir(): string {
     const dir = this.logsBaseDir();
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     return dir;
   }
-  private createLogFile(buildId: string) {
+  private createLogFile(buildId: string): string {
     const dir = this.ensureLogsDir();
     const file = path.join(dir, `${buildId}.log`);
     fs.writeFileSync(file, "");
     return file;
   }
-  private appendLog(buildId: string, line: string) {
+  private appendLog(buildId: string, line: string): void {
     const dir = this.ensureLogsDir();
     const file = path.join(dir, `${buildId}.log`);
     try {
@@ -327,7 +342,7 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
       /* ignore append failure */
     }
   }
-  private async simulatedWork(ms: number) {
+  private async simulatedWork(ms: number): Promise<void> {
     await this.sleep(ms);
   }
 

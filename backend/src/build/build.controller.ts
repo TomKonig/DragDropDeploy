@@ -7,6 +7,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
+import { BuildJob } from "@prisma/client";
 
 import { BuildQueueService } from "./build.queue";
 
@@ -17,7 +18,12 @@ export class BuildController {
   @Post(":projectId")
   async create(
     @Param("projectId") projectId: string,
-  ): Promise<{ queued: true; id: string; status: string; projectId: string }> {
+  ): Promise<{
+    queued: true;
+    id: string;
+    status: string | null;
+    projectId: string;
+  }> {
     if (!/^c[a-z0-9]{24,}$/i.test(projectId))
       throw new BadRequestException("Invalid projectId");
     const job = await this.buildQueue.enqueue(projectId);
@@ -30,7 +36,7 @@ export class BuildController {
   }
 
   @Get(":id")
-  async getOne(@Param("id") id: string) {
+  async getOne(@Param("id") id: string): Promise<BuildJob> {
     if (!/^c[a-z0-9]{24,}$/i.test(id))
       throw new BadRequestException("Invalid id");
     const job = await this.buildQueue.getJob(id);
@@ -42,7 +48,7 @@ export class BuildController {
   async listForProject(
     @Param("projectId") projectId: string,
     @Query("limit") limit = "20",
-  ) {
+  ): Promise<BuildJob[]> {
     if (!/^c[a-z0-9]{24,}$/i.test(projectId))
       throw new BadRequestException("Invalid projectId");
     const builds = await this.buildQueue.listProjectBuilds(
@@ -53,7 +59,10 @@ export class BuildController {
   }
 
   @Get(":id/logs")
-  async getLogs(@Param("id") id: string, @Query("tail") tail?: string) {
+  async getLogs(
+    @Param("id") id: string,
+    @Query("tail") tail?: string,
+  ): Promise<{ id: string; logs: string }> {
     if (!/^c[a-z0-9]{24,}$/i.test(id))
       throw new BadRequestException("Invalid id");
     const job = await this.buildQueue.getJob(id);
