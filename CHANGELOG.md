@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 - Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
 - Static asset minification service (HTML/CSS/JS) with per-project opt-out (`optOutMinify`) and host override (`FORCE_MINIFY`).
 - Deployment archive upload endpoint enhancements since 0.0.2 (artifact processing groundwork for orchestration follow-up).
-- Roadmap automation: support `status: done` in `roadmap.yaml` so shipped slugs no longer require placeholder issues (#113)
+- Roadmap automation: support `status: done` in `roadmap.yaml` so shipped slugs no longer require interim tracking issues (#113)
 
 ### Changed
 
