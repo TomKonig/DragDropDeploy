@@ -50,24 +50,27 @@ Below snippets are injected from TypeDoc output. Follow links within each snippe
 
 <!-- begin:included api/backend/auth/auth.service/classes/AuthService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [auth/auth.service](../README.md) / AuthService
 
 ### Class: AuthService
 
-Defined in: [backend/src/auth/auth.service.ts:20](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/auth/auth.service.ts#L20)
+Defined in: [backend/src/auth/auth.service.ts:25](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/auth/auth.service.ts#L25)
 
 Authentication and token issuance service.
 
 Responsibilities:
+
 - User registration (first user bootstrap to operator handled in UsersService)
 - Credential validation and JWT access token creation
 - Lightweight user profile retrieval (without password hash)
 
 Notes:
+
 - Refresh tokens are not yet implemented; callers must re-auth after expiry.
 - Emits a best-effort plugin hook on user creation; failures are swallowed to avoid blocking auth flow.
 
@@ -77,7 +80,7 @@ Notes:
 
 > **new AuthService**(`users`, `jwt`): `AuthService`
 
-Defined in: [backend/src/auth/auth.service.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/auth/auth.service.ts#L21)
+Defined in: [backend/src/auth/auth.service.ts:26](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/auth/auth.service.ts#L26)
 
 #### Parameters
 
@@ -99,7 +102,7 @@ Defined in: [backend/src/auth/auth.service.ts:21](https://github.com/TomKonig/Dr
 
 > **login**(`email`, `password`): `Promise`\<\{ `accessToken`: `string`; `expiresIn`: `string`; `tokenType`: `string`; \}\>
 
-Defined in: [backend/src/auth/auth.service.ts:48](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/auth/auth.service.ts#L48)
+Defined in: [backend/src/auth/auth.service.ts:58](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/auth/auth.service.ts#L58)
 
 Validate credentials and issue an access token.
 
@@ -127,13 +130,13 @@ Access token response including expiry metadata
 
 UnauthorizedException on invalid credentials
 
-***
+---
 
 ### me()
 
-> **me**(`userId`): `Promise`\<\{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+> **me**(`userId`): `Promise`\<\{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `role`: `string`; `updatedAt`: `Date`; \}\>
 
-Defined in: [backend/src/auth/auth.service.ts:62](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/auth/auth.service.ts#L62)
+Defined in: [backend/src/auth/auth.service.ts:72](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/auth/auth.service.ts#L72)
 
 Retrieve a sanitized user profile (excludes password hash).
 
@@ -147,19 +150,19 @@ Authenticated subject identifier (UUID)
 
 #### Returns
 
-`Promise`\<\{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+`Promise`\<\{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `role`: `string`; `updatedAt`: `Date`; \}\>
 
 #### Throws
 
 UnauthorizedException if user not found (treat as stale token)
 
-***
+---
 
 ### register()
 
 > **register**(`email`, `password`): `Promise`\<\{ `accessToken`: `string`; `expiresIn`: `string`; `tokenType`: `string`; \}\>
 
-Defined in: [backend/src/auth/auth.service.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/auth/auth.service.ts#L31)
+Defined in: [backend/src/auth/auth.service.ts:39](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/auth/auth.service.ts#L39)
 
 Register a new user by email + password.
 
@@ -186,21 +189,24 @@ Access token response for immediate authentication
 #### Throws
 
 ConflictException if email already exists
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/auth/auth.service/classes/AuthService.md -->
+
 ### Build Queue Service
 
 <!-- begin:included api/backend/build/build.queue/classes/BuildQueueService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [build/build.queue](../README.md) / BuildQueueService
 
 ### Class: BuildQueueService
 
-Defined in: [backend/src/build/build.queue.ts:12](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.queue.ts#L12)
+Defined in: [backend/src/build/build.queue.ts:20](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.queue.ts#L20)
 
 #### Implements
 
@@ -213,7 +219,7 @@ Defined in: [backend/src/build/build.queue.ts:12](https://github.com/TomKonig/Dr
 
 > **new BuildQueueService**(`prisma`, `executor`, `deployments`): `BuildQueueService`
 
-Defined in: [backend/src/build/build.queue.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.queue.ts#L21)
+Defined in: [backend/src/build/build.queue.ts:29](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.queue.ts#L29)
 
 #### Parameters
 
@@ -237,9 +243,9 @@ Defined in: [backend/src/build/build.queue.ts:21](https://github.com/TomKonig/Dr
 
 ### enqueue()
 
-> **enqueue**(`projectId`): `Promise`\<`any`\>
+> **enqueue**(`projectId`): `Promise`\<\{ `id`: `string`; `projectId`: `string`; `status`: `BuildJobStatus`; \}\>
 
-Defined in: [backend/src/build/build.queue.ts:105](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.queue.ts#L105)
+Defined in: [backend/src/build/build.queue.ts:162](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.queue.ts#L162)
 
 Enqueue a build. Without Redis yet, simulate PENDING -> RUNNING -> SUCCESS.
 
@@ -251,15 +257,15 @@ Enqueue a build. Without Redis yet, simulate PENDING -> RUNNING -> SUCCESS.
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<\{ `id`: `string`; `projectId`: `string`; `status`: `BuildJobStatus`; \}\>
 
-***
+---
 
 ### getJob()
 
 > **getJob**(`id`): `Promise`\<`null` \| \{ `artifactPath`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `logsPath`: `null` \| `string`; `projectId`: `string`; `status`: `BuildJobStatus`; `updatedAt`: `Date`; `version`: `null` \| `number`; \}\>
 
-Defined in: [backend/src/build/build.queue.ts:176](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.queue.ts#L176)
+Defined in: [backend/src/build/build.queue.ts:277](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.queue.ts#L277)
 
 #### Parameters
 
@@ -271,13 +277,13 @@ Defined in: [backend/src/build/build.queue.ts:176](https://github.com/TomKonig/D
 
 `Promise`\<`null` \| \{ `artifactPath`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `logsPath`: `null` \| `string`; `projectId`: `string`; `status`: `BuildJobStatus`; `updatedAt`: `Date`; `version`: `null` \| `number`; \}\>
 
-***
+---
 
 ### getLogs()
 
 > **getLogs**(`buildId`, `tail?`): `Promise`\<`string`\>
 
-Defined in: [backend/src/build/build.queue.ts:188](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.queue.ts#L188)
+Defined in: [backend/src/build/build.queue.ts:289](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.queue.ts#L289)
 
 #### Parameters
 
@@ -293,13 +299,13 @@ Defined in: [backend/src/build/build.queue.ts:188](https://github.com/TomKonig/D
 
 `Promise`\<`string`\>
 
-***
+---
 
 ### listProjectBuilds()
 
 > **listProjectBuilds**(`projectId`, `limit`): `Promise`\<`object`[]\>
 
-Defined in: [backend/src/build/build.queue.ts:180](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.queue.ts#L180)
+Defined in: [backend/src/build/build.queue.ts:281](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.queue.ts#L281)
 
 #### Parameters
 
@@ -315,13 +321,13 @@ Defined in: [backend/src/build/build.queue.ts:180](https://github.com/TomKonig/D
 
 `Promise`\<`object`[]\>
 
-***
+---
 
 ### onModuleDestroy()
 
 > **onModuleDestroy**(): `Promise`\<`void`\>
 
-Defined in: [backend/src/build/build.queue.ts:225](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.queue.ts#L225)
+Defined in: [backend/src/build/build.queue.ts:334](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.queue.ts#L334)
 
 #### Returns
 
@@ -331,13 +337,13 @@ Defined in: [backend/src/build/build.queue.ts:225](https://github.com/TomKonig/D
 
 `OnModuleDestroy.onModuleDestroy`
 
-***
+---
 
 ### onModuleInit()
 
 > **onModuleInit**(): `Promise`\<`void`\>
 
-Defined in: [backend/src/build/build.queue.ts:29](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.queue.ts#L29)
+Defined in: [backend/src/build/build.queue.ts:41](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.queue.ts#L41)
 
 #### Returns
 
@@ -346,6 +352,7 @@ Defined in: [backend/src/build/build.queue.ts:29](https://github.com/TomKonig/Dr
 #### Implementation of
 
 `OnModuleInit.onModuleInit`
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/build/build.queue/classes/BuildQueueService.md -->
 
@@ -353,15 +360,16 @@ Defined in: [backend/src/build/build.queue.ts:29](https://github.com/TomKonig/Dr
 
 <!-- begin:included api/backend/i18n/i18n.service/classes/I18nService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [i18n/i18n.service](../README.md) / I18nService
 
 ### Class: I18nService
 
-Defined in: [backend/src/i18n/i18n.service.ts:8](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/i18n/i18n.service.ts#L8)
+Defined in: [backend/src/i18n/i18n.service.ts:15](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/i18n/i18n.service.ts#L15)
 
 #### Constructors
 
@@ -369,7 +377,7 @@ Defined in: [backend/src/i18n/i18n.service.ts:8](https://github.com/TomKonig/Dra
 
 > **new I18nService**(`baseDir`): `I18nService`
 
-Defined in: [backend/src/i18n/i18n.service.ts:13](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/i18n/i18n.service.ts#L13)
+Defined in: [backend/src/i18n/i18n.service.ts:20](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/i18n/i18n.service.ts#L20)
 
 #### Parameters
 
@@ -387,19 +395,19 @@ Defined in: [backend/src/i18n/i18n.service.ts:13](https://github.com/TomKonig/Dr
 
 > **load**(): `void`
 
-Defined in: [backend/src/i18n/i18n.service.ts:15](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/i18n/i18n.service.ts#L15)
+Defined in: [backend/src/i18n/i18n.service.ts:22](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/i18n/i18n.service.ts#L22)
 
 #### Returns
 
 `void`
 
-***
+---
 
 ### t()
 
 > **t**(`key`, `params?`, `locale?`): `string`
 
-Defined in: [backend/src/i18n/i18n.service.ts:33](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/i18n/i18n.service.ts#L33)
+Defined in: [backend/src/i18n/i18n.service.ts:47](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/i18n/i18n.service.ts#L47)
 
 #### Parameters
 
@@ -409,7 +417,7 @@ Defined in: [backend/src/i18n/i18n.service.ts:33](https://github.com/TomKonig/Dr
 
 ##### params?
 
-`Record`\<`string`, `any`\>
+`Record`\<`string`, `unknown`\>
 
 ##### locale?
 
@@ -418,6 +426,7 @@ Defined in: [backend/src/i18n/i18n.service.ts:33](https://github.com/TomKonig/Dr
 #### Returns
 
 `string`
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/i18n/i18n.service/classes/I18nService.md -->
 
@@ -425,9 +434,10 @@ Defined in: [backend/src/i18n/i18n.service.ts:33](https://github.com/TomKonig/Dr
 
 <!-- begin:included api/shared/functions/t.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/shared**](../README.md)
 
-***
+---
 
 [@dragdropdeploy/shared](../README.md) / t
 
@@ -435,7 +445,7 @@ Defined in: [backend/src/i18n/i18n.service.ts:33](https://github.com/TomKonig/Dr
 
 > **t**(`key`, `params?`, `locale?`): `string`
 
-Defined in: [i18n.ts:17](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/shared/src/i18n.ts#L17)
+Defined in: [i18n.ts:19](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/shared/src/i18n.ts#L19)
 
 Runtime translation helper bound to the currently active locale.
 
@@ -447,7 +457,7 @@ Runtime translation helper bound to the currently active locale.
 
 ### params?
 
-`Record`\<`string`, `any`\>
+`Record`\<`string`, `unknown`\>
 
 ### locale?
 
@@ -460,6 +470,7 @@ Runtime translation helper bound to the currently active locale.
 #### Remarks
 
 These functions are thin re-exports so consumer packages only need the shared bundle.
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/shared/functions/t.md -->
 
@@ -467,15 +478,16 @@ These functions are thin re-exports so consumer packages only need the shared bu
 
 <!-- begin:included api/backend/deployments/deployments.controller/classes/DeploymentsController.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [deployments/deployments.controller](../README.md) / DeploymentsController
 
 ### Class: DeploymentsController
 
-Defined in: [backend/src/deployments/deployments.controller.ts:19](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.controller.ts#L19)
+Defined in: [backend/src/deployments/deployments.controller.ts:33](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.controller.ts#L33)
 
 #### Constructors
 
@@ -483,7 +495,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:19](https://githu
 
 > **new DeploymentsController**(`extraction`, `deployments`): `DeploymentsController`
 
-Defined in: [backend/src/deployments/deployments.controller.ts:20](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.controller.ts#L20)
+Defined in: [backend/src/deployments/deployments.controller.ts:34](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.controller.ts#L34)
 
 #### Parameters
 
@@ -505,7 +517,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:20](https://githu
 
 > **activate**(`id`): `Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.controller.ts:41](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.controller.ts#L41)
+Defined in: [backend/src/deployments/deployments.controller.ts:72](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.controller.ts#L72)
 
 #### Parameters
 
@@ -517,13 +529,13 @@ Defined in: [backend/src/deployments/deployments.controller.ts:41](https://githu
 
 `Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
 
-***
+---
 
 ### rollback()
 
 > **rollback**(`projectId`, `targetDeploymentId?`): `Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.controller.ts:75](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.controller.ts#L75)
+Defined in: [backend/src/deployments/deployments.controller.ts:110](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.controller.ts#L110)
 
 #### Parameters
 
@@ -539,13 +551,13 @@ Defined in: [backend/src/deployments/deployments.controller.ts:75](https://githu
 
 `Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
 
-***
+---
 
 ### serve()
 
 > **serve**(`projectId`, `res`): `Promise`\<`void` \| `Response`\<`any`, `Record`\<`string`, `any`\>\>\>
 
-Defined in: [backend/src/deployments/deployments.controller.ts:48](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.controller.ts#L48)
+Defined in: [backend/src/deployments/deployments.controller.ts:80](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.controller.ts#L80)
 
 #### Parameters
 
@@ -561,13 +573,13 @@ Defined in: [backend/src/deployments/deployments.controller.ts:48](https://githu
 
 `Promise`\<`void` \| `Response`\<`any`, `Record`\<`string`, `any`\>\>\>
 
-***
+---
 
 ### uploadArchive()
 
-> **uploadArchive**(`file`, `projectId`): `Promise`\<`UploadResponse`\>
+> **uploadArchive**(`file`, `projectId`): `Promise`\<[`UploadResponse`](../interfaces/UploadResponse.md)\>
 
-Defined in: [backend/src/deployments/deployments.controller.ts:25](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.controller.ts#L25)
+Defined in: [backend/src/deployments/deployments.controller.ts:42](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.controller.ts#L42)
 
 #### Parameters
 
@@ -581,7 +593,8 @@ Defined in: [backend/src/deployments/deployments.controller.ts:25](https://githu
 
 #### Returns
 
-`Promise`\<`UploadResponse`\>
+`Promise`\<[`UploadResponse`](../interfaces/UploadResponse.md)\>
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/deployments/deployments.controller/classes/DeploymentsController.md -->
 
@@ -589,15 +602,16 @@ Defined in: [backend/src/deployments/deployments.controller.ts:25](https://githu
 
 <!-- begin:included api/backend/deployments/deployments.service/classes/DeploymentsService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [deployments/deployments.service](../README.md) / DeploymentsService
 
 ### Class: DeploymentsService
 
-Defined in: [backend/src/deployments/deployments.service.ts:9](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.service.ts#L9)
+Defined in: [backend/src/deployments/deployments.service.ts:29](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.service.ts#L29)
 
 #### Constructors
 
@@ -605,7 +619,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:9](https://github.co
 
 > **new DeploymentsService**(`prisma`): `DeploymentsService`
 
-Defined in: [backend/src/deployments/deployments.service.ts:10](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.service.ts#L10)
+Defined in: [backend/src/deployments/deployments.service.ts:30](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.service.ts#L30)
 
 #### Parameters
 
@@ -623,7 +637,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:10](https://github.c
 
 > **activateDeployment**(`deploymentId`): `Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:78](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.service.ts#L78)
+Defined in: [backend/src/deployments/deployments.service.ts:116](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.service.ts#L116)
 
 Activate a deployment after successful build. Marks previous ACTIVE deployments INACTIVE (same project) and updates symlink.
 
@@ -637,13 +651,13 @@ Activate a deployment after successful build. Marks previous ACTIVE deployments 
 
 `Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
 
-***
+---
 
 ### createPending()
 
 > **createPending**(`projectId`): `Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:12](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.service.ts#L12)
+Defined in: [backend/src/deployments/deployments.service.ts:32](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.service.ts#L32)
 
 #### Parameters
 
@@ -655,13 +669,13 @@ Defined in: [backend/src/deployments/deployments.service.ts:12](https://github.c
 
 `Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
 
-***
+---
 
 ### createWithArtifact()
 
 > **createWithArtifact**(`projectId`, `stagedPath`): `Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:24](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.service.ts#L24)
+Defined in: [backend/src/deployments/deployments.service.ts:48](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.service.ts#L48)
 
 Persist a staged (temp) directory produced by the upload extraction into the artifacts root
 and create a pending deployment that references it.
@@ -680,13 +694,13 @@ and create a pending deployment that references it.
 
 `Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
 
-***
+---
 
 ### getActiveArtifactPath()
 
 > **getActiveArtifactPath**(`projectId`): `Promise`\<`null` \| `string`\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:104](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.service.ts#L104)
+Defined in: [backend/src/deployments/deployments.service.ts:162](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.service.ts#L162)
 
 #### Parameters
 
@@ -698,13 +712,13 @@ Defined in: [backend/src/deployments/deployments.service.ts:104](https://github.
 
 `Promise`\<`null` \| `string`\>
 
-***
+---
 
 ### rollback()
 
 > **rollback**(`projectId`, `targetDeploymentId?`): `Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:116](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/deployments/deployments.service.ts#L116)
+Defined in: [backend/src/deployments/deployments.service.ts:176](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/deployments/deployments.service.ts#L176)
 
 #### Parameters
 
@@ -719,6 +733,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:116](https://github.
 #### Returns
 
 `Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/deployments/deployments.service/classes/DeploymentsService.md -->
 
@@ -726,15 +741,16 @@ Defined in: [backend/src/deployments/deployments.service.ts:116](https://github.
 
 <!-- begin:included api/backend/projects/projects.controller/classes/ProjectsController.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [projects/projects.controller](../README.md) / ProjectsController
 
 ### Class: ProjectsController
 
-Defined in: [backend/src/projects/projects.controller.ts:7](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.controller.ts#L7)
+Defined in: [backend/src/projects/projects.controller.ts:24](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.controller.ts#L24)
 
 #### Constructors
 
@@ -742,7 +758,7 @@ Defined in: [backend/src/projects/projects.controller.ts:7](https://github.com/T
 
 > **new ProjectsController**(`projects`): `ProjectsController`
 
-Defined in: [backend/src/projects/projects.controller.ts:8](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.controller.ts#L8)
+Defined in: [backend/src/projects/projects.controller.ts:25](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.controller.ts#L25)
 
 #### Parameters
 
@@ -760,13 +776,13 @@ Defined in: [backend/src/projects/projects.controller.ts:8](https://github.com/T
 
 > **create**(`req`, `dto`): `Promise`\<\{ `createdAt`: `Date`; `domain`: `null` \| `string`; `id`: `string`; `name`: `string`; `ownerId`: `string`; `updatedAt`: `Date`; \}\>
 
-Defined in: [backend/src/projects/projects.controller.ts:11](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.controller.ts#L11)
+Defined in: [backend/src/projects/projects.controller.ts:28](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.controller.ts#L28)
 
 #### Parameters
 
 ##### req
 
-`any`
+[`AuthenticatedRequest`](../interfaces/AuthenticatedRequest.md)
 
 ##### dto
 
@@ -776,19 +792,19 @@ Defined in: [backend/src/projects/projects.controller.ts:11](https://github.com/
 
 `Promise`\<\{ `createdAt`: `Date`; `domain`: `null` \| `string`; `id`: `string`; `name`: `string`; `ownerId`: `string`; `updatedAt`: `Date`; \}\>
 
-***
+---
 
 ### delete()
 
 > **delete**(`req`, `id`): `Promise`\<\{ `deleted`: `boolean`; \}\>
 
-Defined in: [backend/src/projects/projects.controller.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.controller.ts#L31)
+Defined in: [backend/src/projects/projects.controller.ts:52](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.controller.ts#L52)
 
 #### Parameters
 
 ##### req
 
-`any`
+[`AuthenticatedRequest`](../interfaces/AuthenticatedRequest.md)
 
 ##### id
 
@@ -798,19 +814,19 @@ Defined in: [backend/src/projects/projects.controller.ts:31](https://github.com/
 
 `Promise`\<\{ `deleted`: `boolean`; \}\>
 
-***
+---
 
 ### get()
 
 > **get**(`req`, `id`): `Promise`\<`object` & `object`\>
 
-Defined in: [backend/src/projects/projects.controller.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.controller.ts#L21)
+Defined in: [backend/src/projects/projects.controller.ts:38](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.controller.ts#L38)
 
 #### Parameters
 
 ##### req
 
-`any`
+[`AuthenticatedRequest`](../interfaces/AuthenticatedRequest.md)
 
 ##### id
 
@@ -820,37 +836,37 @@ Defined in: [backend/src/projects/projects.controller.ts:21](https://github.com/
 
 `Promise`\<`object` & `object`\>
 
-***
+---
 
 ### list()
 
 > **list**(`req`): `Promise`\<`object` & `object`[]\>
 
-Defined in: [backend/src/projects/projects.controller.ts:16](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.controller.ts#L16)
+Defined in: [backend/src/projects/projects.controller.ts:33](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.controller.ts#L33)
 
 #### Parameters
 
 ##### req
 
-`any`
+[`AuthenticatedRequest`](../interfaces/AuthenticatedRequest.md)
 
 #### Returns
 
 `Promise`\<`object` & `object`[]\>
 
-***
+---
 
 ### update()
 
 > **update**(`req`, `id`, `dto`): `Promise`\<`object` & `object`\>
 
-Defined in: [backend/src/projects/projects.controller.ts:26](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.controller.ts#L26)
+Defined in: [backend/src/projects/projects.controller.ts:43](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.controller.ts#L43)
 
 #### Parameters
 
 ##### req
 
-`any`
+[`AuthenticatedRequest`](../interfaces/AuthenticatedRequest.md)
 
 ##### id
 
@@ -863,6 +879,7 @@ Defined in: [backend/src/projects/projects.controller.ts:26](https://github.com/
 #### Returns
 
 `Promise`\<`object` & `object`\>
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/projects/projects.controller/classes/ProjectsController.md -->
 
@@ -870,15 +887,16 @@ Defined in: [backend/src/projects/projects.controller.ts:26](https://github.com/
 
 <!-- begin:included api/backend/projects/projects.service/classes/ProjectsService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [projects/projects.service](../README.md) / ProjectsService
 
 ### Class: ProjectsService
 
-Defined in: [backend/src/projects/projects.service.ts:5](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.service.ts#L5)
+Defined in: [backend/src/projects/projects.service.ts:23](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.service.ts#L23)
 
 #### Constructors
 
@@ -886,7 +904,7 @@ Defined in: [backend/src/projects/projects.service.ts:5](https://github.com/TomK
 
 > **new ProjectsService**(`prisma`): `ProjectsService`
 
-Defined in: [backend/src/projects/projects.service.ts:6](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.service.ts#L6)
+Defined in: [backend/src/projects/projects.service.ts:25](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.service.ts#L25)
 
 #### Parameters
 
@@ -904,7 +922,7 @@ Defined in: [backend/src/projects/projects.service.ts:6](https://github.com/TomK
 
 > **create**(`ownerId`, `name`, `domain?`): `Promise`\<\{ `createdAt`: `Date`; `domain`: `null` \| `string`; `id`: `string`; `name`: `string`; `ownerId`: `string`; `updatedAt`: `Date`; \}\>
 
-Defined in: [backend/src/projects/projects.service.ts:8](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.service.ts#L8)
+Defined in: [backend/src/projects/projects.service.ts:27](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.service.ts#L27)
 
 #### Parameters
 
@@ -924,13 +942,13 @@ Defined in: [backend/src/projects/projects.service.ts:8](https://github.com/TomK
 
 `Promise`\<\{ `createdAt`: `Date`; `domain`: `null` \| `string`; `id`: `string`; `name`: `string`; `ownerId`: `string`; `updatedAt`: `Date`; \}\>
 
-***
+---
 
 ### findAllForUser()
 
 > **findAllForUser**(`userId`): `Promise`\<`object` & `object`[]\>
 
-Defined in: [backend/src/projects/projects.service.ts:19](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.service.ts#L19)
+Defined in: [backend/src/projects/projects.service.ts:45](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.service.ts#L45)
 
 #### Parameters
 
@@ -942,13 +960,13 @@ Defined in: [backend/src/projects/projects.service.ts:19](https://github.com/Tom
 
 `Promise`\<`object` & `object`[]\>
 
-***
+---
 
 ### findOneOwned()
 
 > **findOneOwned**(`userId`, `id`): `Promise`\<`object` & `object`\>
 
-Defined in: [backend/src/projects/projects.service.ts:23](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.service.ts#L23)
+Defined in: [backend/src/projects/projects.service.ts:53](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.service.ts#L53)
 
 #### Parameters
 
@@ -964,13 +982,13 @@ Defined in: [backend/src/projects/projects.service.ts:23](https://github.com/Tom
 
 `Promise`\<`object` & `object`\>
 
-***
+---
 
 ### remove()
 
 > **remove**(`userId`, `id`): `Promise`\<\{ `deleted`: `boolean`; \}\>
 
-Defined in: [backend/src/projects/projects.service.ts:64](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.service.ts#L64)
+Defined in: [backend/src/projects/projects.service.ts:116](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.service.ts#L116)
 
 #### Parameters
 
@@ -986,13 +1004,13 @@ Defined in: [backend/src/projects/projects.service.ts:64](https://github.com/Tom
 
 `Promise`\<\{ `deleted`: `boolean`; \}\>
 
-***
+---
 
 ### update()
 
 > **update**(`userId`, `id`, `data`): `Promise`\<`object` & `object`\>
 
-Defined in: [backend/src/projects/projects.service.ts:29](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/projects/projects.service.ts#L29)
+Defined in: [backend/src/projects/projects.service.ts:62](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/projects/projects.service.ts#L62)
 
 #### Parameters
 
@@ -1025,6 +1043,7 @@ Defined in: [backend/src/projects/projects.service.ts:29](https://github.com/Tom
 #### Returns
 
 `Promise`\<`object` & `object`\>
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/projects/projects.service/classes/ProjectsService.md -->
 
@@ -1032,20 +1051,16 @@ Defined in: [backend/src/projects/projects.service.ts:29](https://github.com/Tom
 
 <!-- begin:included api/backend/users/users.service/classes/UsersService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [users/users.service](../README.md) / UsersService
 
 ### Class: UsersService
 
-Defined in: [backend/src/users/users.service.ts:12](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/users/users.service.ts#L12)
-
-Data-layer service for user retrieval and creation.
-
-Handles bootstrap operator promotion logic for the first user or a
-specifically designated bootstrap email (via OPERATOR_BOOTSTRAP_EMAIL).
+Defined in: [backend/src/users/users.service.ts:30](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/users/users.service.ts#L30)
 
 #### Constructors
 
@@ -1053,7 +1068,7 @@ specifically designated bootstrap email (via OPERATOR_BOOTSTRAP_EMAIL).
 
 > **new UsersService**(`prisma`): `UsersService`
 
-Defined in: [backend/src/users/users.service.ts:13](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/users/users.service.ts#L13)
+Defined in: [backend/src/users/users.service.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/users/users.service.ts#L31)
 
 #### Parameters
 
@@ -1069,45 +1084,31 @@ Defined in: [backend/src/users/users.service.ts:13](https://github.com/TomKonig/
 
 ### create()
 
-> **create**(`email`, `password`): `Promise`\<\{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+> **create**(`email`, `password`): `Promise`\<[`UserPublic`](../interfaces/UserPublic.md)\>
 
-Defined in: [backend/src/users/users.service.ts:41](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/users/users.service.ts#L41)
-
-Create a new user, hashing password and optionally elevating to operator.
-
-Elevation rules:
-- If no users exist yet OR
-- If OPERATOR_BOOTSTRAP_EMAIL matches the registering email (case-insensitive)
+Defined in: [backend/src/users/users.service.ts:45](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/users/users.service.ts#L45)
 
 #### Parameters
 
 ##### email
 
 `string`
-
-New user email
 
 ##### password
 
 `string`
 
-Raw password (bcrypt hashed)
-
 #### Returns
 
-`Promise`\<\{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+`Promise`\<[`UserPublic`](../interfaces/UserPublic.md)\>
 
-Sanitized user projection (no password hash)
-
-***
+---
 
 ### findByEmail()
 
-> **findByEmail**(`email`): `Promise`\<`null` \| \{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `passwordHash`: `null` \| `string`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+> **findByEmail**(`email`): `Promise`\<`null` \| [`DBUser`](../interfaces/DBUser.md)\>
 
-Defined in: [backend/src/users/users.service.ts:19](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/users/users.service.ts#L19)
-
-Locate a user by email (case-sensitive by default).
+Defined in: [backend/src/users/users.service.ts:33](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/users/users.service.ts#L33)
 
 #### Parameters
 
@@ -1115,21 +1116,17 @@ Locate a user by email (case-sensitive by default).
 
 `string`
 
-User email
-
 #### Returns
 
-`Promise`\<`null` \| \{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `passwordHash`: `null` \| `string`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+`Promise`\<`null` \| [`DBUser`](../interfaces/DBUser.md)\>
 
-***
+---
 
 ### findById()
 
-> **findById**(`id`): `Promise`\<`null` \| \{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `passwordHash`: `null` \| `string`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+> **findById**(`id`): `Promise`\<`null` \| [`DBUser`](../interfaces/DBUser.md)\>
 
-Defined in: [backend/src/users/users.service.ts:27](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/users/users.service.ts#L27)
-
-Fetch a user by id.
+Defined in: [backend/src/users/users.service.ts:39](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/users/users.service.ts#L39)
 
 #### Parameters
 
@@ -1137,11 +1134,10 @@ Fetch a user by id.
 
 `string`
 
-User UUID
-
 #### Returns
 
-`Promise`\<`null` \| \{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `passwordHash`: `null` \| `string`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
+`Promise`\<`null` \| [`DBUser`](../interfaces/DBUser.md)\>
+
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/users/users.service/classes/UsersService.md -->
 
@@ -1149,15 +1145,16 @@ User UUID
 
 <!-- begin:included api/backend/prisma/prisma.service/classes/PrismaService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
+
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
+---
 
 [@dragdropdeploy/backend](../../../README.md) / [prisma/prisma.service](../README.md) / PrismaService
 
 ### Class: PrismaService
 
-Defined in: [backend/src/prisma/prisma.service.ts:6](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/prisma/prisma.service.ts#L6)
+Defined in: [backend/src/prisma/prisma.service.ts:12](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/prisma/prisma.service.ts#L12)
 
 #### Extends
 
@@ -1178,7 +1175,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:6](https://github.com/TomKonig
 
 > **new PrismaService**(`optionsArg?`): `PrismaService`
 
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:144
+Defined in: node_modules/.prisma/client/index.d.ts:144
 
 #### Prisma Client ʲˢ
 
@@ -1196,7 +1193,7 @@ Type-safe database client for TypeScript & Node.js
 
 #### Example
 
-```ts
+````ts
 const prisma = new PrismaClient()
 // Fetch zero or more Users
 const users = await prisma.user.findMany()
@@ -1215,7 +1212,7 @@ Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interface
 
 > **$extends**: `ExtendsHook`\<`"extends"`, `TypeMapCb`, `DefaultArgs`\>
 
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:228
+Defined in: node\_modules/.prisma/client/index.d.ts:228
 
 #### Inherited from
 
@@ -1229,7 +1226,7 @@ Defined in: backend/node\_modules/.prisma/client/index.d.ts:228
 
 > **get** **buildJob**(): `BuildJobDelegate`\<`ExtArgs`\>
 
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:268
+Defined in: node\_modules/.prisma/client/index.d.ts:268
 
 `prisma.buildJob`: Exposes CRUD operations for the **BuildJob** model.
 - Example usage:
@@ -1254,7 +1251,7 @@ Defined in: backend/node\_modules/.prisma/client/index.d.ts:268
 
 > **get** **deployment**(): `DeploymentDelegate`\<`ExtArgs`\>
 
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:258
+Defined in: node\_modules/.prisma/client/index.d.ts:258
 
 `prisma.deployment`: Exposes CRUD operations for the **Deployment** model.
 - Example usage:
@@ -1279,7 +1276,7 @@ Defined in: backend/node\_modules/.prisma/client/index.d.ts:258
 
 > **get** **project**(): `ProjectDelegate`\<`ExtArgs`\>
 
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:248
+Defined in: node\_modules/.prisma/client/index.d.ts:248
 
 `prisma.project`: Exposes CRUD operations for the **Project** model.
 - Example usage:
@@ -1304,13 +1301,13 @@ Defined in: backend/node\_modules/.prisma/client/index.d.ts:248
 
 > **get** **projectSetting**(): `ProjectSettingDelegate`\<`ExtArgs`\>
 
-Defined in: backend/node\_modules/.prisma/client/index.d.ts:288
+Defined in: node\_modules/.prisma/client/index.d.ts:288
 
 ### enableShutdownHooks()
 
-> **enableShutdownHooks**(`app`): `Promise`\<`void`\>
+> **enableShutdownHooks**(`app`): `void`
 
-Defined in: [backend/src/prisma/prisma.service.ts:19](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/prisma/prisma.service.ts#L19)
+Defined in: [backend/src/prisma/prisma.service.ts:28](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/prisma/prisma.service.ts#L28)
 
 #### Parameters
 
@@ -1320,7 +1317,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:19](https://github.com/TomKoni
 
 #### Returns
 
-`Promise`\<`void`\>
+`void`
 
 ***
 
@@ -1328,7 +1325,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:19](https://github.com/TomKoni
 
 > **onModuleDestroy**(): `Promise`\<`void`\>
 
-Defined in: [backend/src/prisma/prisma.service.ts:25](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/prisma/prisma.service.ts#L25)
+Defined in: [backend/src/prisma/prisma.service.ts:34](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/prisma/prisma.service.ts#L34)
 
 #### Returns
 
@@ -1344,7 +1341,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:25](https://github.com/TomKoni
 
 > **onModuleInit**(): `Promise`\<`void`\>
 
-Defined in: [backend/src/prisma/prisma.service.ts:7](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/prisma/prisma.service.ts#L7)
+Defined in: [backend/src/prisma/prisma.service.ts:16](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/prisma/prisma.service.ts#L16)
 
 #### Returns
 
@@ -1358,19 +1355,20 @@ Defined in: [backend/src/prisma/prisma.service.ts:7](https://github.com/TomKonig
 
 ### setTenantContext()
 
-> **setTenantContext**(): `Promise`\<`void`\>
+> **setTenantContext**(): `void`
 
-Defined in: [backend/src/prisma/prisma.service.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/prisma/prisma.service.ts#L31)
+Defined in: [backend/src/prisma/prisma.service.ts:42](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/prisma/prisma.service.ts#L42)
 
 #### Returns
 
-`Promise`\<`void`\>
+`void`
 
 > <!-- prisma-pruning:heuristic active; replace with @internal filtering -->
 <!-- markdownlint-enable MD024 MD025 MD032 -->
 <!-- end:included api/backend/prisma/prisma.service/classes/PrismaService.md -->
 
 <a id="build-executor-service"></a>
+
 ### Build Executor Service
 
 <!-- begin:included api/backend/build/build.executor/classes/BuildExecutorService.md -->
@@ -1383,7 +1381,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:31](https://github.com/TomKoni
 
 ### Class: BuildExecutorService
 
-Defined in: [backend/src/build/build.executor.ts:17](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.executor.ts#L17)
+Defined in: [backend/src/build/build.executor.ts:19](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.executor.ts#L19)
 
 BuildExecutorService: performs a real build process (opt-in) capturing stdout/err to log file.
 Current minimal strategy:
@@ -1397,7 +1395,7 @@ Current minimal strategy:
 
 > **new BuildExecutorService**(`metrics`, `minify`, `prisma`): `BuildExecutorService`
 
-Defined in: [backend/src/build/build.executor.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.executor.ts#L21)
+Defined in: [backend/src/build/build.executor.ts:23](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.executor.ts#L23)
 
 #### Parameters
 
@@ -1423,7 +1421,7 @@ Defined in: [backend/src/build/build.executor.ts:21](https://github.com/TomKonig
 
 > **isEnabled**(): `boolean`
 
-Defined in: [backend/src/build/build.executor.ts:23](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.executor.ts#L23)
+Defined in: [backend/src/build/build.executor.ts:29](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.executor.ts#L29)
 
 #### Returns
 
@@ -1435,7 +1433,7 @@ Defined in: [backend/src/build/build.executor.ts:23](https://github.com/TomKonig
 
 > **runBuild**(`projectId`, `logFile`): `Promise`\<\{ `exitCode`: `null` \| `number`; `success`: `boolean`; \}\>
 
-Defined in: [backend/src/build/build.executor.ts:25](https://github.com/TomKonig/DragDropDeploy/blob/c543db1e4c327b788c29daa30772101f37e909d5/backend/src/build/build.executor.ts#L25)
+Defined in: [backend/src/build/build.executor.ts:33](https://github.com/TomKonig/DragDropDeploy/blob/c5db89aacc2ccce2f30889b2fbae56352424eeb2/backend/src/build/build.executor.ts#L33)
 
 #### Parameters
 
@@ -1454,3 +1452,4 @@ Defined in: [backend/src/build/build.executor.ts:25](https://github.com/TomKonig
 <!-- end:included api/backend/build/build.executor/classes/BuildExecutorService.md -->
 
 Add questions or endpoint requests via issues until automated reference lands.
+````

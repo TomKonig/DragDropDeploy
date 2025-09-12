@@ -5,7 +5,7 @@ import { PrismaService } from "../prisma/prisma.service";
 
 // Lightweight in-module interfaces to give explicit structure without relying on generated Prisma types.
 // They mirror the current Prisma schema fields used by this service.
-interface DBUser {
+export interface DBUser {
   id: string;
   email: string;
   createdAt: Date;

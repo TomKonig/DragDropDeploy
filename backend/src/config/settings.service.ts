@@ -2,14 +2,14 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 
 import { PrismaService } from "../prisma/prisma.service";
 
-type SettingType = "STRING" | "INT" | "BOOL" | "JSON";
+export type SettingType = "STRING" | "INT" | "BOOL" | "JSON";
 interface CachedSetting<T> {
   value: string;
   type: SettingType;
   parsed: T;
 }
 
-type ParsedValue<T extends SettingType> = T extends "INT"
+export type ParsedValue<T extends SettingType> = T extends "INT"
   ? number
   : T extends "BOOL"
     ? boolean

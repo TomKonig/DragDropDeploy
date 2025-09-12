@@ -6,7 +6,7 @@ import * as path from "path";
 import { Injectable, BadRequestException } from "@nestjs/common";
 import JSZip from "jszip";
 
-interface ExtractResult {
+export interface ExtractResult {
   tempDir: string;
   fileCount: number;
   totalUncompressedBytes: number;

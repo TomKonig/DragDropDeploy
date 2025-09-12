@@ -12,13 +12,13 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { PrismaService } from "../prisma/prisma.service";
 import { ProjectsService } from "../projects/projects.service";
 
-interface AuthUser {
+export interface AuthUser {
   sub: string;
 }
-interface UploadRequest {
+export interface UploadRequest {
   user: AuthUser;
 }
-interface UploadedExpressMulterFile {
+export interface UploadedExpressMulterFile {
   originalname: string;
   size: number;
   mimetype: string;

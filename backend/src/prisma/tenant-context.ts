@@ -1,9 +1,9 @@
-import { AsyncLocalStorage } from 'async_hooks';
+import { AsyncLocalStorage } from "async_hooks";
 
 // TenantStore holds per-request contextual data. Today this is only userId; in the
 // future we may extend with tenantId / roles if policy evaluation requires it.
 // Keep this minimal and serializable.
-interface TenantStore {
+export interface TenantStore {
   userId?: string;
 }
 

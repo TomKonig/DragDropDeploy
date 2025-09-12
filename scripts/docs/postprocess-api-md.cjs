@@ -82,6 +82,10 @@ block = block
   .replace(/([^\n])\n```(\w*)\n/g, (m, prev, lang) => `${prev}\n\n\`\`\`${lang}\n`)
   .replace(/```(\w*)\n([\s\S]*?)```(\n[^\n])/g, (m, lang, inner, next) => `\`\`\`${lang}\n${inner}\`\`\`\n${next}`);
 
+// 7. Ensure blank line after raw HTML anchors before next heading (fix MD022)
+// Pattern: <a id="something"></a>\n### Heading -> insert an extra \n between
+block = block.replace(/(<a id="[^"]+"><\/a>)\n(###\s+)/g, (m, anchor, heading) => `${anchor}\n\n${heading}`);
+
 // 5. Trim any trailing whitespace on lines
 block = block.replace(/[ \t]+$/gm, '');
 

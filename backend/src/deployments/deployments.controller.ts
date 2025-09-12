@@ -22,7 +22,7 @@ import * as multer from "multer";
 import { DeploymentsService } from "./deployments.service";
 import { UploadExtractionService } from "./upload-extraction.service";
 
-interface UploadResponse {
+export interface UploadResponse {
   deploymentId: string;
   status: string;
   projectId: string;

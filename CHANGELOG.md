@@ -9,18 +9,25 @@ All notable changes to this project will be documented in this file.
 - Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
 - Static asset minification service (HTML/CSS/JS) with per-project opt-out (`optOutMinify`) and host override (`FORCE_MINIFY`).
 - Deployment archive upload endpoint enhancements since 0.0.2 (artifact processing groundwork for orchestration follow-up).
-- Roadmap automation: support `status: done` in `roadmap.yaml` so shipped slugs no longer require interim tracking issues (#113)
-- Enforceable monorepo ESLint baseline with typed rules and scoped test/config overrides (#114)
-- Artifact cleanup script (`scripts/cleanup-artifacts.cjs`) and root `clean:artifacts` npm script for repository hygiene (#115)
+- Roadmap automation: support `status: done` in `roadmap.yaml` so shipped slugs no longer require interim tracking issues (#113).
+- Enforceable monorepo ESLint baseline with typed rules and scoped test/config overrides (#114).
+- Artifact cleanup script (`scripts/cleanup-artifacts.cjs`) and root `clean:artifacts` npm script for repository hygiene (#115).
 
 ### Changed
 
 - Local full CI parity script (`ci:full`) and enhanced pre-push hook (runs docs:check, Prisma client generation, coverage, builds) to catch documentation/API drift pre-push.
+- Documentation generation now enforces zero internal TypeDoc warnings (new strict wrapper) – exported public types and excluded shim definitions to keep API docs complete.
+
+### Fixed
+
+- Stricter docs gating: env documentation check now fails CI when unused documented variables are present (prevents silent drift).
+- Documentation scan consistency: all scans hard-fail on issues except roadmap issue linkage which permissively skips when no GH token is provided (local dev convenience).
+- API reference markdown: insert blank line after raw anchor tags before headings to satisfy markdownlint MD022 (prevents recurring lint failure during docs:check).
 
 ### Security
 
 - Replace pre-push `ci:all` with `ci:full` including docs and coverage for local failure parity with GitHub workflow.
-- Resolve widespread TypeScript module resolution failures caused by incomplete package installations (restored proper `dist` contents via tarball extraction) (#115)
+- Resolve widespread TypeScript module resolution failures caused by incomplete package installations (restored proper `dist` contents via tarball extraction) (#115).
 
 ## 0.0.2 - 2025-09-12
 
@@ -41,11 +48,11 @@ All notable changes to this project will be documented in this file.
 - Deployment record creation on upload (now immediate transition to BUILDING with BuildJob creation) and e2e test coverage.
 - Security hardening middleware: Helmet + explicit CORS origins loading from CORS_ORIGINS env var.
 - Deployment archive upload endpoint (`POST /deployments/upload`):
-- In-memory buffer handling & ZIP extraction (path traversal, file count, compression ratio, magic number guards)
-- Artifact persisted to `ARTIFACTS_DIR` with recorded `artifactPath`
-- Deployment status immediately set to BUILDING; BuildJob row created (PENDING)
-- Configurable size via `MAX_UPLOAD_MB` (default 25) and storage root via `ARTIFACTS_DIR`
-- E2E tests: happy path, build job creation, oversize rejection, traversal attempt, non-zip rejection
+  - In-memory buffer handling & ZIP extraction (path traversal, file count, compression ratio, magic number guards)
+  - Artifact persisted to `ARTIFACTS_DIR` with recorded `artifactPath`
+  - Deployment status immediately set to BUILDING; BuildJob row created (PENDING)
+  - Configurable size via `MAX_UPLOAD_MB` (default 25) and storage root via `ARTIFACTS_DIR`
+  - E2E tests: happy path, build job creation, oversize rejection, traversal attempt, non-zip rejection
 
 ### Partial / In Progress
 

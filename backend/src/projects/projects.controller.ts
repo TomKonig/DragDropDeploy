@@ -13,10 +13,10 @@ import { CreateProjectDto } from "./dto/create-project.dto";
 import { UpdateProjectDto } from "./dto/update-project.dto";
 import { ProjectsService } from "./projects.service";
 
-interface AuthenticatedUser {
+export interface AuthenticatedUser {
   sub: string;
 }
-interface AuthenticatedRequest {
+export interface AuthenticatedRequest {
   user: AuthenticatedUser;
 }
 
