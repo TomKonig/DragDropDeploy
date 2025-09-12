@@ -1,0 +1,64 @@
+# Canonical roadmap definitions
+# Each item drives a roadmap:<slug> label. Generator will:
+#  - Ensure every slug here has at least one issue
+#  - Flag any roadmap:* label not listed here as ORPHAN
+#  - Order output based on this file
+
+categories:
+  now:
+    title: Now (Available or Shipping Soon)
+    items:
+      - slug: multipart-upload-endpoint
+        title: Multipart upload endpoint
+        description: Accept ZIP or raw directory uploads with validation
+      - slug: build-job-orchestration
+        title: Build job orchestration
+        description: Queue + worker foundation
+      - slug: static-asset-minification
+        title: Static asset minification
+        description: Minify HTML/CSS/JS with opt-outs
+      - slug: project-build-flags
+        title: Project build flags
+        description: Allow-listed flags appended to build command
+  next:
+    title: Next (Upcoming Focus)
+    items:
+      - slug: versioned-rollbacks
+        title: Versioned deploys & rollback
+        description: Retain and switch between deploy versions
+      - slug: domain-routing
+        title: Domain & wildcard routing
+        description: Custom + staging domain mapping
+      - slug: oauth-sign-in
+        title: OAuth sign-in
+        description: External provider login
+      - slug: atomic-publish
+        title: Atomic publish
+        description: Prevent partial deploy visibility
+  later:
+    title: Later / Exploration
+    items:
+      - slug: container-isolated-builds
+        title: Container-isolated builds
+        description: Stronger tenant isolation
+      - slug: incremental-deploys
+        title: Incremental deploys
+        description: Ship only changed assets
+  security:
+    title: Security & Reliability
+    items:
+      - slug: rls-enforcement
+        title: Row-Level Security enforcement
+        description: Database tenant isolation policies
+      - slug: build-sandbox
+        title: Build sandboxing
+        description: Ephemeral constrained build env
+  dx:
+    title: Developer Experience
+    items:
+      - slug: test-factory-helpers
+        title: Test factory helpers
+        description: Faster test data construction
+      - slug: roadmap-automation
+        title: Roadmap automation
+        description: Generated roadmap table + validation
