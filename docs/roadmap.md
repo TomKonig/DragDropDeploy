@@ -19,7 +19,7 @@ Legend: ✅ shipped · 🟡 in progress · 🔜 planned · 🧪 experimental · 
 | Project build flags | ✅ | Safe allow‑listed flags appended to build; secrets redacted in logs. |
 | Metrics endpoint | ✅ | Prometheus metrics for health & build insight. |
 | Structured logs with redaction | ✅ | Pino logs with secret filtering. |
-| Build worker (foundations) | 🟡 | Real execution path feature‑flagged; sandbox & SSG detection next. |
+| Build worker (foundations) | ✅ | BullMQ queue + worker behind feature flag (REDIS_URL) with graceful lifecycle; remaining sandbox & SSG detection tracked separately. |
 | Password protection (site gating) | 🔜 | Enable basic auth/token gate for staging & production. |
 | Minimal dashboard (core views) | 🔜 | Focused deploy, history, and rollback screens before broader UI polish. |
 | Theme-ready styling system | 🔜 | Tokenized styles to allow future theme packs. |
@@ -59,7 +59,7 @@ Legend: ✅ shipped · 🟡 in progress · 🔜 planned · 🧪 experimental · 
 |------|--------|------|
 | Threat model | ✅ | Public document of assets, threats & mitigations. |
 | SAST & dependency scanning | 🔜 | Snyk integration; will block high severity before release. |
-| Row-Level Security policies | 🔜 | Enforced after tenant isolation finalization. |
+| Row-Level Security policies | � | Session context groundwork done (AsyncLocalStorage); actual SQL policies pending. |
 | DB role least privilege | 🔜 | Separate runtime vs migration credentials. |
 
 ## Developer & Contributor Experience
