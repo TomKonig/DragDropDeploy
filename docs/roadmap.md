@@ -17,16 +17,16 @@ Self-host note: All shipped features include configuration docs so you can run t
 <!-- AUTO-ROADMAP:START -->
 | Slug | Issues | Phase | Type | Scope | Status |
 |------|--------|-------|------|-------|--------|
-| multipart-upload-endpoint | #12 | 3 | feature | backend | 🔜 |
-| build-job-orchestration | #16 | 3 | feature | backend | 🔜 |
-| static-asset-minification | #106 |  | feature | backend | 🔜 |
-| project-build-flags | #55 | 4 | feature | backend | 🔜 |
+| multipart-upload-endpoint | #12 | 3 | feature | backend | ✅ |
+| build-job-orchestration | #16 | 3 | feature | backend | � |
+| static-asset-minification | #106 | 3 | feature | backend | � |
+| project-build-flags | #55 | 4 | feature | backend | ✅ |
 | versioned-rollbacks | #44 | 3 | feature | backend | 🔜 |
 | domain-routing | #41 | 3 | feature | backend | 🔜 |
 | oauth-sign-in | #20 | 3 | feature | backend | 🔜 |
 | atomic-publish | #19 | 3 | feature | backend | 🔜 |
 | container-isolated-builds | #43 | 3 | feature | backend | 🔜 |
-| incremental-deploys | #107 |  | feature | backend | 🔜 |
+| incremental-deploys | #107 | 3 | feature | backend | 🔜 |
 | rls-enforcement | #46 | 4 | security | backend | 🟡 |
 | build-sandbox | #38 | 3 | feature | backend | 🔜 |
 | test-factory-helpers | #21 | 3 | chore | backend | 🔜 |

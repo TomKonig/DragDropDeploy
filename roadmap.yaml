@@ -11,15 +11,18 @@ categories:
       - slug: multipart-upload-endpoint
         title: Multipart upload endpoint
         description: Accept ZIP or raw directory uploads with validation
+        status: done
       - slug: build-job-orchestration
         title: Build job orchestration
         description: Queue + worker foundation
       - slug: static-asset-minification
         title: Static asset minification
         description: Minify HTML/CSS/JS with opt-outs
+        status: done
       - slug: project-build-flags
         title: Project build flags
         description: Allow-listed flags appended to build command
+        status: done
   next:
     title: Next (Upcoming Focus)
     items:

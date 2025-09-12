@@ -6,15 +6,19 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- No user-visible additions since last release.
+- Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
+- Static asset minification service (HTML/CSS/JS) with per-project opt-out (`optOutMinify`) and host override (`FORCE_MINIFY`).
+- Deployment archive upload endpoint enhancements since 0.0.2 (artifact processing groundwork for orchestration follow-up).
+- Roadmap automation: support `status: done` in `roadmap.yaml` so shipped slugs no longer require placeholder issues (#113)
 
 ### Changed
 
-- No functional changes recorded yet.
+- Build executor now appends project build flags after `--` and redacts sensitive values in logs.
+- Preparatory refactors for upcoming build job orchestration (internal only).
 
 ### Security
 
-- No security-related changes since last release.
+- Expanded log redaction to include `--token=`, `--secret=`, `--key=`, `--password=` patterns.
 
 ## 0.0.2 - 2025-09-12
 
@@ -58,15 +62,4 @@ All notable changes to this project will be documented in this file.
 - Production compose adds: internal-only DB/Redis network, dropped capabilities (ALL), no-new-privileges, read-only FS (frontend & traefik), resource limits.
 - Added initial auth rate limiting (brute force mitigation) & security headers (Helmet) + stricter CORS configuration.
 
-### Post-0.0.2 Added (Unreleased)
-
-- Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
-- Static asset minification service (HTML/CSS/JS) with per-project opt-out (`optOutMinify`) and host override (`FORCE_MINIFY`).
-
-### Post-0.0.2 Changed (Unreleased)
-
-- Build executor now appends project build flags after `--` and redacts sensitive values in logs.
-
-### Post-0.0.2 Security (Unreleased)
-
-- Expanded log redaction to include `--token=`, `--secret=`, `--key=`, `--password=` patterns.
+<!-- Consolidated former Post-0.0.2 sections into standard Unreleased buckets per style guide. -->

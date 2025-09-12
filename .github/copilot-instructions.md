@@ -15,9 +15,10 @@
      - Touching integration points (NestJS, Prisma, BullMQ, Traefik, Vite, Redis, PostgreSQL)
    - Summarize external references inline (do not paste large dumps).
 3. Roadmap & Issue Discipline
-   - All meaningful issues (feature, enhancement, refactor, security) must map to a roadmap slug label: `roadmap:<slug>`.
-   - Exemptions: trivial typo, tiny test fix, ultra-small bug (<5 lines) — label optional.
-   - If no fitting slug exists, create an issue proposing a new roadmap entry before coding.
+    - Policy (2025-09-12): Use a single generic `roadmap` label plus an issue title prefix `[slug]` (e.g. `[upload-pipeline] Implement resumable chunking`).
+    - Legacy per-slug labels `roadmap:<slug>` are deprecated; do not create new ones. Existing ones may be removed opportunistically.
+    - Exemptions: trivial typo, tiny test fix, ultra-small bug (<5 lines) — roadmap label optional.
+    - If no fitting slug exists, create an issue proposing a new roadmap entry before coding (use placeholder title `[pending-slug] ...`).
 4. Prioritization
    - Default queue: Open issues in the active Release / Project board (e.g. `MVP`) ordered by priority labels or pipeline column.
    - May preempt only for: confirmed vulnerability, blocking regression, data-loss risk, explicit user direction.
@@ -35,8 +36,8 @@
    - When punting scope (tech debt, optimization, edge case), immediately open a new issue with labels: `follow-up`, `tbd` or `next` + optional roadmap slug.
    - Reference original issue via `Related-To: #<num>` in description.
 9. Roadmap Synchronization
-   - On closing an issue with a roadmap slug: ensure corresponding roadmap item is marked complete (script or YAML-driven future mechanism).
-   - Never manually edit generated roadmap sections; adjust source data instead (`roadmap.yaml`).
+    - On closing an issue tied to a roadmap slug (detected via title prefix): ensure corresponding roadmap item status (✅ / 🟡 / 🔜) reflects reality; update `roadmap.yaml` if scope changed.
+    - Never manually edit generated roadmap sections; adjust source data instead (`roadmap.yaml`).
 10. GitHub-First Operations
     - Prefer GitHub MCP tooling for: creating issues, labeling, project column moves, PR creation, reviews, and merges.
     - Local tasks (tests, builds) must run before pushing.
@@ -79,7 +80,7 @@
 
 ## Labels Reference (Baseline)
 
-- `roadmap:<slug>` – Maps to roadmap entry.
+- `roadmap` – Marks issue as part of product roadmap (slug from title prefix `[slug]`).
 - `priority:critical|high|normal|low`
 - `type:feature|bug|refactor|security|docs|chore`
 - `scope:backend|frontend|shared|infra|docs`
@@ -120,7 +121,7 @@ Portion deferred from #<origin>.
 
 | Area | Must Not | Must Always |
 |------|----------|-------------|
-| Roadmap | Bypass slug for major feature | Label meaningful issues with slug |
+| Roadmap | Bypass slug for major feature | Prefix meaningful issue titles with `[slug]` + add `roadmap` label |
 | Changelog | Merge feature w/out entry | Aggregate entry under Unreleased |
 | Docs | Add feature undocumented | Update or add relevant doc page |
 | Security | Introduce secret handling divergence | Follow rotation + credential runbooks |

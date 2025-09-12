@@ -3,8 +3,8 @@
  * generate-roadmap.cjs (enhanced)
  *
  * Source of truth: roadmap.yaml (categories + ordered slugs).
- * New model: Single `roadmap` label + issue title prefix `[slug]`.
- * Backward compatibility: still detect legacy `roadmap:<slug>` labels and treat them as if title had that slug if title lacks a prefix.
+ * Policy (2025-09-12): Single generic `roadmap` label + issue title prefix `[slug]` is authoritative.
+ * Backward compatibility: still detect legacy `roadmap:<slug>` labels only if title lacks a prefix (labels deprecated; do not add new ones).
  * Orphans: title prefix (or legacy label) not present in YAML.
  * Missing: slug in YAML with no matching issue prefix.
  * Duplicates: >1 open issue for slug (allowed but reported).
@@ -87,7 +87,9 @@ function aggregate(issues, yaml){
     for(const item of cat.items){
       yamlSlugs.add(item.slug);
       const linked = bySlug.get(item.slug) || [];
-      if(linked.length===0) missing.push(item.slug);
+      const itemStatus = item.status || '';
+      const isDone = itemStatus === 'done';
+      if(linked.length===0 && !isDone) missing.push(item.slug);
       if(linked.length>1) duplicates.push(item.slug);
       // Derive merged meta
       const meta = { phase:'', type:'', scope:'', status:'🔜' };
@@ -102,6 +104,8 @@ function aggregate(issues, yaml){
         if(statuses.some(s=> s.statusIcon==='✅')) meta.status='✅';
         else if(statuses.some(s=> /security|bug/.test(s.type))) meta.status='🟡';
         else meta.status='🔜';
+      } else if(isDone){
+        meta.status='✅';
       }
       rows.push({ slug:item.slug, issues: linked.map(i=>({number:i.number})), ...meta });
     }
