@@ -102,6 +102,8 @@ Simple service layout: API (NestJS), optional Redis queue, Postgres DB, reverse 
 
 We welcome contributions: new integrations, themes, plugins, locales, docs improvements, and core features.
 
+Branch workflow: open PRs against `develop` (integration branch). Production releases are cut from `main`. See detailed guidance in `docs/development/branching-strategy.md`.
+
 1. Check open issues or propose an idea via a discussion.
 2. Fork & create a feature branch.
 3. Add/adjust tests for behavior changes.
