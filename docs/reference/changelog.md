@@ -49,6 +49,9 @@ All notable changes (mirrored from root) are listed below.
 - Stricter docs gating: env documentation check now fails CI when unused documented variables are present (prevents silent drift).
 - Documentation scan consistency: all scans hard-fail on issues except roadmap issue linkage which permissively skips when no GH token is provided (local dev convenience).
 - API reference markdown: insert blank line after raw anchor tags before headings to satisfy markdownlint MD022 (prevents recurring lint failure during docs:check).
+- Eliminate unsafe implicit Prisma result inference causing `@typescript-eslint/no-unsafe-*` CI failures by adding explicit model return types across services and controllers (#116).
+- Ensure Prisma Client is generated prior to lint via new `prelint` script preventing type fallback to `any` in CI (#116).
+- Resolve shared package path resolution issues in CI by adding TypeScript import resolver configuration (monorepo path aliases) (#116).
 
 ### Security
 
