@@ -67,12 +67,12 @@ Baseline Docker defaults already apply a seccomp profile that blocks dangerous s
 
 ```json
 {
-	"defaultAction": "SCMP_ACT_ERRNO",
-	"archMap": [{ "architecture": "SCMP_ARCH_X86_64", "subArchitectures": ["SCMP_ARCH_X86", "SCMP_ARCH_X32"] }],
-	"syscalls": [
-		{ "names": ["read", "write", "exit", "futex", "clone", "execve", "openat", "close", "statx"], "action": "SCMP_ACT_ALLOW" },
-		{ "names": ["ptrace"], "action": "SCMP_ACT_ERRNO" }
-	]
+    "defaultAction": "SCMP_ACT_ERRNO",
+    "archMap": [{ "architecture": "SCMP_ARCH_X86_64", "subArchitectures": ["SCMP_ARCH_X86", "SCMP_ARCH_X32"] }],
+    "syscalls": [
+        { "names": ["read", "write", "exit", "futex", "clone", "execve", "openat", "close", "statx"], "action": "SCMP_ACT_ALLOW" },
+        { "names": ["ptrace"], "action": "SCMP_ACT_ERRNO" }
+    ]
 }
 ```
 
@@ -80,12 +80,12 @@ Compose usage (optional override):
 
 ```yaml
 services:
-	api:
-		security_opt:
-			- seccomp:./hardening/seccomp-api.json
-	frontend:
-		security_opt:
-			- seccomp:unconfined # only temporarily during troubleshooting
+    api:
+        security_opt:
+            - seccomp:./hardening/seccomp-api.json
+    frontend:
+        security_opt:
+            - seccomp:unconfined # only temporarily during troubleshooting
 ```
 
 #### AppArmor Example
@@ -94,11 +94,11 @@ On hosts with AppArmor (Ubuntu): create a profile `dragdropdeploy-api` limiting 
 
 ```text
 profile dragdropdeploy-api flags=(attach_disconnected) {
-	network,
-	capability net_bind_service,
-	file,
-	umount,
-	deny ptrace (trace),
+    network,
+    capability net_bind_service,
+    file,
+    umount,
+    deny ptrace (trace),
 }
 ```
 
@@ -106,9 +106,9 @@ Compose reference:
 
 ```yaml
 services:
-	api:
-		security_opt:
-			- apparmor:dragdropdeploy-api
+    api:
+        security_opt:
+            - apparmor:dragdropdeploy-api
 ```
 
 ### Operational Notes

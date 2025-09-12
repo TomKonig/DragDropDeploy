@@ -3,7 +3,7 @@
 
 <!-- Project Logo -->
 <p align="center">
-	<img src="./docs/assets/logo.jpg" alt="DragDropDeploy Logo" width="480" />
+<img src="./docs/assets/logo.jpg" alt="DragDropDeploy Logo" width="480" />
 </p>
 
 [![Build](https://img.shields.io/github/actions/workflow/status/TomKonig/DragDropDeploy/ci.yml?style=flat-square)](https://github.com/TomKonig/DragDropDeploy/actions/workflows/ci.yml)
@@ -142,6 +142,6 @@ Early stage software: expect iteration. Feedback welcome.
 
 <br/>
 <div align="center">
-	<img src="./docs/assets/icon.jpg" alt="DragDropDeploy Icon" width="96" />
-	<p><sub>DragDropDeploy</sub></p>
+<img src="./docs/assets/icon.jpg" alt="DragDropDeploy Icon" width="96" />
+<p><sub>DragDropDeploy</sub></p>
 </div>

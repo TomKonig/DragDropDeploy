@@ -10,6 +10,10 @@ describe('Build history & concurrency (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
+  // The build lifecycle (even in simulated mode) plus Prisma I/O can exceed the default 5s Jest timeout
+  // when the machine is under load. Bump the timeout for this suite to reduce flakiness.
+  jest.setTimeout(20000);
+
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
     app = moduleRef.createNestApplication();
@@ -54,9 +58,21 @@ describe('Build history & concurrency (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(201);
     expect(b2.body.id).toBe(b1.body.id); // concurrency gate returns same active build
-
-    // Wait for lifecycle to finish
-  await new Promise(r => { const t = setTimeout(r, 160); if (typeof (t as any).unref === 'function') (t as any).unref(); });
+    
+    // Poll for build completion instead of relying on a fixed sleep which was causing flakiness
+    const pollStart = Date.now();
+    await new Promise(r => { const t = setTimeout(r, 60); if (typeof (t as any).unref === 'function') (t as any).unref(); });
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const res = await request(app.getHttpServer())
+        .get(`/builds/${b1.body.id}`)
+        .set('Authorization', `Bearer ${token}`);
+      if (res.status === 200 && ['SUCCESS', 'FAILED'].includes(res.body.status)) break;
+      if (Date.now() - pollStart > 8000) {
+        throw new Error(`Timed out waiting for initial build to finish (last status=${res.body?.status})`);
+      }
+      await new Promise(r => { const t = setTimeout(r, 150); if (typeof (t as any).unref === 'function') (t as any).unref(); });
+    }
 
     // Enqueue second build after first completes
     const b3 = await request(app.getHttpServer())

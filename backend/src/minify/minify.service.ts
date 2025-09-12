@@ -25,7 +25,8 @@ function minifyHtml(src: string): string {
 
 @Injectable()
 export class MinifyService {
-  private force = process.env.FORCE_MINIFY; // '1' or '0'
+  // Read FORCE_MINIFY dynamically so tests (and runtime) can adjust between builds.
+  private get force() { return process.env.FORCE_MINIFY; }
   private artifactsRoot = process.env.ARTIFACTS_DIR || './artifacts';
   constructor(private readonly prisma: PrismaService) {}
 

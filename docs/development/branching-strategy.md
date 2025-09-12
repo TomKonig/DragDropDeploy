@@ -37,8 +37,8 @@ git rebase origin/develop
    - All tests & docs checks pass
    - Changelog updated if user-visible
    - Env vars documented if introduced
-2. Merge via squash (preferred) or rebase merge to keep history linear.
-3. Release: When `develop` is ready, open a PR `develop` -> `main`, run full checks, then tag version after merge.
+1. Merge via squash (preferred) or rebase merge to keep history linear.
+1. Release: When `develop` is ready, open a PR `develop` -> `main`, run full checks, then tag version after merge.
 
 ## Hotfix Procedure
 
@@ -49,8 +49,9 @@ git checkout main
 git pull origin main
 git checkout -b hotfix/<issue>
 ```
-2. Implement fix, update changelog, raise PR to `main`.
-3. After merge & tag, merge `main` back into `develop` (or rebase `develop`) to propagate the fix.
+
+1. Implement fix, update changelog, raise PR to `main`.
+1. After merge & tag, merge `main` back into `develop` (or rebase `develop`) to propagate the fix.
 
 ## Changelog & Docs Requirements
 

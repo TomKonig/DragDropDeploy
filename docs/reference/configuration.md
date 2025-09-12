@@ -8,7 +8,8 @@ title: Configuration Reference
 
 <!-- Temporary: Inline copy until include tooling exists -->
 
-\n## Configuration Reference  
+## Configuration Reference  
+
 **Status:** Mixed (Shipped settings + clearly marked Planned entries)
 
 (Source migrated from root `CONFIGURATION.md`)
@@ -126,4 +127,3 @@ Action Items:
 ### Database Schema (Proposed)
 
 ...existing content from original file...
-

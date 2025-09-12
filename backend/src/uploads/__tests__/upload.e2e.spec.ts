@@ -27,6 +27,8 @@ describe('Uploads -> Deployment creation (e2e)', () => {
   await app.init();
   registerTestApp(app);
     await prisma.deployment.deleteMany();
+    await prisma.buildJob.deleteMany();
+    await prisma.projectSetting.deleteMany();
     await prisma.project.deleteMany();
     await prisma.user.deleteMany();
   });

@@ -88,7 +88,7 @@ sudo -u ddd npx prisma migrate deploy
 
 Create `/etc/systemd/system/dragdropdeploy-backend.service`:
 
-```
+```ini
 [Unit]
 Description=DragDropDeploy Backend
 After=network.target postgresql.service redis-server.service
@@ -115,7 +115,7 @@ sudo systemctl enable --now dragdropdeploy-backend
 
 ### Reverse Proxy (Nginx Example)
 
-```
+```nginx
 server {
   server_name app.example.com;
   listen 80;
@@ -149,7 +149,7 @@ Checkout previous tag and repeat build steps. If migration incompatible, restore
 
 ### Backups
 
-```
+```bash
 pg_dump -U ddd ddd > /var/backups/ddd-$(date +%F).sql
 ```
 

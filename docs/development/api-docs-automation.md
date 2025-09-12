@@ -55,7 +55,6 @@ Proposed token syntax inside md:
 
 A script resolves it using a pre-indexed JSON map built after TypeDoc generation.
 
-
 ### Script Sketch
 
 1. Parse `docs/.generated/api/**/**/*.md`.

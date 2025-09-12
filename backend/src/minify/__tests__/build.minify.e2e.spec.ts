@@ -29,7 +29,8 @@ describe('Build Minify Toggle (e2e)', () => {
     const password = 'Passw0rd!test';
     await request(app.getHttpServer()).post('/auth/register').send({ email, password }).expect(201);
     const login = await request(app.getHttpServer()).post('/auth/login').send({ email, password }).expect(201);
-    token = login.body.access_token;
+  // Auth service returns camelCase accessToken (not snake_case)
+  token = login.body.accessToken;
     const proj = await request(app.getHttpServer()).post('/projects').set('Authorization', `Bearer ${token}`).send({ name: 'p-min' }).expect(201);
     projectId = proj.body.id;
   });
@@ -73,7 +74,14 @@ describe('Build Minify Toggle (e2e)', () => {
   });
 
   it('FORCE_MINIFY=1 overrides optOut', async () => {
+    // Ensure project is opted OUT so that FORCE_MINIFY actually proves override
+    await request(app.getHttpServer())
+      .patch(`/projects/${projectId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ optOutMinify: true })
+      .expect(200);
     process.env.FORCE_MINIFY = '1';
+    // Seed artifact with whitespace so minifier has work to do
     await seedArtifact(true);
     const { BuildExecutorService } = await import('../../build/build.executor');
     const exec = app.get(BuildExecutorService);

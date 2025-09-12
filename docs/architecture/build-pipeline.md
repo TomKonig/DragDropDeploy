@@ -1,12 +1,15 @@
 ---
+---
 title: Build Pipeline Internals
 ---
 
-## Build Pipeline Internals
+Build Pipeline Internals
+=======================
 
 Describes artifact upload, validation, storage, and job lifecycle.
 
-### Flow Overview
+Flow Overview
+-------------
 
 1. Client uploads ZIP to deployment endpoint
 2. Backend validates archive (size, magic number, entry count, compression ratio, traversal paths)
@@ -16,7 +19,8 @@ Describes artifact upload, validation, storage, and job lifecycle.
 6. On success: deployment marked ACTIVE (Planned target), job logs stored
 7. On failure: deployment may revert or remain in FAILED_BUILD state (Planned)
 
-### Validation Steps
+Validation Steps
+----------------
 
 | Check | Purpose | Implementation (Current unless noted) |
 |-------|---------|-----------------------|
@@ -26,7 +30,8 @@ Describes artifact upload, validation, storage, and job lifecycle.
 | Compression ratio | Mitigate zip bomb | Ratio compressed vs uncompressed threshold |
 | Path traversal | Prevent escape | Normalize paths; reject `..` segments or absolute |
 
-### Storage Layout
+Storage Layout
+--------------
 
 Current layout omits `build/` and `logs/` until worker exists. Planned final structure:
 
@@ -38,12 +43,14 @@ ARTIFACTS_DIR/
   logs/          # build logs (Planned)
 ```
 
-### Database Entities (Simplified)
+Database Entities (Simplified)
+------------------------------
 
 - Deployment: id, projectId, status (PENDING -> BUILDING -> ACTIVE/FAILED), artifactPath
 - BuildJob: id, deploymentId, status (PENDING -> RUNNING -> SUCCEEDED/FAILED), createdAt, finishedAt
 
-### Status Transitions (Target Model – Planned Beyond Current)
+Status Transitions (Target Model – Planned Beyond Current)
+---------------------------------------------------------
 
 | Deployment | BuildJob | Trigger |
 |------------|----------|---------|
@@ -52,7 +59,8 @@ ARTIFACTS_DIR/
 | BUILDING -> FAILED | RUNNING -> FAILED | Build error |
 | ACTIVE -> BUILDING | New PENDING created | Redeploy (future) |
 
-### Future Enhancements (Planned)
+Future Enhancements (Planned)
+-----------------------------
 
 - Queue isolation / concurrency controls
 - Per-project build limits
@@ -60,26 +68,31 @@ ARTIFACTS_DIR/
 - Artifact checksum + integrity verification
 - Build caching (shared) / remote cache store
 
-### Logs (Planned)
+Logs (Planned)
+--------------
 
 Planned log capture:
+
 - stdout/stderr of build worker into `logs/build-<timestamp>.log`
 - Summaries persisted in DB for quick UI access
 
-### Security Considerations
+Security Considerations
+-----------------------
 
 - Reject nested archives or symlinks outside root
 - Consider scanning extracted files for disallowed types if executing build scripts
 - Timeouts & resource limits in worker process
 
-### Redeploy Strategy (Planned)
+Redeploy Strategy (Planned)
+---------------------------
 
 1. User triggers new upload
 2. New directory `<deploymentId>-<seq>` or maintain versioned subfolders
 3. Switch active pointer (symlink) after successful build
 4. Retain last N versions for rollback
 
-### Open Questions (Exploratory)
+Open Questions (Exploratory)
+----------------------------
 
 - Multi-tenant isolation boundary for builds
 - Build plugin hooks (preBuild/postBuild)

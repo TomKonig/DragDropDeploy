@@ -28,10 +28,12 @@ describe('Health endpoints (e2e)', () => {
     prisma = app.get(PrismaService);
     await app.init();
     registerTestApp(app);
-    // Clean in dependency order: deployments -> projects -> users
-    await (prisma as any).deployment.deleteMany();
-    await (prisma as any).project.deleteMany();
-    await (prisma as any).user.deleteMany();
+  // Clean in dependency order: deployments -> buildJobs -> projectSetting -> projects -> users
+  await (prisma as any).deployment.deleteMany();
+  await (prisma as any).buildJob.deleteMany();
+  await (prisma as any).projectSetting.deleteMany();
+  await (prisma as any).project.deleteMany();
+  await (prisma as any).user.deleteMany();
   });
 
   afterAll(async () => {
