@@ -10,8 +10,11 @@ dist
 # Keep generated root-level build artifacts ignored, but allow source folder backend/src/build
 /build/
 coverage
-tsconfig.tsbuildinfo
-tsconfig.build.tsbuildinfo
+# TypeScript incremental build info (root & workspace)
+*.tsbuildinfo
+
+# Generated API reference (regenerated via docs:api); ignore if purely generated
+docs/reference/api.md
 
 # Local debug logs
 debug.log
