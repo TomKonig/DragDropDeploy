@@ -1,4 +1,8 @@
-# DragDropDeploy – End-to-End Task List (MVP Execution)
+# DragDropDeploy – End-to-End Task List (Deprecated)
+
+> Deprecated: Active and future tasks are moving to GitHub Issues + a Project board. This file is retained for historical context and will no longer be the authoritative source of work items. When opening or working on an Issue, add a `roadmap:<slug>` label to keep the roadmap in sync. A migration script (`scripts/migrate-tasklist-to-issues.cjs`) will assist in bulk creation.
+
+## (Historical) DragDropDeploy – End-to-End Task List (MVP Execution)
 
 Every actionable bullet is a checkbox. Check only when the deliverable truly meets the described acceptance. Narrative context retained where useful. Phases flow in build order; optional / stretch items are marked (Optional).
 
