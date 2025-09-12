@@ -77,6 +77,7 @@ This document classifies all platform settings and indicates where they live.
 | Build | BUILD_FLAGS_ALLOWLIST | env | restart | no | Comma-separated list of allowed build flags (empty = allow all; dev only). |
 | Docs/Internal | SKIP_DB_CONNECT_FOR_DOCS | env | restart | no | When '1', skips DB connection during documentation generation (OpenAPI stub). |
 | Docs/Internal | FAIL_ON_DB_CONNECT | env | restart | no | When '1', forces OpenAPI generation to fail hard on DB connect errors. |
+| Test | ALLOW_REDIS_IN_TEST | env | restart | no | Enables BullMQ/Redis in tests when set; unset skips external Redis and uses in-memory simulation. |
 
 ### Discovered Runtime Environment Variables (Audited)
 
