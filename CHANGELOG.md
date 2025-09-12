@@ -4,7 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-## 0.0.2 - (date pending)
+### Added
+
+- No user-visible additions since last release.
+
+### Changed
+
+- No functional changes recorded yet.
+
+### Security
+
+- No security-related changes since last release.
+
+## 0.0.2 - 2025-09-12
 
 ### Added
 
@@ -45,3 +57,16 @@ All notable changes to this project will be documented in this file.
 - Snyk scans executed (no medium/high issues introduced; remaining low findings are dynamic credential usage in tests).
 - Production compose adds: internal-only DB/Redis network, dropped capabilities (ALL), no-new-privileges, read-only FS (frontend & traefik), resource limits.
 - Added initial auth rate limiting (brute force mitigation) & security headers (Helmet) + stricter CORS configuration.
+
+### Post-0.0.2 Added (Unreleased)
+
+- Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
+- Static asset minification service (HTML/CSS/JS) with per-project opt-out (`optOutMinify`) and host override (`FORCE_MINIFY`).
+
+### Post-0.0.2 Changed (Unreleased)
+
+- Build executor now appends project build flags after `--` and redacts sensitive values in logs.
+
+### Post-0.0.2 Security (Unreleased)
+
+- Expanded log redaction to include `--token=`, `--secret=`, `--key=`, `--password=` patterns.

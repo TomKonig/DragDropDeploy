@@ -20,6 +20,10 @@ export class BuildQueueService implements OnModuleDestroy, OnModuleInit {
 
   constructor(private readonly prisma: PrismaService, private readonly executor: BuildExecutorService, private readonly deployments: DeploymentsService) {
     this.useBull = !!process.env.REDIS_URL;
+    if (process.env.NODE_ENV === 'test' && !process.env.ALLOW_REDIS_IN_TEST) {
+      // Avoid external Redis dependency during tests to prevent hanging beforeAll hooks
+      this.useBull = false;
+    }
   }
 
   async onModuleInit() {

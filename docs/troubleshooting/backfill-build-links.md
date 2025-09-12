@@ -2,7 +2,8 @@
 title: Missing Build ↔ Deployment Links
 ---
 
-## Missing Build ↔ Deployment Links
+\n## Missing Build ↔ Deployment Links  
+**Status:** Shipped (backfill script) – UI surfacing Planned
 
 Historical deployments created before the `buildJobId` column existed may not be linked to their originating build jobs.
 

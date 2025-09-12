@@ -2,7 +2,8 @@
 title: Docker Compose Deployment
 ---
 
-## Docker Compose Deployment
+\n## Docker Compose Deployment  
+**Status:** Shipped (baseline) – resource limits & automated rollback Planned
 
 Standard self-host deployment using the provided `docker-compose.yml` (includes Traefik reverse proxy, Postgres, Redis, backend, optional frontend).
 
@@ -113,7 +114,7 @@ services:
 
 1. Validate health endpoint.
 
-### Rollback (Simple)
+### Rollback (Interim – Planned automated rollback later)
 
 1. Stop stack: `docker compose down` (leave volumes).
 2. Checkout previous git tag / commit.

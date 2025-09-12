@@ -2,7 +2,8 @@
 title: Failed or Stuck Builds
 ---
 
-## Failed or Stuck Builds
+\n## Failed or Stuck Builds  
+**Status:** Shipped (worker simulation) – queue metrics Planned
 
 ### Symptoms
 
@@ -20,14 +21,14 @@ title: Failed or Stuck Builds
 printenv REDIS_URL
 ```
 
-2. If unset, in-memory fallback is used (serial execution). If set, verify connectivity:
+1. If unset, in-memory fallback is used (serial execution). If set, verify connectivity:
 
 ```bash
 redis-cli -u "$REDIS_URL" ping
 ```
 
-3. Inspect backend logs for build errors.
-4. Verify artifact extraction directory exists (`ARTIFACTS_DIR`, default `./artifacts`).
+1. Inspect backend logs for build errors.
+1. Verify artifact extraction directory exists (`ARTIFACTS_DIR`, default `./artifacts`).
 
 ### Resolution
 
@@ -40,8 +41,8 @@ redis-cli -u "$REDIS_URL" ping
 
 ### Prevention
 
-- Add build size limit & pre-validation (planned).
-- Monitor queue latency metric (future instrumentation).
+- Add build size limit & pre-validation (Planned).
+- Monitor queue latency metric (Planned instrumentation).
 - Keep artifacts on fast local volume.
 
 ### Related Docs

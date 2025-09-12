@@ -2,7 +2,8 @@
 title: Threat Model
 ---
 
-## Threat Model
+## Threat Model  
+**Status:** Shipped (baseline) – future items labeled Planned
 
 High-level assessment of assets, actors, attack surfaces, and mitigations. Complements `reference/security-baseline.md`.
 
@@ -30,11 +31,11 @@ High-level assessment of assets, actors, attack surfaces, and mitigations. Compl
 
 | Surface | Risks | Current / Planned Mitigations |
 |---------|-------|------------------------------|
-| ZIP Upload Endpoint | Zip bombs, traversal, large files | Size cap, traversal check, compression ratio, magic number; add rate limiting |
-| Auth (future) | Brute force, token theft | JWT secret rotation, nonce/state for OAuth, rate limiting |
+| ZIP Upload Endpoint | Zip bombs, traversal, large files | Size cap, traversal check, compression ratio, magic number; add rate limiting (Planned) |
+| Auth (Current) | Brute force, token theft | JWT secret entropy, short expiry, login rate limiting |
 | API Endpoints | Injection, broken access control | Parameter validation, role guards, input sanitation (planned) |
-| Build Process | RCE via scripts (future) | No untrusted execution yet; future container isolation |
-| Dependencies | Supply chain compromise | Pin versions, Snyk scanning (enable) |
+| Build Process (Planned) | RCE via scripts | No untrusted execution yet; future container isolation |
+| Dependencies | Supply chain compromise | Pin versions, (Planned) recurring Snyk SCA/SAST scans |
 
 ### Trust Boundaries
 
@@ -53,7 +54,7 @@ High-level assessment of assets, actors, attack surfaces, and mitigations. Compl
 | Privilege Escalation | Unauthorized access | Role guard middleware; future RLS |
 | Dependency Vulnerability | RCE / data leak | Snyk SCA/SAST scans; patch promptly |
 | Build Sandbox Escape (future) | Host compromise | Container isolation + seccomp/AppArmor profiles |
-| Data Exfiltration via Logs | Sensitive leak | Redaction layer (planned) |
+| Data Exfiltration via Logs | Sensitive leak | Redaction layer (implemented patterns for secrets/keys) |
 
 ### Risk Rating (Qualitative)
 
@@ -77,7 +78,7 @@ High-level assessment of assets, actors, attack surfaces, and mitigations. Compl
 - No untrusted plugins auto-loaded
 - No arbitrary build scripts executed yet
 
-### Future Work
+### Future Work (Planned)
 
 - Formal STRIDE categorization
 - Automated threat validation tests

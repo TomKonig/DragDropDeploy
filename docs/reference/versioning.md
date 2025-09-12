@@ -2,7 +2,8 @@
 title: Versioning Strategy
 ---
 
-## Versioning Strategy
+\n## Versioning Strategy  
+**Status:** Shipped
 
 We use Semantic Versioning (SemVer) for all tagged releases: `vMAJOR.MINOR.PATCH`.
 

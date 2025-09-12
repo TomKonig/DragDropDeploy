@@ -6,15 +6,42 @@ title: Changelog
 
 Authoritative source: root `CHANGELOG.md` (retained for repository + tooling conventions). This page mirrors its contents for documentation site readers. Do not edit here directly; modify the root file and re-sync.
 
+### Updating Procedure
+
+1. Edit root `CHANGELOG.md` only.
+2. Keep new entries under the Unreleased section grouped by: Added / Changed / Fixed / Security / Removed / Deprecated (if needed).
+3. Before release, move those sections under a new heading: `## X.Y.Z - YYYY-MM-DD`.
+4. Keep an empty Unreleased template ready in the root file (see root CHANGELOG for canonical format).
+
+5. Run `npm run docs:changelog` (part of `npm run docs:check`) to ensure mirror sync.
+
+### Date Handling
+
+Release date must use UTC date (`YYYY-MM-DD`). Avoid `(date pending)` once released; automation can be added later to enforce.
+
 ---
 
 ### Mirror Content
 
 All notable changes (mirrored from root) are listed below.
 
+<!-- Mirror starts -->
+<!-- markdownlint-disable MD024 -->
 ## Unreleased
 
-## 0.0.2 - (date pending)
+### Added
+
+- No user-visible additions since last release.
+
+### Changed
+
+- No functional changes recorded yet.
+
+### Security
+
+- No security-related changes since last release.
+
+## 0.0.2 - 2025-09-12
 
 ### Added
 
@@ -55,3 +82,16 @@ All notable changes (mirrored from root) are listed below.
 - Snyk scans executed (no medium/high issues introduced; remaining low findings are dynamic credential usage in tests).
 - Production compose adds: internal-only DB/Redis network, dropped capabilities (ALL), no-new-privileges, read-only FS (frontend & traefik), resource limits.
 - Added initial auth rate limiting (brute force mitigation) & security headers (Helmet) + stricter CORS configuration.
+
+### Post-0.0.2 Added (Unreleased)
+
+- Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
+- Static asset minification service (HTML/CSS/JS) with per-project opt-out (`optOutMinify`) and host override (`FORCE_MINIFY`).
+
+### Post-0.0.2 Changed (Unreleased)
+
+- Build executor now appends project build flags after `--` and redacts sensitive values in logs.
+
+### Post-0.0.2 Security (Unreleased)
+
+- Expanded log redaction to include `--token=`, `--secret=`, `--key=`, `--password=` patterns.

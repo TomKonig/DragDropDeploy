@@ -2,85 +2,79 @@
 title: Project Roadmap
 ---
 
-## Project Roadmap
+This page shows users what's available now, what's coming next, and what we’re exploring. For detailed engineering subtasks see the repository task list and issues (converted from `tasklist.md`).
 
-Status legend: ✅ done · 🟡 in progress · 🔜 planned · 🧪 experimental · ❓ under evaluation
+Legend: ✅ shipped · 🟡 in progress · 🔜 planned · 🧪 experimental · ❓ under evaluation
 
-### Near-Term (0–2 Releases)
+## Now (Available or Shipping Soon)
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Deployment artifact upload & validation | ✅ | Implemented: size, traversal, ratio, entry count, artifact persistence |
-| Build job creation on upload | ✅ | Deployment status immediately BUILDING + BuildJob PENDING |
-| Docs restructuring (/docs) | ✅ | Architecture spec migrated; maintainers trimmed |
-| Docker Compose & manual install guides | ✅ | Added operations docs |
-| Roadmap & contributing docs | ✅ | Contributing + roadmap published |
-| Expanded configuration reference | ✅ | Env matrix & audited vars added |
-| API auth reference | ✅ | JWT structure, endpoints, examples |
-| Documentation validation CI | ✅ | Doc quality gates (env vars, changelog consistency) |
-| Release process automation (scripts) | ✅ | Manual dispatch workflow + automated bump/tag/release implemented |
-| Lean dashboard baseline (minimal UI, only essential components) | 🔜 | Strip to core deploy/build/rollback views before styling pass |
-| Static asset minification & optional user disable toggle | 🔜 | HTML/CSS/JS minify at serve/build; per-project setting + host override |
-| Custom per-deployment build flags | 🔜 | Allow user-defined extra args (validated allow-list) appended to SSG command |
-| Theming-ready CSS architecture | 🔜 | Tokenized variables + utility classes to enable future theme packs |
-| Password protection for sites (optional + host enforce) | 🔜 | Basic HTTP auth / token gate for staging & prod toggled per project |
-| Coolify + Traefik deployment validation | 🔜 | Run end-to-end deploy behind Traefik on Coolify template |
+| Feature | Status | What it means for you |
+|---------|--------|-----------------------|
+| Upload & validate your site archive | ✅ | Upload ZIPs with size, path traversal, compression ratio and entry count protections. Artifacts stored for builds. |
+| Automatic build job creation | ✅ | Each upload immediately creates a build record and begins processing. |
+| Configuration & install docs | ✅ | Clear Docker Compose + manual install instructions. |
+| Auth & API basics | ✅ | JWT auth with documented endpoints. |
+| Release automation | ✅ | Consistent tagged releases and published images. |
+| Static asset minification (toggle) | ✅ | HTML/CSS/JS minified by default; project opt-out and global override. |
+| Project build flags | ✅ | Safe allow‑listed flags appended to build; secrets redacted in logs. |
+| Metrics endpoint | ✅ | Prometheus metrics for health & build insight. |
+| Structured logs with redaction | ✅ | Pino logs with secret filtering. |
+| Build worker (foundations) | 🟡 | Real execution path feature‑flagged; sandbox & SSG detection next. |
+| Password protection (site gating) | 🔜 | Enable basic auth/token gate for staging & production. |
+| Minimal dashboard (core views) | 🔜 | Focused deploy, history, and rollback screens before broader UI polish. |
+| Theme-ready styling system | 🔜 | Tokenized styles to allow future theme packs. |
+| Coolify + Traefik validation | 🔜 | Verified one‑click self-host flow. |
 
-### Mid-Term (3–6 Releases)
+## Next (Upcoming Focus)
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Build worker implementation | 🟡 | Basic worker, file-based logs & feature-flagged real execution (`BUILD_EXECUTION_ENABLED`) added; extended SSG detection & sandbox pending |
-| Redeploy / versioned artifacts | 🔜 | Keep N versions + rollback pointer |
-| Domain & wildcard routing | 🔜 | Map hostnames to deployments |
-| OAuth provider integration | 🔜 | GitHub / Google minimal scopes |
-| Rate limiting middleware | ✅ | Auth login rate limiting implemented; upload path pending if needed |
-| DB role separation & least privilege | 🔜 | Apply roles script; adjust runtime URL |
-| Structured logging + redaction | ✅ | Pino integrated; redaction plan documented |
-| Metrics endpoint (Prometheus) | 🔜 | Basic counters (requests, builds) |
-| Test coverage reporting | 🔜 | Add coverage thresholds |
-| External SSL strategy matrix (Cloudflare / ACME / self-cert) | 🔜 | Configurable provider + host-level enforcement policy |
-| Theme override upload mechanism | 🔜 | Zip partials / CSS bundle overriding default theme assets |
-| Automatic page health checks registry | 🔜 | Crawl built pages, record status & latency for dashboard |
-
-### Long-Term (6+ Releases)
-
-| Item | Status | Notes |
-|------|--------|-------|
-| Multi-tenant isolation (containerized builds) | ❓ | Evaluate cost/complexity |
-| Plugin sandboxing / permissions model | ❓ | Policy-driven execution |
-| Incremental diff deploys | ❓ | Hash-based partial updates |
-| Build cache (shared / remote) | ❓ | Speed up repeat builds |
-| Multi-region deployment replication | ❓ | CDN / edge caching strategy |
-| UI extension points (frontend plugins) | ❓ | Component injection registry |
-| Automated canary + rollback | ❓ | Metrics-driven deploy decisions |
-
-### Security & Compliance
-
-| Initiative | Status | Notes |
+| Initiative | Status | Value |
 |-----------|--------|-------|
-| Threat model doc | ✅ | Assets, threats, mitigations documented |
-| SAST & SCA in CI | 🔜 | Enable Snyk with org token |
-| RLS policies | 🔜 | After multi-tenant model solidifies |
+| Versioned deploys & rollback | 🔜 | Keep prior versions and instantly revert if needed. |
+| Domain & wildcard routing | 🔜 | Map custom and staging domains to deployments. |
+| OAuth sign-in (GitHub/Google) | 🔜 | Faster onboarding & reduced password surface. |
+| Artifact publish atomically | 🔜 | Prevent partial or broken live deploys. |
+| Health checks & page monitoring | 🔜 | Detect broken pages post-deploy. |
+| Tier-based retention | 🔜 | Automatic cleanup of old builds based on plan limits. |
+| Theme overrides upload | 🔜 | Drop-in partials / CSS to customize look & feel. |
+| External SSL strategy matrix | 🔜 | Choose Cloudflare, ACME or self-managed cert flows. |
+| Schema drift detection | 🔜 | CI fails if DB schema & migrations diverge. |
+| Test factory helpers | 🔜 | Faster contribution onboarding via simple data builders. |
 
-### Developer Experience
+## Later (Exploration & Long-Term)
 
-| Initiative | Status | Notes |
-|-----------|--------|-------|
-| Factory helpers for tests | 🔜 | Speed up test authoring |
-| Drift detection for schema | 🔜 | Fails CI if Prisma diff exists |
-| Pre-push git hook (lint/test subset) | ❓ | Optional convenience |
+| Idea | Status | Why it matters |
+|------|--------|---------------|
+| Container-isolated builds | ❓ | Stronger multi-tenant security at higher resource cost. |
+| Plugin sandbox & permissions | ❓ | Extensibility without compromising core security. |
+| Incremental / diff deploys | ❓ | Faster updates by shipping only changed assets. |
+| Remote/shared build cache | ❓ | Speed up repeated builds across projects. |
+| Multi-region replication | ❓ | Lower latency & resilience for global audiences. |
+| UI extension injection points | ❓ | Community add-ons and custom panels. |
+| Automated canary + rollback | ❓ | Safer progressive rollouts based on metrics. |
+| Alternative backends (Convex/Supabase) | 🧪 | Optional external data provider experiments. |
 
-### Documentation Enhancements
+## Security & Reliability
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Threat model | ✅ | Security section link present |
-| API quickstart | ✅ | Quickstart & first deployment guides added |
-| Configuration matrix | ✅ | Documented in configuration reference |
+| Area | Status | Note |
+|------|--------|------|
+| Threat model | ✅ | Public document of assets, threats & mitigations. |
+| SAST & dependency scanning | 🔜 | Snyk integration; will block high severity before release. |
+| Row-Level Security policies | 🔜 | Enforced after tenant isolation finalization. |
+| DB role least privilege | 🔜 | Separate runtime vs migration credentials. |
 
-### Tracking & Updates
+## Developer & Contributor Experience
 
-This roadmap is aspirational; priorities may shift. Update status indicators during each release cut.
+| Improvement | Status | Impact |
+|------------|--------|--------|
+| Structured logging & metrics | ✅ | Easier debugging & ops visibility. |
+| Coverage thresholds in CI | ✅ | Baseline code health guardrails. |
+| Pre-push local hook (lint/test) | ❓ | Optional workflow speed-up. |
+| Faster test data factories | 🔜 | Lower barrier for new contributors. |
 
-Sync Note: High-level status must match granular progress in `tasklist.md`. A CI check ensures no completed roadmap item remains unchecked in the task list (and vice versa). Update both when completing a feature.
+## How This Roadmap Works
+
+The roadmap is user-facing. Engineering-level breakdowns, acceptance criteria, and granular progress live in the repository task list and issues. Completed roadmap items must correspond to checked items in `tasklist.md`; CI will flag divergence once that check is enabled.
+
+Priorities can shift based on community feedback and operational learning. Open a discussion or issue if a feature here matters to you—especially items in the Later section.
+
+Self-host note: All shipped features include configuration docs so you can run them privately with minimal overhead.

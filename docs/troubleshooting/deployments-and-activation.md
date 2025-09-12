@@ -2,7 +2,8 @@
 title: Deployment Activation Issues
 ---
 
-## Deployment Activation Issues
+\n## Deployment Activation Issues  
+**Status:** Shipped (manual activation patterns) – smoke test automation Planned
 
 ### Symptoms
 
@@ -21,8 +22,8 @@ title: Deployment Activation Issues
 ls -l artifacts/active/<projectId>
 ```
 
-3. Compare target path with expected deployment artifact directory.
-4. Verify directory contains expected static assets.
+1. Compare target path with expected deployment artifact directory.
+1. Verify directory contains expected static assets.
 
 ### Resolution
 
@@ -35,7 +36,7 @@ ls -l artifacts/active/<projectId>
 ### Prevention
 
 - Keep activation atomic via `ln -sfn` semantics.
-- Add post-activation smoke test (planned).
+- Add post-activation smoke test (Planned).
 - Monitor logs for activation start/complete events.
 
 ### Related Docs

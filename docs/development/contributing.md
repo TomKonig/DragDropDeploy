@@ -65,6 +65,28 @@ Call out any perf-sensitive paths or new attack surfaces in PR description.
 
 Add entry under appropriate section. Group similar changes when squashing before release.
 
+Template (keep headings even if empty while developing a feature branch):
+
+```markdown
+## Unreleased
+### Added
+### Changed
+### Fixed
+### Security
+### Removed
+```
+
+### Security Scans (Snyk)
+
+If you add dependencies or touch auth / upload / parsing code:
+
+1. (Optional) Export `SNYK_TOKEN` locally.
+2. Run SAST (code) scan (if CLI installed): `snyk code test --severity-threshold=high`.
+3. Run SCA (deps) scan: `snyk test --all-projects --severity-threshold=high`.
+4. Address high/critical before requesting review (or justify in PR).
+
+GitHub Actions will run on tag or manual dispatch when token configured.
+
 ### Review Process
 
 - At least one maintainer approval (see `MAINTAINERS.md`)

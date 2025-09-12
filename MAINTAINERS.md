@@ -1,5 +1,8 @@
 # Maintainers Guide
 
+<!-- Added link to documentation philosophy for clarity on artifact roles -->
+See also: [Documentation Philosophy](./DOCUMENTATION_PHILOSOPHY.md)
+
 This file now focuses on governance, release, and maintenance processes. The comprehensive technical & architecture specification has moved to `docs/architecture/spec.md` to avoid duplication.
 
 ## Quick Links

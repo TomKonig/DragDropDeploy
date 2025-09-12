@@ -11,7 +11,8 @@ Actionable guides for diagnosing and resolving common issues. Each page follows 
 | Resolution | Steps to fix safely |
 | Prevention | Hardening / process steps to avoid repeat |
 
-## Topics
+\n## Topics  
+**Status:** Shipped – add new pages as issues arise
 
 * [Schema Drift Detected](schema-drift.md)
 * [Missing Build ↔ Deployment Links](backfill-build-links.md)

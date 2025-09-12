@@ -43,10 +43,18 @@ jobs:
         run: npm ci
       - name: Generate Prisma Client
         run: npm run prisma:generate -w backend
+      - name: Docs checks (includes API gen)
+        run: npm run docs:check
       - name: Run backend tests
         env:
           DATABASE_URL: postgresql://ddd:ddd@localhost:5432/ddd
         run: npm test -w backend -- --runInBand
+      - name: Run frontend tests
+        run: npm test -w frontend
+      - name: Backend coverage
+        run: npm run coverage:backend
+      - name: Frontend coverage
+        run: npm run coverage:frontend
       - name: Build backend
         run: npm run build -w backend
       - name: Build shared (explicit)

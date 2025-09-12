@@ -2,7 +2,8 @@
 title: Schema Drift Detected
 ---
 
-## Schema Drift Detected
+\n## Schema Drift Detected  
+**Status:** Shipped
 
 > The Prisma schema defines models/fields not present in applied migrations (or vice‑versa).
 

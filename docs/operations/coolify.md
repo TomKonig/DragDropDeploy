@@ -2,7 +2,8 @@
 title: Coolify Deployment Guide
 ---
 
-## Coolify Deployment Guide
+\n## Coolify Deployment Guide  
+**Status:** Shipped (base deployment) – multi-domain & automated rollback Planned
 
 This guide shows how to deploy DragDropDeploy on Coolify using the provided `docker-compose.coolify.yml` (no embedded Traefik – Coolify manages proxy, TLS, and domains).
 
@@ -96,13 +97,13 @@ Then set `STORAGE_ROOT=/data/storage` to have persistent deployment artifacts.
 - Prisma migrations: On image start, run `npx prisma migrate deploy` (add an init script or entrypoint wrapper in future iteration).
 - Static frontend: Build in CI and serve from backend (add copy step) to eliminate `frontend` container.
 
-### 11. Zero-Downtime Strategy (Future)
+### 11. Zero-Downtime Strategy (Planned)
 
 - Introduce versioned artifact directories and a pointer (symlink) for active.
 - Preload new version then atomically swap pointer.
 - Health endpoint (`/health`) used by Coolify for rolling restart checks.
 
-### 12. Rollback Procedure (Interim)
+### 12. Rollback Procedure (Interim / Planned Automation)
 
 Until automated rollback implemented:
 
@@ -115,7 +116,7 @@ Until automated rollback implemented:
 - If OAuth: add provider envs (e.g. `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OAUTH_REDIRECT_URL`).
 - Enforce HTTPS cookie settings (`SECURE_COOKIES=true`).
 
-### 14. Observability (Future)
+### 14. Observability (Planned Enhancements)
 
 - Add minimal logs volume or external log shipping.
 - Expose metrics endpoint (e.g. `/metrics`) and integrate with Prometheus stack (optional).

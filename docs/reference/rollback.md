@@ -2,7 +2,8 @@
 title: Rollback Plan
 ---
 
-## Rollback Plan
+\n## Rollback Plan  
+**Status:** Shipped (manual) – automated rollback & canary Planned
 
 Reliable reversibility is required for any production upgrade. This document defines the standard rollback playbook.
 
@@ -87,7 +88,7 @@ Automate when CI/CD integration is added.
 - Log completion with success flag.
 - Annotate CHANGELOG under Unreleased -> Changed or Security if user-facing impact.
 
-### Future Enhancements (Optional)
+### Future Enhancements (Planned / Optional)
 
 - Automated canary deployment & auto-revert on error rate spike.
 - Continuous backups (WAL archiving) enabling point-in-time recovery.

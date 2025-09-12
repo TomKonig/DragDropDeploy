@@ -12,30 +12,30 @@ Describes artifact upload, validation, storage, and job lifecycle.
 2. Backend validates archive (size, magic number, entry count, compression ratio, traversal paths)
 3. Extracts into `ARTIFACTS_DIR/<deploymentId>/source` (or similar layout)
 4. Creates `BuildJob` record (status PENDING) & sets Deployment status BUILDING
-5. Worker (future) processes build job (transforms, bundling, domain config)
-6. On success: deployment marked ACTIVE (planned state), job logs stored
-7. On failure: deployment may revert or remain in FAILED_BUILD state (planned)
+5. Worker (Planned) processes build job (transforms, bundling, domain config)
+6. On success: deployment marked ACTIVE (Planned target), job logs stored
+7. On failure: deployment may revert or remain in FAILED_BUILD state (Planned)
 
 ### Validation Steps
 
-| Check | Purpose | Implementation Sketch |
+| Check | Purpose | Implementation (Current unless noted) |
 |-------|---------|-----------------------|
 | Size limit | Prevent large memory/disk abuse | Compare raw bytes against `MAX_UPLOAD_MB` env |
 | Magic number | Ensure ZIP signature | Check first 4 bytes == PK\x03\x04 |
-| Entry count | Avoid zip bombs | Cap file entries (configurable future) |
+| Entry count | Avoid zip bombs | Cap file entries (configurable Planned tuning) |
 | Compression ratio | Mitigate zip bomb | Ratio compressed vs uncompressed threshold |
 | Path traversal | Prevent escape | Normalize paths; reject `..` segments or absolute |
 
 ### Storage Layout
 
-Suggested layout (current or planned):
+Current layout omits `build/` and `logs/` until worker exists. Planned final structure:
 
 ```text
 ARTIFACTS_DIR/
   <deploymentId>/
     source/        # raw extracted files
-    build/         # processed build output (future)
-    logs/          # build logs (future)
+  build/         # processed build output (Planned)
+  logs/          # build logs (Planned)
 ```
 
 ### Database Entities (Simplified)
@@ -43,7 +43,7 @@ ARTIFACTS_DIR/
 - Deployment: id, projectId, status (PENDING -> BUILDING -> ACTIVE/FAILED), artifactPath
 - BuildJob: id, deploymentId, status (PENDING -> RUNNING -> SUCCEEDED/FAILED), createdAt, finishedAt
 
-### Status Transitions (Target Model)
+### Status Transitions (Target Model – Planned Beyond Current)
 
 | Deployment | BuildJob | Trigger |
 |------------|----------|---------|
@@ -52,7 +52,7 @@ ARTIFACTS_DIR/
 | BUILDING -> FAILED | RUNNING -> FAILED | Build error |
 | ACTIVE -> BUILDING | New PENDING created | Redeploy (future) |
 
-### Future Enhancements
+### Future Enhancements (Planned)
 
 - Queue isolation / concurrency controls
 - Per-project build limits
@@ -60,7 +60,7 @@ ARTIFACTS_DIR/
 - Artifact checksum + integrity verification
 - Build caching (shared) / remote cache store
 
-### Logs
+### Logs (Planned)
 
 Planned log capture:
 - stdout/stderr of build worker into `logs/build-<timestamp>.log`
@@ -79,7 +79,7 @@ Planned log capture:
 3. Switch active pointer (symlink) after successful build
 4. Retain last N versions for rollback
 
-### Open Questions
+### Open Questions (Exploratory)
 
 - Multi-tenant isolation boundary for builds
 - Build plugin hooks (preBuild/postBuild)

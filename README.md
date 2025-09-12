@@ -1,140 +1,141 @@
-# DragDropDeploy (WIP)
-
-Deploy static sites in minutes. Self‑hosted. Open Source.
-
-Drag & drop a ZIP → get a live site (workflow in progress). This project is early; expect fast change.
-
-## Current Capabilities
-
-* Email/password auth (first user becomes operator)
-* Project creation + secure ZIP upload (deployment enters BUILDING)
-* Artifact persistence (`ARTIFACTS_DIR`)
-* Build jobs with simulated or real execution (feature-flagged)
-* Deployment activation (symlink) & static file serving endpoint
-* Rollback to previous deployment (most recent inactive or explicit ID)
-* Settings + config validation
-* i18n foundation (shared YAML locales)
-* OpenAPI docs at `/docs`
-
-Full technical spec & roadmap: see `MAINTAINERS.md`.
-
-## Roadmap (Short List)
-
-* Build execution + status transitions
-* Version history & rollback
-* Custom and wildcard domains
-* Snippet injection (global & per project)
-* OAuth + invite codes
-* Plans / quotas / usage metrics
-
-## Quick Start (Experimental)
-
-```bash
-git clone https://github.com/TomKonig/DragDropDeploy.git
-cd DragDropDeploy
-cp .env.example .env   # edit DATABASE_URL + JWT_SECRET
 docker compose up -d
-```
-
-Open <http://localhost:3000> and register; first account becomes operator.
-
-### Minimal Environment Variables
-
-| Key | Purpose |
-|-----|---------|
-| DATABASE_URL | Postgres connection string |
-| JWT_SECRET | 16+ char signing secret |
-| MAX_UPLOAD_MB | (optional) Upload size limit (default 25) |
-| ARTIFACTS_DIR | (optional) Where deployment artifacts persist |
-
-See `CONFIGURATION.md` for the full list.
-
-### Build System & Logs
-
-Builds are queued per project. Without Redis, an in-memory simulation runs. With `REDIS_URL` set, BullMQ processes jobs. Build execution defaults to simulated steps unless you set:
-
-```bash
-export BUILD_EXECUTION_ENABLED=true
-```
-
-When enabled, the executor runs `npm run build --if-present` at the repo root, capturing stdout/stderr to a file under `backend/artifacts/build-logs/<buildId>.log`. Logs are retrievable via:
-
-```bash
-curl -H "Authorization: Bearer <token>" http://localhost:3000/builds/<buildId>/logs
-```
-
-Optional query `?tail=200` returns the last N lines. Basic redaction masks bearer tokens and obvious secret patterns. Future work: sandboxing & SSG detection.
-
-### Deployment & Rollback (MVP)
-
-1. Upload a deployment artifact ZIP: `POST /deployments/upload` (multipart fields: `projectId`, `file`)
-2. (If build executor enabled) wait for build success; else manually activate with `POST /deployments/{deploymentId}/activate`.
-3. Serve site root: `GET /deployments/project/{projectId}/site/` (serves `index.html` of active artifact). Append a path segment to fetch a file.
-4. New deployment activation auto-inactivates the previous active deployment.
-5. Rollback: `POST /deployments/project/{projectId}/rollback` (body optional: `{ "targetDeploymentId": "..." }`).
-
-Security notes:
-
-* Path traversal blocked during extraction & serving (realpath + prefix checks).
-* Directory listing disabled; only files or implicit `index.html` are served.
-* Deployment endpoints require authentication (JWT bearer). Future enhancement: role-based restrictions & per-project scopes.
-
-### Troubleshooting & Operations
-
-Operational diagnostics, schema drift remediation, build/deployment troubleshooting, and historical backfill procedures now live in the docs site:
-
-See: `docs/troubleshooting/` (e.g. [Schema Drift](docs/troubleshooting/schema-drift.md), [Missing Build Links](docs/troubleshooting/backfill-build-links.md)).
-
-## Contributing
-
-PRs welcome. Keep this README short—put deep architectural details in `MAINTAINERS.md`.
-
-## Philosophy
-
-* Start incredibly simple; scale only if necessary
-* Favor transparency over magic
-* Secure defaults; explicit extension points
-
-## Related Docs
-
-* Technical / Architecture: `MAINTAINERS.md`
-* Configuration Reference: `CONFIGURATION.md`
-* Security Baseline: `SECURITY_BASELINE.md`
-* Versioning: `VERSIONING.md`
-* Rollback Playbook: `ROLLBACK.md`
-* Changelog: `CHANGELOG.md`
-
-## Versioning & Releases
-
-All packages share a single version (monorepo style). Use:
-
-```bash
-npm run release:patch
-npm run release:minor
-npm run release:major
-```
-
-Append :tag to auto create commit + tag, or :push to also push:
-
-```bash
-npm run release:patch:tag
-npm run release:minor:push
-```
-
-This updates all `package.json` versions and inserts a new heading under `## Unreleased` in `CHANGELOG.md`. If you did not use :tag or :push, manually commit and tag:
-
-```bash
 git add .
 git commit -m "chore(release): vX.Y.Z"
 git tag vX.Y.Z
 git push origin main --tags
+
+# DragDropDeploy
+
+![DragDropDeploy Logo](./docs/assets/logo.svg)
+
+[![Build](https://img.shields.io/github/actions/workflow/status/TomKonig/DragDropDeploy/ci.yml?style=flat-square)](https://github.com/TomKonig/DragDropDeploy/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](./LICENSE)
+[![Changelog](https://img.shields.io/badge/Changelog-keep--a--changelog-blue?style=flat-square)](./CHANGELOG.md)
+[![Roadmap](https://img.shields.io/badge/Roadmap-Now%2FNext%2FLater-purple?style=flat-square)](./docs/roadmap.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](https://github.com/TomKonig/DragDropDeploy/issues)
+
+Self‑hosted, lightweight static (and future hybrid) site hosting — drop in your site and share the link. An open alternative to closed platforms like Tiiny.host, Cloudflare Pages, and Netlify, designed for people who want control, customization, and low resource usage.
+
+> Drag & drop a ZIP → get a staging URL → go live. Keep ownership of your data and deploy on your own hardware (even a modest VPS or homelab box).
+
+## Why DragDropDeploy?
+
+**Own your platform.** No vendor lock‑in, MIT licensed. Run it privately for yourself or offer hosting to others.
+
+**Built for self‑hosters.** Minimal services (Postgres + optional Redis + Traefik). Lean runtime so small servers run comfortably.
+
+**Multi‑tenant ready.** Host multiple users, each with their own projects, custom domains or shared subdomains.
+
+**Extensible by design.** Theme system, plugin hooks (early), localization files, and planned marketplace for themes, plugins, and language packs.
+
+**Future‑proof.** Roadmap includes broad static site generator (SSG) coverage and optional non‑serverless runtime support.
+
+**Admin friendly.** As many settings as possible live in the dashboard instead of piling on environment variables.
+
+**Monetization ready.** Endpoints prepared for integrating Stripe and pricing tiers (plans, quotas, usage metrics) — bring your own billing.
+
+## Core Features (Current / Emerging)
+
+- Email/password login (first user auto‑elevated to operator)
+- Create & manage projects
+- Secure ZIP upload & artifact storage
+- Build jobs (simulated or real execution behind a flag)
+- Static asset minification (toggle per project; global override)
+- Project-level build flags (allow‑listed, safely redacted in logs)
+- Version tracking groundwork (build history & logs)
+- Clean file serving with path safety checks
+- OpenAPI docs at `/docs`
+- Internationalization foundation (YAML locales)
+- Metrics endpoint (Prometheus) & structured logs
+
+See the user‑oriented roadmap for “Now / Next / Later”: [`docs/roadmap.md`](docs/roadmap.md)
+
+## Coming Soon (Highlights)
+
+- One‑click rollback & version retention
+- Custom + wildcard domain routing
+- OAuth sign‑in (GitHub / Google)
+- Theming & marketplace publishing flow
+- Plugin execution sandbox
+- Health checks & page quality signals
+- Tier‑based retention quotas
+
+## Quickstart (5 Minutes)
+
+> Full install, advanced tuning, and operations docs live in the documentation site. This is the short version.
+
+```bash
+git clone https://github.com/TomKonig/DragDropDeploy.git
+cd DragDropDeploy
+cp .env.example .env  # set DATABASE_URL + JWT_SECRET
+docker compose up -d
 ```
 
-Clean working tree is required (script aborts) unless you pass `--allow-dirty` (not recommended). Using :tag or :push stamps the version heading with the current date (ISO yyyy-mm-dd). Manual bumps leave 'TBD' until you commit/tag.
+Visit <http://localhost:3000> and register — the first account becomes the operator.
+
+### Minimal Environment
+
+| Variable | Purpose |
+|----------|---------|
+| DATABASE_URL | Postgres connection string |
+| JWT_SECRET | 16+ char signing secret |
+| MAX_UPLOAD_MB | (optional) ZIP upload size limit (default 25) |
+| ARTIFACTS_DIR | (optional) Artifact storage path |
+
+More: see `CONFIGURATION.md`.
+
+## Extensibility & Customization
+
+| Aspect | Status | Notes |
+|--------|--------|-------|
+| Themes | 🔜 | Token‑based styling & future theme marketplace |
+| Plugins | 🟡 | Hook surfaces forming; sandbox & permissions planned |
+| Locales | 🟡 | i18n foundation; community language packs welcome |
+| Build Flags | ✅ | Allow‑listed per project, appended to build command |
+| Minification | ✅ | HTML/CSS/JS with opt‑out and global force flag |
+
+## Architecture at a Glance
+
+Simple service layout: API (NestJS), optional Redis queue, Postgres DB, reverse proxy (Traefik). All chosen for low friction self hosting, clarity, and future scalability without forcing complexity early.
+
+## Contributing
+
+We welcome contributions: new integrations, themes, plugins, locales, docs improvements, and core features.
+
+1. Check open issues or propose an idea via a discussion.
+2. Fork & create a feature branch.
+3. Add/adjust tests for behavior changes.
+4. Submit a PR referencing any related issue.
+
+For deeper internals & release process see:
+
+- `CONTRIBUTING.md` (guidelines)
+- `MAINTAINERS.md` (architecture & subsystem notes)
+- `CONFIGURATION.md` (all settings)
+- `CHANGELOG.md` (history)
+
+For how we structure docs (what belongs in the README vs deeper guides), see [Documentation Philosophy](./DOCUMENTATION_PHILOSOPHY.md).
+
+## Philosophy
+
+- Start simple; optimize only when real usage demands it.
+- Prefer explicit, observable behavior over hidden automation.
+- Keep resource usage low so hobby hardware works.
+- Enable customization without mandatory plugins.
+
+## Releasing (Maintainers)
+
+Monorepo single version. Scripts (patch/minor/major) update packages & changelog. See `VERSIONING.md` for full workflow. Typical example:
+
+```bash
+npm run release:patch:tag
+```
+
+Creates commit + tag and stamps the date. Push with `:push` variant or manually push tags afterward.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT — permissive for commercial & private use. See `LICENSE`.
 
 ---
-Early stage software: APIs & schema may change without notice.
+Early stage software: expect iteration. Feedback welcome.

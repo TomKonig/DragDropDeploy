@@ -1,7 +1,7 @@
 {
   "name": "dragdropdeploy-monorepo",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "workspaces": [
     "backend",
@@ -20,7 +20,11 @@
     "docs:env": "node scripts/docs/check-env-docs.js",
     "docs:changelog": "node scripts/docs/check-changelog-sync.js",
     "docs:roadmap": "node scripts/docs/check-roadmap-sync.js",
-    "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog && npm run docs:roadmap",
+  "docs:api": "npm run openapi:gen -w backend && node scripts/docs/generate-openapi-md.cjs",
+  "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog && npm run docs:roadmap && npm run docs:api",
+  "coverage:backend": "npm run test:ci -w backend -- --coverage",
+  "coverage:frontend": "npm run test:coverage -w frontend",
+  "coverage": "npm run coverage:backend && npm run coverage:frontend",
     "release:patch": "node scripts/release/bump-version.js patch",
     "release:minor": "node scripts/release/bump-version.js minor",
   "release:major": "node scripts/release/bump-version.js major",

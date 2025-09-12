@@ -94,6 +94,8 @@ model ProjectSetting {
   project     Project  @relation(fields: [projectId], references: [id])
   userSnippet String?
   spaMode     Boolean  @default(false)
+  optOutMinify Boolean @default(false) // when true skip minification unless FORCE_MINIFY=1
+  buildFlags  String[] @default([]) // project-level additional build flags (allow-listed)
   updatedAt   DateTime @updatedAt
 }
 

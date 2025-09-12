@@ -2,7 +2,8 @@
 title: Authentication / Authorization Problems
 ---
 
-## Authentication / Authorization Problems
+\n## Authentication / Authorization Problems  
+**Status:** Shipped (JWT auth) – refresh tokens & OAuth Planned
 
 ### Symptoms
 
@@ -20,13 +21,13 @@ title: Authentication / Authorization Problems
 curl -s -X POST http://localhost:3000/auth/login -d '{"email":"admin@example.com","password":"StrongP@ssw0rd"}' -H 'Content-Type: application/json'
 ```
 
-2. Decode JWT (header & exp) to ensure not expired:
+1. Decode JWT (header & exp) to ensure not expired:
 
 ```bash
 jq -R 'split(".") | .[1] | @base64d | fromjson' <<< "$TOKEN"
 ```
 
-3. Check server logs for guard errors.
+1. Check server logs for guard errors.
 
 ### Resolution
 
@@ -39,8 +40,8 @@ jq -R 'split(".") | .[1] | @base64d | fromjson' <<< "$TOKEN"
 ### Prevention
 
 - Rotate secrets deliberately with overlap window.
-- Add refresh token flow (future enhancement).
-- Centralize auth error metrics.
+- Add refresh token flow (Planned).
+- Centralize auth error metrics (Planned).
 
 ### Related Docs
 

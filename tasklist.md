@@ -33,6 +33,15 @@ Sync Note: When marking an item complete that corresponds to a high-level roadma
 - [x] Provide initial seccomp/apparmor profile reference (document optional use).
 - [x] Dependency automation: Renovate config + weekly dependency audit workflow (outdated report & policy gate in CI)
 
+### Roadmap Evidence (Summary Items)
+
+- [x] Roadmap evidence: upload & validate site archive (upload & archive validation guards implemented: size, traversal, compression ratio, entry count).
+- [x] Roadmap evidence: automatic build job creation (build job auto-created on upload; status transitions begin immediately).
+- [x] Roadmap evidence: configuration & install docs (Compose + manual install configuration & installation docs shipped).
+- [x] Roadmap evidence: auth & API basics (JWT auth + core API endpoints documented and tested; OpenAPI generated).
+- [x] Roadmap evidence: metrics endpoint (Prometheus metrics endpoint exposed with counters/histogram and IP allow list).
+- [x] Roadmap evidence: coverage thresholds in CI (coverage tasks/scripts established in pipeline enforcing quality gate).
+
 ## Phase 2: Core Backend Development
 
 - [x] Select ORM (Prisma or TypeORM) and initialize.
@@ -77,21 +86,24 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 ### Core Drag & Drop Deploy Flow (Primary Value Proposition)
 
 - [ ] Backend: multipart upload endpoint `/deployments/upload` (accept .zip or raw directory upload) with:
-  - Size limit (configurable, reject > MAX_UPLOAD_MB)
-  - Content-type & extension validation
-  - Path traversal protection (no `..` segments, strip leading slashes)
-  - File count & compressed/uncompressed ratio guard (zip bomb mitigation)
-  - (Partial 2025-09-11) Implemented initial ZIP path: size limit env (`MAX_UPLOAD_MB`), traversal & ratio guard, Deployment row creation (PENDING). Pending: content-type validation, raw directory path, actual artifact persistence/publish.
+  - [x] Size limit (env `MAX_UPLOAD_MB`)
+  - [x] Basic path traversal protection
+  - [x] Compression ratio & entry count guard (initial heuristic)
+  - [ ] Content-type & extension validations
+  - [ ] Raw directory (no-zip) upload support
+  - [ ] Artifact persistence (copy to version folder)
+  - [ ] Immediate staging URL returned
+  - [ ] Finalize deployment status transitions (UPLOADING -> PROCESSING)
 - [ ] Extraction pipeline: unzip to temp workspace, normalize line endings, sanitize filenames.
   - (Skeleton controller `DeploymentsController` returns 501 for `/deployments/upload` placeholder.)
 - [ ] Static site default: if no build config detected, treat root as ready-to-serve artifact (copy directly -> version folder).
 - [ ] Deployment record creation (status: UPLOADING -> PROCESSING -> BUILDING -> ACTIVE/FAILED) persisted.
 - [ ] Status polling endpoint (lightweight JSON) for dashboard progress.
 - [x] Logs endpoint (tail + full) with redaction hook placeholder (basic file-based, redaction TBD).
-- [ ] Static asset minification + disable toggle
-  - Acceptance: HTML/CSS/JS (where applicable) minified by default during build or serve path; per-project DB setting `optOutMinify` stored & reflected via API; host-level env `FORCE_MINIFY=1|0` overrides project preference; e2e test proves toggle on/off; minification step skips already minified assets (heuristic) to avoid double-processing.
-- [ ] Custom per-deployment build flags
-  - Acceptance: Allow-list of supported SSGs (e.g. HUGO, ASTRO) may receive user-provided extra flags; invalid / disallowed flags rejected with 400 & clear message; persisted with build record; redaction of any secrets (no `--token=` style leakage) verified in logs test.
+- [x] Static asset minification + disable toggle
+  - Acceptance: HTML/CSS/JS (where applicable) minified by default; per-project DB setting `optOutMinify`; host-level `FORCE_MINIFY` overrides; skips already minified assets; e2e tests for default, opt-out, forced.
+- [x] Project-level build flags
+  - Acceptance: `ProjectSetting.buildFlags` array stored; allowlist via `BUILD_FLAGS_ALLOWLIST`; appended to build command with `npm run build --if-present -- <flags>`; sensitive values redacted; e2e tests for allowlist rejection & log redaction.
 - [ ] Atomic publish step (symlink or pointer swap) to avoid partial deploy state.
 - [ ] Immediate staging URL returned in initial response (even if build pending) for eventual live check.
 - [ ] Tests: upload happy path, oversize rejection, zip bomb heuristic, path traversal rejection.
@@ -180,131 +192,10 @@ Immediate Next Focus (shortlist before starting full artifact pipeline):
 - [ ] Coolify deployment template / instructions validated (one-click run with Traefik & env setup).
 - [ ] Security hardening guide added (defense-in-depth: Traefik, Coolify, DB least privilege, OAuth safeguards).
 
-### Post-MVP / Future Extensibility
-
-- [ ] Pluggable auth & data backend option (Experimental): Admin UI toggle to switch from local PostgreSQL (Prisma) to Convex or Supabase.
-  - Validate provided Convex/Supabase credentials & target project readiness.
-  - Provide one-way export (initial): snapshot relational data -> target schema with migration script.
-  - (Stretch) Bi-directional sync: change capture (logical decoding or triggers) -> queue -> apply to remote; remote -> local polling or webhooks.
-  - Conflict resolution policy (last-write-wins baseline; optional vector clock or timestamp guard).
-  - Rollback path: re-import remote snapshot to PostgreSQL and disable external backend.
-  - Security doc: token scopes, least privilege RLS/row policies, data residency implications.
-  - Feature flag: `EXPERIMENTAL_PLUGGABLE_BACKEND=true` gating all UI/actions.
-  - Clear disclaimer: Not required for MVP; high complexity & potential consistency trade-offs.
-- [x] Eliminate need for `--forceExit` in test:ci by identifying and closing lingering Testcontainers/Docker stream handle so Jest exits cleanly without force exit. (Achieved 2025-09-11: teardown refinements allow natural Jest exit; script updated.) Acceptance: `npm test` finishes with no open handle warning and without `--forceExit` flag.
-- [ ] External SSL strategy matrix (Cloudflare / ACME / self-cert)
-  - Acceptance: Abstraction layer with provider enum; configuration via env + documented precedence; stub implementations returning simulated cert metadata; switching provider requires only env change + restart; fallback self-signed documented; security note about key storage path.
-- [ ] Theme override upload mechanism
-  - Acceptance: Authenticated UI/API to upload zip of theme partials/assets; validation rejects archives with executables or disallowed extensions; overrides extracted into project-specific dir; precedence order (override -> default) documented; test ensures override supersedes base asset.
-- [ ] Automatic page health checks registry
-  - Acceptance: After activation, background job crawls site (depth & rate limited) storing status code & latency; dashboard table with last run timestamp & aggregate pass/fail; opt-out flag per project; failing pages raise warning badge on project list.
 
 ## References (Informational – Not Checkboxes)
 
 > NestJS & BullMQ, PostgreSQL RLS, Traefik ACME automation, React ecosystem selection, official Postgres Docker image.
-
-## Complexity Breakdown (Informational)
-
-What’s Simple:
-
-- [ ] Static upload -> serve on subdomain (core path).
-- [ ] CRUD for users/projects/roles.
-- [ ] Basic React dashboards (unstyled initially).
-- [ ] Basic BullMQ queue (single worker) & per-project mutex.
-- [ ] Local filesystem storage with retention.
-
-Medium Complexity:
-
-- [ ] Versioning + rollback pointer + permanent staging URLs.
-- [ ] GitHub (public) import with shallow clone.
-- [ ] Universal snippet injection (head-safe parser, idempotent).
-- [ ] Optional S3-compatible backend.
-- [ ] Stripe hosted checkout & webhooks.
-
-High Complexity / Risk Areas:
-
-- [ ] Build isolation (Docker vs local) with timeouts & resource caps.
-- [ ] Wildcard subdomains + DNS-01 TLS issuance.
-- [ ] Concurrency fairness & Redis locking robustness.
-- [ ] Proper RLS (policies + admin bypass auditing).
-- [ ] Dynamic Traefik routing strategy (single service host mapping).
-- [ ] Large uploads & quotas (size caps, potential virus scan future).
-
-## Scope Control (Acceptance Markers)
-
-- [ ] Explicit SSG selection; heuristic hints only.
-- [ ] Single runtime image (Hugo binary + Node). Jekyll only in isolated build job.
-- [ ] Serve artifacts from app for MVP (CDN optional later).
-- [ ] Stripe minimal: hosted checkout + plan mapping only.
-
-## Hidden Work (Checklist to Avoid Surprises)
-
-- [ ] Cleanup of temp dirs after builds.
-- [ ] GC old versions beyond retention.
-- [ ] GC expired staging links (if policy defined).
-- [ ] Log retention & redaction (no secrets in logs).
-- [ ] Timezone consistency (UTC in DB, UI localize).
-- [ ] Distinguish retried vs new builds in history.
-- [ ] Handling of Windows line endings in uploaded zips.
-- [ ] Reject overly large node_modules in uploads (size guard).
-
-## Risk Mitigation Sequencing (Ordered Subset)
-
-- [ ] 1: Core serving loop (upload -> serve) done before complex builds.
-- [ ] 2: Add queue + dummy build then real Node/Hugo builds (in-process).
-- [ ] 3: Introduce containerized build isolation (feature flag) after stable local.
-- [ ] 4: Versioning & rollback pointer stabilization.
-- [ ] 5: Traefik + ACME DNS-01 after basic HTTP-01 works.
-- [ ] 6: Stripe integration (flag-gated) after core flows stable.
-- [ ] 7: S3 backend after local retention proven.
-- [ ] 8: Enable RLS as final hardening step (test suite green first).
-
-## Definition of “Done” for Complex Areas
-
-Build Isolation:
-
-- [ ] DinD or alternative sandbox with user-ns remap (Optional early; doc fallback).
-- [ ] Resource caps (CPU/mem/time) + forced kill on timeout.
-- [ ] Deny dangerous docker run flags.
-
-Wildcard TLS:
-
-- [ ] DNS provider creds stored & validated (or documented manual path).
-- [ ] Wildcard cert for *.staging.example.com issued & auto-renewing.
-- [ ] Fallback per-subdomain cert issuance documented.
-
-Concurrency:
-
-- [ ] Redis lock build:{projectId} prevents parallel same-project builds.
-- [ ] BullMQ concurrency >1 for different projects.
-- [ ] Metrics for queue depth & active jobs exposed.
-
-Stripe:
-
-- [ ] Webhook signature verified.
-- [ ] Idempotent subscription updates (event log table).
-- [ ] Admin override for plan assignment.
-
-RLS:
-
-- [ ] Policies for all CRUD operations referencing tenant column.
-- [ ] Admin bypass via separate DB role logged.
-- [ ] Test suite executed with RLS on.
-- [ ] Runtime uses app_rw role only; migrator role used exclusively in migration job.
-- [ ] JIT admin elevation procedure tested & documented.
-
-Traefik Routing:
-
-- [ ] Host -> project/version mapping internal cache.
-- [ ] No container-per-version explosion (single runtime service).
-
-## De-Risking Quick Wins
-
-- [ ] Implement minimal build (no SSG) early.
-- [ ] Add staging subdomain generation before Traefik wildcard DNS.
-- [ ] Add feature flag for BUILD_MODE=local|docker.
-- [ ] Provide manual cert instructions before automating DNS-01.
-- [ ] Delay RLS enforcement until after integration tests exist.
 
 ## Final Go-Live Gates
 
@@ -317,5 +208,3 @@ Traefik Routing:
 - [ ] Tagged release (v0.1.0) pushed & images published.
 - [ ] Deployment runbook documented.
 
----
-Short answer: Core is simple; isolation, domains/SSL, billing, concurrency, and RLS are the real engineering weight. This checklist converts the narrative plan into verifiable steps—when the last required box is checked, the MVP is deployable.

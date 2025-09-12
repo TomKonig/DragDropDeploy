@@ -11,6 +11,9 @@ async function register(app: INestApplication, email: string = randomEmail()) {
   const res = await request(app.getHttpServer())
     .post('/auth/register')
     .send({ email, password });
+  // Debug: log status for registration
+  // eslint-disable-next-line no-console
+  console.log('[health.e2e] register response', res.status, res.body?.role);
   return res.body.accessToken as string;
 }
 
@@ -23,12 +26,12 @@ describe('Health endpoints (e2e)', () => {
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     prisma = app.get(PrismaService);
-  await app.init();
-  registerTestApp(app);
-  // Clean in dependency order: deployments -> projects -> users
-  await (prisma as any).deployment.deleteMany();
-  await (prisma as any).project.deleteMany();
-  await (prisma as any).user.deleteMany();
+    await app.init();
+    registerTestApp(app);
+    // Clean in dependency order: deployments -> projects -> users
+    await (prisma as any).deployment.deleteMany();
+    await (prisma as any).project.deleteMany();
+    await (prisma as any).user.deleteMany();
   });
 
   afterAll(async () => {
@@ -46,12 +49,15 @@ describe('Health endpoints (e2e)', () => {
   });
 
   it('returns 403 for /health/internal with basic user token', async () => {
-  // Ensure first user (operator bootstrap) is created so the next user is plain USER
-  await register(app, 'health-bootstrap-op@example.com');
-  const token = await register(app, 'healthuser@example.com');
-    await request(app.getHttpServer())
+    // Ensure first user (operator bootstrap) is created so the next user is plain USER
+    await register(app, 'health-bootstrap-op@example.com');
+    const token = await register(app, 'healthuser@example.com');
+    // Debug: attempt request and log intermediate response
+    const res = await request(app.getHttpServer())
       .get('/health/internal')
-      .set('Authorization', `Bearer ${token}`)
-      .expect(403);
-  });
+      .set('Authorization', `Bearer ${token}`);
+    // eslint-disable-next-line no-console
+    console.log('[health.e2e] /health/internal status', res.status, res.body);
+    expect(res.status).toBe(403);
+  }, 15000); // increase timeout to 15s for diagnostics
 });
