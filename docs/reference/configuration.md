@@ -22,7 +22,9 @@ This document classifies all platform settings and indicates where they live.
 |-------|------------|--------|--------------------|--------|-------|
 | Core | DATABASE_URL | env | restart | yes | Separate MIGRATOR_DATABASE_URL later. |
 | Core | REDIS_URL | env | restart | no | Connection string for queue/cache. |
-| Core | JWT_SECRET | env | restart (rotation deploy) | yes | Rotate via deployment; triggers token invalidation. |
+| Core | JWT_SECRET | env | restart (rotation deploy) | yes | Legacy single-secret name (still accepted); superseded by JWT_SIGNING_SECRET for rotation. |
+| Core | JWT_SIGNING_SECRET | env | restart (rotation deploy) | yes | Primary secret used to sign NEW JWTs (falls back to JWT_SECRET if unset). |
+| Core | JWT_VERIFICATION_SECRETS | env | restart (rotation deploy) | yes | Comma-separated list of additional (previous) secrets accepted for verification during key rotation (includes JWT_SIGNING_SECRET implicitly if not provided). |
 | Core | ENCRYPTION_KEY | env | restart | yes | For encrypting stored third‑party secrets (future). |
 | Core | NODE_ENV | env | restart | no | Standard Node environment. |
 | Core | PORT | env | restart | no | Backend listen port. |
