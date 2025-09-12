@@ -48,6 +48,42 @@ Self‑hosted, lightweight static (and future hybrid) site hosting — drop in y
 
 See the user‑oriented roadmap for “Now / Next / Later”: [`docs/roadmap.md`](docs/roadmap.md)
 
+## Roadmap Maintenance
+
+The roadmap is source‑controlled and enforced — no manual editing of the table in `docs/roadmap.md`.
+
+Authoritative data flow:
+
+1. `roadmap.yaml` (canonical categories + slugs)
+2. One GitHub issue per slug, labeled `roadmap`, titled `[slug] Descriptive title`
+3. Generated markdown table inside `docs/roadmap.md` (AUTO-ROADMAP block)
+4. CI validation (`scripts/docs/check-roadmap-sync.js`) ensures: every slug has an issue & doc row; warns on stale doc rows.
+
+Daily tasks:
+
+- To add a roadmap item: add slug entry under the right category in `roadmap.yaml`, create the matching issue.
+- To rename: update slug in YAML AND retitle the issue; regenerate docs.
+- To remove: delete from YAML; close the issue (optionally remove label); regenerate docs.
+
+Regenerate the roadmap table:
+
+```bash
+node scripts/generate-roadmap.cjs
+```
+
+Commit the changed `docs/roadmap.md`.
+
+Token usage in CI:
+
+- Uses `GH_TOKEN` (fallback `GITHUB_TOKEN`) for listing issues via `gh` CLI.
+- If neither token is present, script skips issue validation (prints a warning).
+
+Common pitfalls:
+
+- Forgetting the `[slug]` prefix → item treated as missing.
+- Duplicate slugs in issues → validation fails until duplicates closed/retitled.
+- Manual edits inside the AUTO-ROADMAP block → overwritten next generation.
+
 ## Coming Soon (Highlights)
 
 - One‑click rollback & version retention

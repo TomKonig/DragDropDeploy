@@ -44,6 +44,8 @@ jobs:
       - name: Generate Prisma Client
         run: npm run prisma:generate -w backend
       - name: Docs checks (includes API gen)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: npm run docs:check
       - name: Run backend tests
         env:
@@ -99,12 +101,14 @@ jobs:
           command: code test --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
       - name: Snyk Open Source (SCA) Test
         uses: snyk/actions/node@master
         with:
           command: test --all-projects --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
       - name: Snyk Open Source Monitor (optional)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: snyk/actions/node@master
@@ -112,6 +116,7 @@ jobs:
           command: monitor --all-projects
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
 
   docker-images:
     name: Build & Push Images

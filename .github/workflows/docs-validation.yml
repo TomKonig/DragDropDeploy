@@ -21,6 +21,10 @@ jobs:
       - name: Install deps
         run: npm install --no-audit --no-fund
       - name: Run docs checks
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: npm run docs:check
       - name: Roadmap docs sync check
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: node scripts/docs/check-roadmap-sync.js

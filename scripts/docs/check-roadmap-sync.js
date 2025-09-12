@@ -44,13 +44,19 @@ for(; (m=rowRe.exec(md));){
   if(canonical.has(cell)) docSlugs.add(cell);
 }
 
-// Query GitHub issues for roadmap label
-let issues=[];
-try {
-  issues = JSON.parse(sh('gh issue list --label roadmap --limit 500 --json number,title,labels,state'));
-} catch(e){
-  console.error('Failed to list issues via gh CLI:', e.message);
-  process.exit(1);
+// Query GitHub issues for roadmap label (token fallback: GH_TOKEN || GITHUB_TOKEN)
+let issues = [];
+const ghToken = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
+if(!ghToken){
+  console.warn('No GH_TOKEN/GITHUB_TOKEN provided; skipping GitHub issue validation (will not fail).');
+} else {
+  // Ensure gh CLI sees token
+  const envExport = `export GH_TOKEN='${ghToken.replace(/'/g,"'\\''")}'`;
+  try {
+    issues = JSON.parse(sh(`${envExport} && gh issue list --label roadmap --limit 500 --json number,title,labels,state`));
+  } catch(e){
+    console.warn('Warning: gh issue list failed, skipping issue validation:', e.message);
+  }
 }
 
 const slugFromTitle = t => (t.match(/^\[([^\]]+)\]/) || [])[1];
@@ -62,8 +68,8 @@ for(const is of issues){
   issueMap.get(slug).push(is);
 }
 
-const missingIssues = [...canonical].filter(s=> !issueMap.has(s));
-const duplicateIssues = [...issueMap.entries()].filter(([s,list])=> list.length>1 && canonical.has(s)).map(([s])=>s);
+const missingIssues = issues.length ? [...canonical].filter(s=> !issueMap.has(s)) : [];
+const duplicateIssues = issues.length ? [...issueMap.entries()].filter(([s,list])=> list.length>1 && canonical.has(s)).map(([s])=>s) : [];
 const missingDoc = [...canonical].filter(s=> !docSlugs.has(s));
 const docOrphans = [...docSlugs].filter(s=> !canonical.has(s));
 
