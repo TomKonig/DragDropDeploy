@@ -15,5 +15,9 @@
   "skipErrorChecking": true,
   "navigation": {
     "includeCategories": true
-  }
+  },
+  "exclude": [
+    "**/generated/prisma/runtime/**",
+    "**/generated/prisma/namespaces/Prisma/**"
+  ]
 }
