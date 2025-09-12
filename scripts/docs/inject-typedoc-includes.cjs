@@ -83,6 +83,35 @@ function extractFragment(fileEntry, anchor) {
   return lines.slice(target.line, end).join('\n').trim();
 }
 
+function transformFragment(raw, key) {
+  let out = raw.trim();
+  // Demote first level-1 heading (# ) to level-3 (###) to avoid multiple H1s in composite page
+  out = out.replace(/^# (.+)$/m, '### $1');
+  // Optional: demote any level-2 under original to level-4 to keep hierarchy compact
+  out = out.replace(/^## (.+)$/gm, '#### $1');
+  // Collapse extremely long pipe unions (like translation key lists) for readability
+  out = out.replace(/`((?:[^`]|`(?!`))+?)`/g, (m, inner) => {
+    if (inner.length > 400 && inner.includes('|')) {
+      // Keep first ~6 segments then ellipsis
+      const parts = inner.split('|').map(s => s.trim());
+      if (parts.length > 12) {
+        return '`' + parts.slice(0, 6).join(' | ') + ' | … | ' + parts.slice(-3).join(' | ') + '`';
+      }
+    }
+    return m;
+  });
+  // Specific tweak for shared translation helper: shorten the giant key union section heading to a single sentence if present
+  if (/shared\/functions\/t\.md$/.test(key)) {
+    out = out.replace(/### key[\s\S]*?## Parameters/, match => {
+      return '#### Keys\nLarge union of i18n keys omitted for brevity (see full generated docs for complete list).\n\n## Parameters';
+    });
+  }
+  // Wrap with markdownlint disable/enable for duplicate headings etc.
+  const lintDisable = '<!-- markdownlint-disable MD024 MD025 MD032 -->';
+  const lintEnable = '<!-- markdownlint-enable MD024 MD025 MD032 -->';
+  return `${lintDisable}\n${out}\n${lintEnable}`;
+}
+
 function resolveKey(rawPath, index) {
   // rawPath examples: backend/auth/auth.service#login OR backend/AuthService#login
   const [filePart, anchor] = rawPath.split('#');
@@ -103,7 +132,8 @@ function processFile(mdPath, index) {
   let changed = false;
   content = content.replace(INCLUDE_REGEX, (_, key) => {
     const { entry, anchor } = resolveKey(key, index);
-    const frag = extractFragment(entry, anchor);
+  const rawFrag = extractFragment(entry, anchor);
+  const frag = transformFragment(rawFrag, key);
     changed = true;
     return `\n<!-- begin:included ${key} -->\n${frag}\n<!-- end:included ${key} -->\n`;
   });

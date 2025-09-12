@@ -42,6 +42,8 @@ Below snippets are injected from TypeDoc output. Follow links within each snippe
 - [Projects Service](#projects-service)
 - [Users Service](#users-service)
 - [Shared Translation Helper `t()`](#shared-translation-helper-t)
+ - [Prisma Service](#prisma-service)
+ - [Build Executor Service](#build-executor-service)
 
 ### Auth Service
 
@@ -1136,6 +1138,755 @@ User UUID
 
 `Promise`\<`null` \| \{ `createdAt`: `Date`; `displayName`: `null` \| `string`; `email`: `string`; `id`: `string`; `isOperator`: `boolean`; `passwordHash`: `null` \| `string`; `role`: `UserRole`; `updatedAt`: `Date`; \}\>
 <!-- end:included api/backend/users/users.service/classes/UsersService.md -->
+
+### Prisma Service
+
+
+<!-- begin:included api/backend/prisma/prisma.service/classes/PrismaService.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
+[**@dragdropdeploy/backend**](../../../README.md)
+
+***
+
+[@dragdropdeploy/backend](../../../README.md) / [prisma/prisma.service](../README.md) / PrismaService
+
+### Class: PrismaService
+
+Defined in: [backend/src/prisma/prisma.service.ts:6](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/prisma/prisma.service.ts#L6)
+
+#### Extends
+
+- `PrismaClient`
+
+#### Implements
+
+- `OnModuleInit`
+- `OnModuleDestroy`
+
+#### Indexable
+
+\[`K`: `symbol`\]: `object`
+
+#### Constructors
+
+### Constructor
+
+> **new PrismaService**(`optionsArg?`): `PrismaService`
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:144
+
+####  Prisma Client ʲˢ
+
+Type-safe database client for TypeScript & Node.js
+
+#### Parameters
+
+##### optionsArg?
+
+`Subset`\<`PrismaClientOptions`, `PrismaClientOptions`\>
+
+#### Returns
+
+`PrismaService`
+
+#### Example
+
+```
+const prisma = new PrismaClient()
+// Fetch zero or more Users
+const users = await prisma.user.findMany()
+```
+
+Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+
+#### Inherited from
+
+`PrismaClient.constructor`
+
+#### Properties
+
+### $extends
+
+> **$extends**: `ExtendsHook`\<`"extends"`, `TypeMapCb`, `DefaultArgs`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:228
+
+#### Inherited from
+
+`PrismaClient.$extends`
+
+#### Accessors
+
+### buildJob
+
+#### Get Signature
+
+> **get** **buildJob**(): `BuildJobDelegate`\<`ExtArgs`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:268
+
+`prisma.buildJob`: Exposes CRUD operations for the **BuildJob** model.
+ * Example usage:
+ * ```ts
+ * // Fetch zero or more BuildJobs
+ * const buildJobs = await prisma.buildJob.findMany()
+ * ```
+
+##### Returns
+
+`BuildJobDelegate`\<`ExtArgs`\>
+
+#### Inherited from
+
+`PrismaClient.buildJob`
+
+***
+
+### deployment
+
+#### Get Signature
+
+> **get** **deployment**(): `DeploymentDelegate`\<`ExtArgs`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:258
+
+`prisma.deployment`: Exposes CRUD operations for the **Deployment** model.
+ * Example usage:
+ * ```ts
+ * // Fetch zero or more Deployments
+ * const deployments = await prisma.deployment.findMany()
+ * ```
+
+##### Returns
+
+`DeploymentDelegate`\<`ExtArgs`\>
+
+#### Inherited from
+
+`PrismaClient.deployment`
+
+***
+
+### project
+
+#### Get Signature
+
+> **get** **project**(): `ProjectDelegate`\<`ExtArgs`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:248
+
+`prisma.project`: Exposes CRUD operations for the **Project** model.
+ * Example usage:
+ * ```ts
+ * // Fetch zero or more Projects
+ * const projects = await prisma.project.findMany()
+ * ```
+
+##### Returns
+
+`ProjectDelegate`\<`ExtArgs`\>
+
+#### Inherited from
+
+`PrismaClient.project`
+
+***
+
+### projectSetting
+
+#### Get Signature
+
+> **get** **projectSetting**(): `ProjectSettingDelegate`\<`ExtArgs`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:288
+
+`prisma.projectSetting`: Exposes CRUD operations for the **ProjectSetting** model.
+ * Example usage:
+ * ```ts
+ * // Fetch zero or more ProjectSettings
+ * const projectSettings = await prisma.projectSetting.findMany()
+ * ```
+
+##### Returns
+
+`ProjectSettingDelegate`\<`ExtArgs`\>
+
+#### Inherited from
+
+`PrismaClient.projectSetting`
+
+***
+
+### systemSetting
+
+#### Get Signature
+
+> **get** **systemSetting**(): `SystemSettingDelegate`\<`ExtArgs`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:278
+
+`prisma.systemSetting`: Exposes CRUD operations for the **SystemSetting** model.
+ * Example usage:
+ * ```ts
+ * // Fetch zero or more SystemSettings
+ * const systemSettings = await prisma.systemSetting.findMany()
+ * ```
+
+##### Returns
+
+`SystemSettingDelegate`\<`ExtArgs`\>
+
+#### Inherited from
+
+`PrismaClient.systemSetting`
+
+***
+
+### user
+
+#### Get Signature
+
+> **get** **user**(): `UserDelegate`\<`ExtArgs`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:238
+
+`prisma.user`: Exposes CRUD operations for the **User** model.
+ * Example usage:
+ * ```ts
+ * // Fetch zero or more Users
+ * const users = await prisma.user.findMany()
+ * ```
+
+##### Returns
+
+`UserDelegate`\<`ExtArgs`\>
+
+#### Inherited from
+
+`PrismaClient.user`
+
+#### Methods
+
+### $connect()
+
+> **$connect**(): `Promise`\<`void`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:150
+
+Connect with the database
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Inherited from
+
+`PrismaClient.$connect`
+
+***
+
+### $disconnect()
+
+> **$disconnect**(): `Promise`\<`void`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:155
+
+Disconnect from the database
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Inherited from
+
+`PrismaClient.$disconnect`
+
+***
+
+### $executeRaw()
+
+> **$executeRaw**\<`T`\>(`query`, ...`values`): `PrismaPromise`\<`number`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:173
+
+Executes a prepared raw query and returns the number of affected rows.
+
+#### Type Parameters
+
+##### T
+
+`T` = `unknown`
+
+#### Parameters
+
+##### query
+
+`TemplateStringsArray` | `Sql`
+
+##### values
+
+...`any`[]
+
+#### Returns
+
+`PrismaPromise`\<`number`\>
+
+#### Example
+
+```
+const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
+```
+
+Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+
+#### Inherited from
+
+`PrismaClient.$executeRaw`
+
+***
+
+### $executeRawUnsafe()
+
+> **$executeRawUnsafe**\<`T`\>(`query`, ...`values`): `PrismaPromise`\<`number`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:185
+
+Executes a raw query and returns the number of affected rows.
+Susceptible to SQL injections, see documentation.
+
+#### Type Parameters
+
+##### T
+
+`T` = `unknown`
+
+#### Parameters
+
+##### query
+
+`string`
+
+##### values
+
+...`any`[]
+
+#### Returns
+
+`PrismaPromise`\<`number`\>
+
+#### Example
+
+```
+const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
+```
+
+Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+
+#### Inherited from
+
+`PrismaClient.$executeRawUnsafe`
+
+***
+
+### $on()
+
+> **$on**\<`V`\>(`eventType`, `callback`): `void`
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:145
+
+#### Type Parameters
+
+##### V
+
+`V` *extends* `never`
+
+#### Parameters
+
+##### eventType
+
+`V`
+
+##### callback
+
+(`event`) => `void`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+`PrismaClient.$on`
+
+***
+
+### $queryRaw()
+
+> **$queryRaw**\<`T`\>(`query`, ...`values`): `PrismaPromise`\<`T`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:196
+
+Performs a prepared raw query and returns the `SELECT` data.
+
+#### Type Parameters
+
+##### T
+
+`T` = `unknown`
+
+#### Parameters
+
+##### query
+
+`TemplateStringsArray` | `Sql`
+
+##### values
+
+...`any`[]
+
+#### Returns
+
+`PrismaPromise`\<`T`\>
+
+#### Example
+
+```
+const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
+```
+
+Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+
+#### Inherited from
+
+`PrismaClient.$queryRaw`
+
+***
+
+### $queryRawUnsafe()
+
+> **$queryRawUnsafe**\<`T`\>(`query`, ...`values`): `PrismaPromise`\<`T`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:208
+
+Performs a raw query and returns the `SELECT` data.
+Susceptible to SQL injections, see documentation.
+
+#### Type Parameters
+
+##### T
+
+`T` = `unknown`
+
+#### Parameters
+
+##### query
+
+`string`
+
+##### values
+
+...`any`[]
+
+#### Returns
+
+`PrismaPromise`\<`T`\>
+
+#### Example
+
+```
+const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
+```
+
+Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+
+#### Inherited from
+
+`PrismaClient.$queryRawUnsafe`
+
+***
+
+### $transaction()
+
+#### Call Signature
+
+> **$transaction**\<`P`\>(`arg`, `options?`): `Promise`\<`UnwrapTuple`\<`P`\>\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:223
+
+Allows the running of a sequence of read/write operations that are guaranteed to either succeed or fail as a whole.
+
+##### Type Parameters
+
+###### P
+
+`P` *extends* `PrismaPromise`\<`any`\>[]
+
+##### Parameters
+
+###### arg
+
+\[`...P[]`\]
+
+###### options?
+
+###### isolationLevel?
+
+`TransactionIsolationLevel`
+
+##### Returns
+
+`Promise`\<`UnwrapTuple`\<`P`\>\>
+
+##### Example
+
+```
+const [george, bob, alice] = await prisma.$transaction([
+  prisma.user.create({ data: { name: 'George' } }),
+  prisma.user.create({ data: { name: 'Bob' } }),
+  prisma.user.create({ data: { name: 'Alice' } }),
+])
+```
+
+Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
+
+##### Inherited from
+
+`PrismaClient.$transaction`
+
+#### Call Signature
+
+> **$transaction**\<`R`\>(`fn`, `options?`): `Promise`\<`R`\>
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:225
+
+Allows the running of a sequence of read/write operations that are guaranteed to either succeed or fail as a whole.
+
+##### Type Parameters
+
+###### R
+
+`R`
+
+##### Parameters
+
+###### fn
+
+(`prisma`) => `Promise`\<`R`\>
+
+###### options?
+
+###### isolationLevel?
+
+`TransactionIsolationLevel`
+
+###### maxWait?
+
+`number`
+
+###### timeout?
+
+`number`
+
+##### Returns
+
+`Promise`\<`R`\>
+
+##### Example
+
+```
+const [george, bob, alice] = await prisma.$transaction([
+  prisma.user.create({ data: { name: 'George' } }),
+  prisma.user.create({ data: { name: 'Bob' } }),
+  prisma.user.create({ data: { name: 'Alice' } }),
+])
+```
+
+Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
+
+##### Inherited from
+
+`PrismaClient.$transaction`
+
+***
+
+### ~~$use()~~
+
+> **$use**(`cb`): `void`
+
+Defined in: backend/node\_modules/.prisma/client/index.d.ts:162
+
+Add a middleware
+
+#### Parameters
+
+##### cb
+
+`Middleware`
+
+#### Returns
+
+`void`
+
+#### Deprecated
+
+since 4.16.0. For new code, prefer client extensions instead.
+
+#### See
+
+https://pris.ly/d/extensions
+
+#### Inherited from
+
+`PrismaClient.$use`
+
+***
+
+### enableShutdownHooks()
+
+> **enableShutdownHooks**(`app`): `Promise`\<`void`\>
+
+Defined in: [backend/src/prisma/prisma.service.ts:19](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/prisma/prisma.service.ts#L19)
+
+#### Parameters
+
+##### app
+
+`INestApplication`
+
+#### Returns
+
+`Promise`\<`void`\>
+
+***
+
+### onModuleDestroy()
+
+> **onModuleDestroy**(): `Promise`\<`void`\>
+
+Defined in: [backend/src/prisma/prisma.service.ts:25](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/prisma/prisma.service.ts#L25)
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+`OnModuleDestroy.onModuleDestroy`
+
+***
+
+### onModuleInit()
+
+> **onModuleInit**(): `Promise`\<`void`\>
+
+Defined in: [backend/src/prisma/prisma.service.ts:7](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/prisma/prisma.service.ts#L7)
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+`OnModuleInit.onModuleInit`
+
+***
+
+### setTenantContext()
+
+> **setTenantContext**(): `Promise`\<`void`\>
+
+Defined in: [backend/src/prisma/prisma.service.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/prisma/prisma.service.ts#L31)
+
+#### Returns
+
+`Promise`\<`void`\>
+<!-- markdownlint-enable MD024 MD025 MD032 -->
+<!-- end:included api/backend/prisma/prisma.service/classes/PrismaService.md -->
+
+
+### Build Executor Service
+
+
+<!-- begin:included api/backend/build/build.executor/classes/BuildExecutorService.md -->
+<!-- markdownlint-disable MD024 MD025 MD032 -->
+[**@dragdropdeploy/backend**](../../../README.md)
+
+***
+
+[@dragdropdeploy/backend](../../../README.md) / [build/build.executor](../README.md) / BuildExecutorService
+
+### Class: BuildExecutorService
+
+Defined in: [backend/src/build/build.executor.ts:17](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.executor.ts#L17)
+
+BuildExecutorService: performs a real build process (opt-in) capturing stdout/err to log file.
+Current minimal strategy:
+ - Detects presence of package.json in project workspace (future: project specific path)
+ - Runs `npm run build --if-present` and records exit code
+ - Redacts any occurrence of bearer tokens or typical secret patterns before writing logs
+
+#### Constructors
+
+### Constructor
+
+> **new BuildExecutorService**(`metrics`, `minify`, `prisma`): `BuildExecutorService`
+
+Defined in: [backend/src/build/build.executor.ts:21](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.executor.ts#L21)
+
+#### Parameters
+
+##### metrics
+
+[`MetricsService`](../../../metrics/metrics.service/classes/MetricsService.md)
+
+##### minify
+
+[`MinifyService`](../../../minify/minify.service/classes/MinifyService.md)
+
+##### prisma
+
+[`PrismaService`](../../../prisma/prisma.service/classes/PrismaService.md)
+
+#### Returns
+
+`BuildExecutorService`
+
+#### Methods
+
+### isEnabled()
+
+> **isEnabled**(): `boolean`
+
+Defined in: [backend/src/build/build.executor.ts:23](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.executor.ts#L23)
+
+#### Returns
+
+`boolean`
+
+***
+
+### runBuild()
+
+> **runBuild**(`projectId`, `logFile`): `Promise`\<\{ `exitCode`: `null` \| `number`; `success`: `boolean`; \}\>
+
+Defined in: [backend/src/build/build.executor.ts:25](https://github.com/TomKonig/DragDropDeploy/blob/7cfad32578f007c36f85506e906f5cd454b8c265/backend/src/build/build.executor.ts#L25)
+
+#### Parameters
+
+##### projectId
+
+`string`
+
+##### logFile
+
+`string`
+
+#### Returns
+
+`Promise`\<\{ `exitCode`: `null` \| `number`; `success`: `boolean`; \}\>
+<!-- markdownlint-enable MD024 MD025 MD032 -->
+<!-- end:included api/backend/build/build.executor/classes/BuildExecutorService.md -->
+
 
 
 
