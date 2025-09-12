@@ -27,6 +27,7 @@ const lines = md.split(/\r?\n/);
 let currentPhase = null;
 const phaseRe = /^##\s+Phase\s+(\d+):/i;
 const uncheckedTaskRe = /^- \[ \] (.+)/; // unchecked only
+const POST_MVP_REGEX = /post-mvp/i; // marker to exclude
 
 function slugify(str) {
   return str
@@ -69,6 +70,10 @@ for (const line of lines) {
   const taskMatch = uncheckedTaskRe.exec(line);
   if (taskMatch && currentPhase) {
     const title = taskMatch[1].trim();
+    // Skip explicitly tagged post-MVP tasks
+    if (POST_MVP_REGEX.test(title)) {
+      continue;
+    }
     // Skip already checked tasks (pattern ensures unchecked only)
     const slug = slugify(title);
     const labels = [
@@ -80,14 +85,12 @@ for (const line of lines) {
     const escapedTitle = title.replace(/"/g, '\\"');
     const bodyLines = [
       `Imported from deprecated tasklist (Phase ${currentPhase}).`,
-      '',
       'Acceptance Criteria:',
       '- [ ] Define measurable outcome',
       '- [ ] Add tests / docs / changelog entry',
-      '',
       'Migration Note: Replace roadmap status manually if this closes the item.'
     ];
-    const body = bodyLines.join('\n').replace(/"/g, '\\"');
+    const body = bodyLines.join('\\n').replace(/"/g, '\\"');
     const cmd = `gh issue create --title "${escapedTitle}" --body "${body}" --label "${labels.join(',')}"`;
     commands.push(cmd);
   }
