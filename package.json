@@ -21,6 +21,7 @@
     "docs:changelog": "node scripts/docs/check-changelog-sync.js",
     "docs:roadmap": "node scripts/docs/check-roadmap-sync.js",
     "docs:api": "npm run openapi:gen -w backend && node scripts/docs/generate-openapi-md.cjs && npm run docs:typedoc && npm run docs:includes && node scripts/docs/postprocess-api-md.cjs",
+    "docs:regen-core": "node scripts/generate-roadmap.cjs && npm run docs:api",
   "docs:includes": "node scripts/docs/inject-typedoc-includes.cjs",
   "docs:lint": "markdownlint --config .markdownlint.json \"docs/**/*.md\" --ignore docs/.generated",
   "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog && npm run docs:roadmap && npm run docs:api && npm run docs:lint",
