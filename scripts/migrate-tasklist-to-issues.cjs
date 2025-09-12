@@ -69,7 +69,8 @@ for (const line of lines) {
   }
   const taskMatch = uncheckedTaskRe.exec(line);
   if (taskMatch && currentPhase) {
-    const title = taskMatch[1].trim();
+    const rawTitle = taskMatch[1].trim();
+    const title = rawTitle.replace(/\s+/g, ' '); // normalize whitespace/newlines
     // Skip explicitly tagged post-MVP tasks
     if (POST_MVP_REGEX.test(title)) {
       continue;
