@@ -21,10 +21,12 @@ describe('Auth & Roles (e2e)', () => {
 
   await app.init();
   registerTestApp(app);
-  // Clean in dependency order to avoid foreign key violations
-  await (prisma as any).deployment.deleteMany();
-  await (prisma as any).project.deleteMany();
-  await (prisma as any).user.deleteMany();
+  // Global clean for deterministic first-user promotion; truncate key tables
+  await prisma.deployment.deleteMany();
+  await prisma.project.deleteMany();
+  await prisma.buildJob.deleteMany();
+  await prisma.projectSetting.deleteMany();
+  await prisma.user.deleteMany();
   });
 
   afterAll(async () => {
@@ -32,31 +34,8 @@ describe('Auth & Roles (e2e)', () => {
     await prisma.$disconnect();
   });
 
-  it('registers a user and logs in', async () => {
-  const email = randomEmail();
-  const password = randomPassword();
-
-    const reg = await request(app.getHttpServer())
-      .post('/auth/register')
-      .send({ email, password })
-      .expect(201);
-
-    expect(reg.body.accessToken).toBeDefined();
-
-    const login = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({ email, password })
-      .expect(201);
-
-    expect(login.body.accessToken).toBeDefined();
-  });
-
   it('promotes first user to operator role', async () => {
-    // Reset DB to ensure first user scenario
-  await (prisma as any).deployment.deleteMany();
-  await (prisma as any).project.deleteMany();
-  await (prisma as any).user.deleteMany();
-  const email = randomEmail('bootstrap.test');
+    const email = randomEmail('bootstrap.test');
     const password = randomPassword();
     const reg = await request(app.getHttpServer())
       .post('/auth/register')
@@ -69,6 +48,23 @@ describe('Auth & Roles (e2e)', () => {
       .expect(200);
     expect(me.body.role).toBe('OPERATOR');
     expect(me.body.isOperator).toBe(true);
+  });
+
+  it('registers a user and logs in', async () => {
+    const email = randomEmail();
+    const password = randomPassword();
+
+    const reg = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({ email, password })
+      .expect(201);
+    expect(reg.body.accessToken).toBeDefined();
+
+    const login = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email, password })
+      .expect(201);
+    expect(login.body.accessToken).toBeDefined();
   });
 
   it('second user is plain USER role', async () => {

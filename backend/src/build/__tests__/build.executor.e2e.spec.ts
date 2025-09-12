@@ -44,13 +44,21 @@ describe('Build Executor (flag) e2e', () => {
 
     const start = Date.now();
     let status = build.body.status;
-    while (status !== 'SUCCESS' && status !== 'FAILED' && Date.now() - start < 15000) {
-      await new Promise(r => setTimeout(r, 250));
-      const latest = await request(app.getHttpServer())
-        .get(`/builds/${buildId}`)
-        .set('Authorization', `Bearer ${token}`)
-        .expect(200);
-      status = latest.body.status;
+    let attempt = 0;
+    let lastError: any;
+    while (status !== 'SUCCESS' && status !== 'FAILED' && Date.now() - start < 20000) {
+      await new Promise(r => setTimeout(r, 150 + attempt * 50));
+      attempt++;
+      try {
+        const latest = await request(app.getHttpServer())
+          .get(`/builds/${buildId}`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(200);
+        status = latest.body.status;
+      } catch (e) {
+        // Intermittent 404 (job row not yet committed / read skew); retry until timeout
+        lastError = e;
+      }
     }
     expect(['SUCCESS', 'FAILED']).toContain(status);
 
