@@ -3,10 +3,10 @@
   "extends": [
     "config:recommended",
     ":semanticCommits",
-    ":timezone(Europe/Vienna)",
-    ":prHourlyLimit10",
-    ":prConcurrentLimit20"
+    ":timezone(Europe/Vienna)"
   ],
+  "prHourlyLimit": 10,
+  "prConcurrentLimit": 20,
   "rangeStrategy": "replace",
   "separateMajorMinor": true,
   "packageRules": [
