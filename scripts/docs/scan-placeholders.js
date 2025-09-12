@@ -9,6 +9,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..', '..');
 const DOCS = path.join(ROOT, 'docs');
+const GENERATED_DIR = path.join(DOCS, '.generated');
 
 const PATTERNS = [
   /<INSERT_/i,
@@ -22,6 +23,8 @@ const PATTERNS = [
 let failures = [];
 
 function walk(dir) {
+  // Skip generated API docs to avoid false positives (they're derived artifacts)
+  if (dir.startsWith(GENERATED_DIR)) return;
   for (const entry of fs.readdirSync(dir)) {
     const p = path.join(dir, entry);
     const stat = fs.statSync(p);
