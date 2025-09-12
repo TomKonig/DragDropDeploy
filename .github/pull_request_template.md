@@ -2,76 +2,72 @@
 
 ## Summary
 
-Describe the change briefly.
+Briefly describe the change and its primary user-facing impact.
+
+## Metadata
+
+- Issue(s) Closed: # (list)
+- Roadmap Slug: `roadmap:<slug>` (omit only if trivial bug/typo)
+- Changelog Section: Added | Changed | Fixed | Security | Removed | Docs
+- Docs Updated: Yes / N.A.
+- Breaking Change: Yes / No (if Yes, fill section below)
 
 ## Type
 
-- [ ] feat
+- [ ] feature
 - [ ] fix
 - [ ] docs
-- [ ] chore
 - [ ] refactor
+- [ ] chore
 - [ ] security
 
 ## Checklist
 
-- [ ] Tests added/updated
-- [ ] All tests pass locally (`npm test`)
-- [ ] Lint & typecheck clean (`npm run lint`, `npm run typecheck`)
-- [ ] Changelog updated (root `CHANGELOG.md`)
-- [ ] Relevant docs updated (see below)
-- [ ] Security impact considered
-- [ ] Roadmap & tasklist synchronized (if a roadmap item advanced, corresponding `tasklist.md` box updated, and vice‑versa)
-- [ ] Snyk scans run on changed code (Code + SCA) with no new high severity issues OR rationale provided
-- [ ] New / changed environment variables documented in `CONFIGURATION.md` & `.env.example`
-- [ ] Rollback plan or confirmation: change is safely reversible (note how)
-- [ ] If adding build flags / commands: allow-list & validation updated + tests
-- [ ] If serving user-uploaded content: path traversal & content-type checks verified
-- [ ] If security-sensitive: threat model delta noted below
+- [ ] Phase plan executed (Discovery → Design → Implementation → Validation → Docs)
+- [ ] Tests added/updated (happy path + edge)
+- [ ] All tests pass locally (`npm test` / relevant workspaces)
+- [ ] Lint & typecheck clean
+- [ ] `CHANGELOG.md` Unreleased updated (single aggregated entry)
+- [ ] Roadmap label applied (and roadmap status will auto-sync / source data updated if needed)
+- [ ] No direct edits to generated mirrors (e.g., `docs/reference/changelog.md`)
+- [ ] New / changed env vars documented (`docs/reference/configuration.md` + `.env.example`)
+- [ ] Security impact assessed (auth, secrets, uploads, build pipeline, RBAC)
+- [ ] Rollback path documented (simple revert or mitigation steps)
+- [ ] Image / bundle size impact considered (removed dead code where possible)
+- [ ] Feature flags applied for optional / latent functionality
+- [ ] Follow-up issues opened for any deferrals (labeled `follow-up` / `next` / `tbd`)
+- [ ] Snyk / security scans (if touching dependencies or security areas) – no new High/Critical OR justified
 
-## Docs Update Matrix
+## Documentation Touchpoints
 
-Tick all that apply if code in those areas changed:
+Select all that were updated (remove lines not applicable):
 
-- [ ] Configuration (`docs/reference/configuration.md`)
-- [ ] API Auth (`docs/reference/api-auth.md`)
-- [ ] Build Pipeline (`docs/architecture/build-pipeline.md`)
-- [ ] Database / Prisma models (`docs/architecture/database.md`) – added/removed models documented
-- [ ] Roadmap status adjusted (`docs/roadmap.md`)
-- [ ] Tasklist updated (`tasklist.md`)
-- [ ] Threat model updated (`docs/security/threat-model.md`)
-- [ ] Getting Started guides (`docs/getting-started/*.md`)
-- [ ] Configuration reference (`CONFIGURATION.md` / `.env.example`)
-- [ ] Deployment / Coolify (`COOLIFY.md`)
-- [ ] Security baseline (`SECURITY_BASELINE.md`)
-
-If any unchecked items should have been updated, explain why.
+- Configuration (`docs/reference/configuration.md`)
+- API Auth / Endpoints (OpenAPI regeneration + reference pages)
+- Build Pipeline (`docs/architecture/build-pipeline.md`)
+- Database / Prisma models (`docs/architecture/database.md`)
+- Roadmap source (`roadmap.yaml`) or status (auto-generated)
+- Threat Model (`docs/security/threat-model.md`)
+- Operations Runbooks (`docs/operations/*.md`)
+- Getting Started (`docs/getting-started/*.md`)
+- Security Baseline (`docs/reference/security-baseline.md`)
 
 ## Breaking Changes
 
-List any breaking changes and migration steps.
+Describe required migrations / user actions. Provide reversible steps.
 
 ## Security Considerations
 
-Describe new attack surface, secrets, permissions, or mitigations.
+Summarize new attack surface, mitigations, secret handling, auth/rbac changes.
 
-### Snyk Summary
+## Validation Evidence
 
-- Code Scan: (attach excerpt or link) – New High/Critical: 0? If not, justify.
-- Open Source (SCA): New High/Critical: 0? If not, justify.
+Outline manual / automated verification: key commands, endpoints hit, sample logs.
 
-### Threat Model Delta
+## Rollback Plan
 
-- Entry points changed:
-- Data flows changed:
-- Privilege / role changes:
-- Notable mitigations added:
-- Residual risks / follow-ups:
+How to revert safely (git revert, config toggle, data migration rollback). Note irreversible effects.
 
-## Screenshots / Output (if UI/API)
+## Additional Notes
 
-Add before/after or example responses.
-
-## Rollback Notes
-
-State what command or revert PR would restore previous behavior; note any irreversible migrations.
+Implementation nuances, trade-offs, or rationale not obvious from diff.
