@@ -42,7 +42,7 @@ The executor log file includes lines like:
 minify: starting pass
 minify: complete processed=42 skipped=18 errors=0
 ```
- 
+
 Errors for individual files are logged but do not fail the build; they increment an `errors` counter.
 
 ## Performance Considerations

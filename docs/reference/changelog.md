@@ -13,7 +13,7 @@ Authoritative source: root `CHANGELOG.md` (retained for repository + tooling con
 3. Before release, move those sections under a new heading: `## X.Y.Z - YYYY-MM-DD`.
 4. Keep an empty Unreleased template ready in the root file (see root CHANGELOG for canonical format).
 
-5. Run `npm run docs:changelog:sync` to automatically update + verify mirror (or `npm run docs:changelog` to only verify).
+5. `npm run docs:check` now auto-runs the sync; you can run `npm run docs:changelog:sync` manually to update + verify (or `npm run docs:changelog` to only verify).
 
 ### Date Handling
 

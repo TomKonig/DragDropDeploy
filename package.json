@@ -25,7 +25,7 @@
     "docs:regen-core": "node scripts/generate-roadmap.cjs && npm run docs:api",
   "docs:includes": "node scripts/docs/inject-typedoc-includes.cjs",
   "docs:lint": "markdownlint --config .markdownlint.json \"docs/**/*.md\" --ignore docs/.generated",
-  "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog && npm run docs:roadmap && npm run docs:api && npm run docs:lint",
+  "docs:check": "npm run docs:scan && npm run docs:env && npm run docs:changelog:sync && npm run docs:roadmap && npm run docs:api && npm run docs:lint",
   "docs:typedoc": "npm run typedoc -w @dragdropdeploy/shared && npm run typedoc -w backend",
   "coverage:backend": "npm run test:ci -w backend -- --coverage",
   "coverage:frontend": "npm run test:coverage -w frontend",
