@@ -6,7 +6,10 @@ git push origin main --tags
 
 # DragDropDeploy
 
-![DragDropDeploy Logo](./docs/assets/logo.svg)
+<!-- Project Logo -->
+<p align="center">
+	<img src="./docs/assets/logo.jpg" alt="DragDropDeploy Logo" width="480" />
+</p>
 
 [![Build](https://img.shields.io/github/actions/workflow/status/TomKonig/DragDropDeploy/ci.yml?style=flat-square)](https://github.com/TomKonig/DragDropDeploy/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](./LICENSE)
@@ -141,3 +144,9 @@ MIT — permissive for commercial & private use. See `LICENSE`.
 
 ---
 Early stage software: expect iteration. Feedback welcome.
+
+<br/>
+<div align="center">
+	<img src="./docs/assets/icon.jpg" alt="DragDropDeploy Icon" width="96" />
+	<p><sub>DragDropDeploy</sub></p>
+</div>
