@@ -393,19 +393,92 @@
     "schemas": {
       "RegisterDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "example": "p@ssw0rd!"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
       },
       "LoginDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "example": "p@ssw0rd!"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
       },
       "CreateProjectDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "my-static-site"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Custom apex or subdomain",
+            "example": "example.com"
+          }
+        },
+        "required": [
+          "name"
+        ]
       },
       "UpdateProjectDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "renamed-project"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Custom apex or subdomain",
+            "example": "example.com"
+          },
+          "optOutMinify": {
+            "type": "boolean",
+            "description": "Disable HTML/CSS/JS minification for this project"
+          },
+          "buildFlags": {
+            "description": "Additional build CLI flags (allow-listed)",
+            "maxItems": 20,
+            "example": [
+              "--force",
+              "--verbose"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       }
     }
   }

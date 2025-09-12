@@ -25,6 +25,22 @@
 const fs = require('fs');
 const path = require('path');
 
+// Simple deterministic slugify tuned for headings & code identifiers:
+// - Lowercase
+// - Strip surrounding backticks
+// - Remove trailing () from method-like names
+// - Replace non alphanumeric sequences with single dash
+// - Collapse multiple dashes, trim leading/trailing
+function slugify(text) {
+  return text
+    .replace(/^`|`$/g, '')
+    .replace(/\(\)$/,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-');
+}
+
 const root = path.join(__dirname, '..', '..');
 const GENERATED_ROOT = path.join(root, 'docs', '.generated', 'api');
 const TARGET_DIR = path.join(root, 'docs', 'reference');
@@ -49,8 +65,7 @@ function readAllGeneratedFiles() {
           const m = /^(#+)\s+(.*)$/.exec(lines[i]);
           if (m) {
             const text = m[2].trim();
-            // naive slug (mkdocs style simplified)
-            const slug = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+            const slug = slugify(text);
             headings.push({ line: i, text, slug });
           }
         }
@@ -109,29 +124,32 @@ function transformFragment(raw, key) {
     out = out.replace(/`"actions\.cancel"[\s\S]*?"validation\.required"`/, '`<many i18n keys omitted>`');
   }
   // If PrismaService, drop massive inherited method documentation after first custom method heading to reduce noise.
+  // TODO: Replace this heuristic pruning by marking unwanted members with @internal and enabling excludeInternal in TypeDoc config.
   if (/prisma\/prisma\.service\/classes\/PrismaService\.md$/.test(key)) {
-    // Keep until first "### enableShutdownHooks" (custom) and subsequent custom methods, remove large delegate property listings beyond a threshold.
-    const lines = out.split(/\n/);
-    const keep = [];
-    let pruning = false; let keptCustom = false; let retained = 0;
-    for (let i=0;i<lines.length;i++) {
-      const line = lines[i];
-      if (/### enableShutdownHooks/.test(line)) { pruning = false; keptCustom = true; }
-      // Start pruning after a large inherited block marker (heuristic: backticks example lines referencing prisma.$queryRaw)
-      if (/`prisma\.projectSetting`/.test(line)) pruning = true;
-      if (pruning && !/enableShutdownHooks|onModuleInit|onModuleDestroy|setTenantContext/.test(line)) {
-        // Skip verbose inherited chunk
-        continue;
-      }
-      keep.push(line);
-      retained++;
-    }
-    out = keep.join('\n');
+    out = prunePrisma(out);
   }
   // Wrap with markdownlint disable/enable for duplicate headings etc.
   const lintDisable = '<!-- markdownlint-disable MD024 MD025 MD032 -->';
   const lintEnable = '<!-- markdownlint-enable MD024 MD025 MD032 -->';
   return `${lintDisable}\n${out}\n${lintEnable}`;
+}
+
+// TODO(@docs-pruning): Replace this heuristic PrismaService pruning with @internal tags once code annotated
+// and enable `excludeInternal` in typedoc config. Keep function isolated for easy removal.
+function prunePrisma(md) {
+  const lines = md.split(/\n/);
+  const keep = [];
+  let pruning = false;
+  for (const line of lines) {
+    if (/### enableShutdownHooks/.test(line)) pruning = false;
+    if (/`prisma\.projectSetting`/.test(line)) pruning = true; // heuristic start marker
+    if (pruning && !/enableShutdownHooks|onModuleInit|onModuleDestroy|setTenantContext/.test(line)) {
+      continue;
+    }
+    keep.push(line);
+  }
+  keep.push('\n> <!-- prisma-pruning:heuristic active; replace with @internal filtering -->');
+  return keep.join('\n');
 }
 
 function resolveKey(rawPath, index) {
