@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 ### Security
 
 - Expanded log redaction to include `--token=`, `--secret=`, `--key=`, `--password=` patterns.
+- Upgraded dev toolchain (vite 7.x, vitest 3.x, @vitest/coverage-v8 3.x, markdownlint-cli 0.45.0) to remediate moderate advisories (esbuild, vitest/vite, smol-toml) – zero known vulnerabilities remaining.
 
 ## 0.0.2 - 2025-09-12
 

@@ -6,6 +6,8 @@ import { registerTestApp } from '../../test/app-tracker';
 import { randomPassword } from '../../test/random-password';
 
 describe('Build Executor (flag) e2e', () => {
+  // Extended timeout: build execution path can take >5s on cold start (Prisma + module init)
+  jest.setTimeout(30000);
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -46,8 +48,10 @@ describe('Build Executor (flag) e2e', () => {
     let status = build.body.status;
     let attempt = 0;
     let lastError: any;
-    while (status !== 'SUCCESS' && status !== 'FAILED' && Date.now() - start < 20000) {
-      await new Promise(r => setTimeout(r, 150 + attempt * 50));
+    while (status !== 'SUCCESS' && status !== 'FAILED' && Date.now() - start < 25000) {
+      // Progressive backoff but capped to keep test under global timeout
+      const delay = Math.min(300 + attempt * 75, 1500);
+      await new Promise(r => setTimeout(r, delay));
       attempt++;
       try {
         const latest = await request(app.getHttpServer())
