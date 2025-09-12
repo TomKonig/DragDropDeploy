@@ -1,8 +1,3 @@
-docker compose up -d
-git add .
-git commit -m "chore(release): vX.Y.Z"
-git tag vX.Y.Z
-git push origin main --tags
 
 # DragDropDeploy
 
