@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 /**
  * Generate a random, DNS-safe staging subdomain.
@@ -12,9 +12,8 @@ export function generateStagingSubdomain(length = 12): string {
   if (length < 3) length = 3;
   if (length > 32) length = 32;
   // Use hex entropy then map to allowed set.
-  const raw = crypto.randomBytes(Math.ceil(length)).toString('hex');
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let out = '';
+  const raw = crypto.randomBytes(Math.ceil(length)).toString("hex");
+  let out = "";
   for (let i = 0; i < raw.length && out.length < length; i++) {
     const c = raw[i];
     if (/[a-f0-9]/.test(c)) {
@@ -23,7 +22,7 @@ export function generateStagingSubdomain(length = 12): string {
   }
   // Ensure starts with letter
   if (!/^[a-z]/.test(out)) {
-    out = 'a' + out.slice(1);
+    out = "a" + out.slice(1);
   }
   return out.slice(0, length);
 }

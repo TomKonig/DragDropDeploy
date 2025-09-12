@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+if [ "$SKIP_HOOKS" = "1" ]; then
+  echo "[husky] pre-push skipped via SKIP_HOOKS=1" >&2
+  exit 0
+fi
+
+echo "[husky] Running full CI pipeline (ci:all) locally..."
+npm run ci:all || exit 1

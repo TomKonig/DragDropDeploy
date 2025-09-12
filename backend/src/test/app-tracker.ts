@@ -1,4 +1,6 @@
-import { INestApplication } from '@nestjs/common';
+import type { Server } from "http";
+
+import { INestApplication } from "@nestjs/common";
 
 // Simple registry for e2e Nest application instances so we can ensure all are closed.
 // Each test that creates an app should call registerTestApp(app).
@@ -12,23 +14,46 @@ export function registerTestApp(app: INestApplication) {
 export async function closeAllTestApps(force = false) {
   for (const app of Array.from(apps)) {
     try {
-      if ((app as any).getHttpServer) {
-        const httpServer: any = app.getHttpServer();
+      if (
+        typeof (app as unknown as { getHttpServer?: () => unknown })
+          .getHttpServer === "function"
+      ) {
+        const raw = (
+          app as unknown as { getHttpServer: () => unknown }
+        ).getHttpServer();
+        const httpServer = raw as Server & {
+          closeAllConnections?: () => void;
+          closeIdleConnections?: () => void;
+        };
         if (!force) {
           await app.close();
         } else {
-          // Forcefully destroy all open connections then close
-            if (httpServer?.closeAllConnections) {
-              try { httpServer.closeAllConnections(); } catch {/* ignore */}
+          if (typeof httpServer.closeAllConnections === "function") {
+            try {
+              httpServer.closeAllConnections();
+            } catch {
+              /* ignore */
             }
-            if (httpServer?.closeIdleConnections) {
-              try { httpServer.closeIdleConnections(); } catch {/* ignore */}
+          }
+          if (typeof httpServer.closeIdleConnections === "function") {
+            try {
+              httpServer.closeIdleConnections();
+            } catch {
+              /* ignore */
             }
-            try { await app.close(); } catch {/* ignore */}
-            // As a last resort, destroy the underlying server
-            if (httpServer?.listening) {
-              try { httpServer.close(); } catch {/* ignore */}
+          }
+          try {
+            await app.close();
+          } catch {
+            /* ignore */
+          }
+          if (httpServer && (httpServer as Server).listening) {
+            try {
+              httpServer.close();
+            } catch {
+              /* ignore */
             }
+          }
         }
       }
     } catch {

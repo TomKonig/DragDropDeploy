@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { UsersModule } from '../users/users.module';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { JwtStrategy } from './jwt.strategy';
-import { RolesGuard } from './roles.guard';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { APP_GUARD } from '@nestjs/core';
+import { Module } from "@nestjs/common";
+import { APP_GUARD } from "@nestjs/core";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
+
+import { UsersModule } from "../users/users.module";
+
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { JwtAuthGuard } from "./jwt-auth.guard";
+import { JwtStrategy } from "./jwt.strategy";
+import { RolesGuard } from "./roles.guard";
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { APP_GUARD } from '@nestjs/core';
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SIGNING_SECRET || process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN || '15m' },
+      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN || "15m" },
     }),
   ],
   controllers: [AuthController],

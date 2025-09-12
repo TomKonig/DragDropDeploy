@@ -1,8 +1,10 @@
-import { Module, forwardRef } from '@nestjs/common';
-import { DeploymentsController } from './deployments.controller';
-import { UploadExtractionService } from './upload-extraction.service';
-import { DeploymentsService } from './deployments.service';
-import { BuildModule } from '../build/build.module';
+import { Module, forwardRef } from "@nestjs/common";
+
+import { BuildModule } from "../build/build.module";
+
+import { DeploymentsController } from "./deployments.controller";
+import { DeploymentsService } from "./deployments.service";
+import { UploadExtractionService } from "./upload-extraction.service";
 
 @Module({
   imports: [forwardRef(() => BuildModule)],

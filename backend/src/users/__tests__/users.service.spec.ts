@@ -1,10 +1,12 @@
-import { Test } from '@nestjs/testing';
-import { UsersService } from '../users.service';
-import { PrismaService } from '../../prisma/prisma.service';
-import { randomPassword } from '../../test/random-password';
+import { Test } from "@nestjs/testing";
 
-describe('UsersService', () => {
-  let service: UsersService; let prisma: PrismaService;
+import { PrismaService } from "../../prisma/prisma.service";
+import { randomPassword } from "../../test/random-password";
+import { UsersService } from "../users.service";
+
+describe("UsersService", () => {
+  let service: UsersService;
+  let prisma: PrismaService;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -12,23 +14,23 @@ describe('UsersService', () => {
     }).compile();
     service = moduleRef.get(UsersService);
     prisma = moduleRef.get(PrismaService);
-  // Cleanup tables honoring FK constraints: deployments -> buildJobs -> projectSetting -> projects -> users
-  await (prisma as any).deployment.deleteMany();
-  await (prisma as any).buildJob.deleteMany();
-  await (prisma as any).projectSetting.deleteMany();
-  await (prisma as any).project.deleteMany();
-  await (prisma as any).user.deleteMany();
+    // Cleanup tables honoring FK constraints: deployments -> buildJobs -> projectSetting -> projects -> users
+    await (prisma as any).deployment.deleteMany();
+    await (prisma as any).buildJob.deleteMany();
+    await (prisma as any).projectSetting.deleteMany();
+    await (prisma as any).project.deleteMany();
+    await (prisma as any).user.deleteMany();
   });
 
-  it('first created user becomes operator', async () => {
-  const u = await service.create('first@example.com', randomPassword());
-    expect(u.role).toBe('OPERATOR');
+  it("first created user becomes operator", async () => {
+    const u = await service.create("first@example.com", randomPassword());
+    expect(u.role).toBe("OPERATOR");
     expect(u.isOperator).toBe(true);
   });
 
-  it('second user is plain USER', async () => {
-  const u = await service.create('second@example.com', randomPassword());
-    expect(u.role).toBe('USER');
+  it("second user is plain USER", async () => {
+    const u = await service.create("second@example.com", randomPassword());
+    expect(u.role).toBe("USER");
     expect(u.isOperator).toBe(false);
   });
 

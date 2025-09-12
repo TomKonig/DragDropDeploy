@@ -28,6 +28,7 @@ backend/prisma/migrations/*/schema.prisma
 # Coverage reports
 coverage/
 
+tmp-nestjs-swagger/
 # MkDocs build output (if used locally)
 site/
 

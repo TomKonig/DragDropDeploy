@@ -27,6 +27,7 @@ All notable changes (mirrored from root) are listed below.
 
 <!-- Mirror starts -->
 <!-- markdownlint-disable MD024 -->
+
 ## Unreleased
 
 ### Added
@@ -35,6 +36,7 @@ All notable changes (mirrored from root) are listed below.
 - Static asset minification service (HTML/CSS/JS) with per-project opt-out (`optOutMinify`) and host override (`FORCE_MINIFY`).
 - Deployment archive upload endpoint enhancements since 0.0.2 (artifact processing groundwork for orchestration follow-up).
 - Roadmap automation: support `status: done` in `roadmap.yaml` so shipped slugs no longer require interim tracking issues (#113)
+- Enforceable monorepo ESLint baseline with typed rules and scoped test/config overrides (#114)
 
 ### Changed
 

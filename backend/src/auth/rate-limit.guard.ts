@@ -1,5 +1,11 @@
-import { CanActivate, ExecutionContext, Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { Request, Response } from 'express';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
+import { Request } from "express";
 
 interface Bucket {
   tokens: number;
@@ -14,12 +20,24 @@ export class RateLimitGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<Request>();
-    const res = context.switchToHttp().getResponse<Response>();
-    const ip = ((req.headers['x-forwarded-for'] as string) || req.ip || 'unknown').split(',')[0].trim();
-    const email = req.body?.email || '';
+    const ip = (
+      (req.headers["x-forwarded-for"] as string) ||
+      req.ip ||
+      "unknown"
+    )
+      .split(",")[0]
+      .trim();
+    const bodyEmail =
+      typeof req.body === "object" && req.body && "email" in req.body
+        ? (req.body as Record<string, unknown>).email
+        : "";
+    const email = typeof bodyEmail === "string" ? bodyEmail : "";
     const key = `${ip}:${email}`;
     const now = Date.now();
-    const bucket = this.buckets.get(key) || { tokens: this.capacity, lastRefill: now };
+    const bucket = this.buckets.get(key) || {
+      tokens: this.capacity,
+      lastRefill: now,
+    };
     // Refill
     const elapsed = now - bucket.lastRefill;
     if (elapsed > this.windowMs) {
@@ -30,7 +48,10 @@ export class RateLimitGuard implements CanActivate {
     if (bucket.tokens < 0) {
       bucket.tokens = 0; // clamp
       this.buckets.set(key, bucket);
-      throw new HttpException('Rate limit exceeded', HttpStatus.TOO_MANY_REQUESTS);
+      throw new HttpException(
+        "Rate limit exceeded",
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
     }
     this.buckets.set(key, bucket);
     return true;
