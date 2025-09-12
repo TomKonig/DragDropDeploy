@@ -84,7 +84,7 @@ Where DTOs appear both in TypeDoc and OpenAPI schemas:
 ## Action Items Tracker
 
 - [x] TypeDoc config & generation
-- [ ] Extraction / include script (Phase 2)
+- [x] Extraction / include script (Phase 2)
 - [ ] Replace duplicated sections with tokens
 - [ ] Add validation gate
 - [ ] Expand docblocks coverage
