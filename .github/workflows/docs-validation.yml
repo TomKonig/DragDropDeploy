@@ -22,3 +22,5 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Run docs checks
         run: npm run docs:check
+      - name: Roadmap docs sync check
+        run: node scripts/docs/check-roadmap-sync.js
