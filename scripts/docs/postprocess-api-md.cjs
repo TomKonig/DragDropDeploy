@@ -89,6 +89,11 @@ block = block.replace(/(<a id="[^"]+"><\/a>)\n(###\s+)/g, (m, anchor, heading) =
 // 5. Trim any trailing whitespace on lines
 block = block.replace(/[ \t]+$/gm, '');
 
+// 7. Stabilize GitHub source links: replace commit-specific blob hashes with HEAD so docs don't churn each commit.
+// Example: https://github.com/org/repo/blob/3ef2c5d9bef761a03025df6b8767642077c87fd2/path -> .../blob/HEAD/path
+// This keeps links valid while ensuring deterministic doc generation for ci:full:strict clean-tree verification.
+block = block.replace(/(\/blob\/)[0-9a-f]{7,40}\//g, '$1HEAD/');
+
 const updated = block;
 if (updated !== content) {
   fs.writeFileSync(target, updated, 'utf8');
