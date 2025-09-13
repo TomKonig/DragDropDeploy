@@ -41,6 +41,19 @@ describe("Projects CRUD (e2e)", () => {
     await prisma.$disconnect();
   });
 
+  // Defensive: ensure no JWT rotation test leakage (if future tests mutate secrets)
+  // Keeping this aligned with auth.e2e afterEach so tests remain order-independent.
+  afterEach(() => {
+    if (process.env.JWT_VERIFICATION_SECRETS)
+      delete process.env.JWT_VERIFICATION_SECRETS;
+    if (process.env.JWT_SIGNING_SECRET && process.env.JWT_SECRET) {
+      delete process.env.JWT_SIGNING_SECRET;
+    } else if (process.env.JWT_SIGNING_SECRET && !process.env.JWT_SECRET) {
+      process.env.JWT_SECRET = process.env.JWT_SIGNING_SECRET;
+      delete process.env.JWT_SIGNING_SECRET;
+    }
+  });
+
   it("creates lists updates and deletes a project", async () => {
     const { token } = await register(app);
 
