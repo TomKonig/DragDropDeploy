@@ -97,6 +97,8 @@ block = block.replace(/(\/blob\/)[0-9a-f]{7,40}\//g, '$1HEAD/');
 // 8. Normalize horizontal rules: some generators emit '----' (4 dashes). Canonicalize to '***' for consistency.
 // Only replace lines that are exactly a rule (optionally surrounded by spaces).
 block = block.replace(/^----\s*$/gm, '***');
+// Also normalize '---' (three dashes) if used as a thematic break inside generated include regions to avoid mixed styles.
+block = block.replace(/^---\s*$/gm, '***');
 
 // 9. Remove superfluous blank lines immediately after markdownlint-disable blocks and before the first content line
 // to reduce churn where a generator sometimes adds an empty line.
