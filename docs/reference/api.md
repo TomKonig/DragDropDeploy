@@ -1,7 +1,5 @@
 ---
-
 title: API Reference (Stub)
-
 ---
 
 ## API Reference (Planned)
@@ -1245,8 +1243,7 @@ Defined in: node_modules/.prisma/client/index.d.ts:268
 
 `PrismaClient.buildJob`
 
-***
-
+---
 ### deployment
 
 #### Get Signature
@@ -1270,8 +1267,7 @@ Defined in: node_modules/.prisma/client/index.d.ts:258
 
 `PrismaClient.deployment`
 
-***
-
+---
 ### project
 
 #### Get Signature
@@ -1295,8 +1291,7 @@ Defined in: node_modules/.prisma/client/index.d.ts:248
 
 `PrismaClient.project`
 
-***
-
+---
 ### projectSetting
 
 #### Get Signature
@@ -1321,8 +1316,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:28](https://github.com/TomKoni
 
 `void`
 
-***
-
+---
 ### onModuleDestroy()
 
 > **onModuleDestroy**(): `Promise`\<`void`\>
@@ -1337,8 +1331,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:34](https://github.com/TomKoni
 
 `OnModuleDestroy.onModuleDestroy`
 
-***
-
+---
 ### onModuleInit()
 
 > **onModuleInit**(): `Promise`\<`void`\>
@@ -1353,8 +1346,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:16](https://github.com/TomKoni
 
 `OnModuleInit.onModuleInit`
 
-***
-
+---
 ### setTenantContext()
 
 > **setTenantContext**(): `void`
@@ -1377,8 +1369,7 @@ Defined in: [backend/src/prisma/prisma.service.ts:42](https://github.com/TomKoni
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
 
-***
-
+---
 [@dragdropdeploy/backend](../../../README.md) / [build/build.executor](../README.md) / BuildExecutorService
 
 ### Class: BuildExecutorService
@@ -1429,8 +1420,7 @@ Defined in: [backend/src/build/build.executor.ts:29](https://github.com/TomKonig
 
 `boolean`
 
-***
-
+---
 ### runBuild()
 
 > **runBuild**(`projectId`, `logFile`): `Promise`\<\{ `exitCode`: `null` \| `number`; `success`: `boolean`; \}\>

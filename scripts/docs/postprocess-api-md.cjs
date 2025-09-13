@@ -20,6 +20,12 @@ let content = fs.readFileSync(target, 'utf8');
 // Process full file because TypeDoc includes appear outside AUTO-API block.
 let block = content;
 
+// Preserve YAML frontmatter delimiters if present at top (--- on line 1 and within first 5 lines again)
+let frontmatterMatch = null;
+if (/^---\n[\s\S]*?\n---\n/.test(block)) {
+  frontmatterMatch = block.match(/^(---\n[\s\S]*?\n---\n)/);
+}
+
 // 1. Fix multiple spaces after heading hashes (MD019) preserving rest of line
 block = block.replace(/^(#{1,6})\s{2,}([^\n]+)/gm, (_, hashes, rest) => `${hashes} ${rest}`);
 
@@ -94,9 +100,10 @@ block = block.replace(/[ \t]+$/gm, '');
 // This keeps links valid while ensuring deterministic doc generation for ci:full:strict clean-tree verification.
 block = block.replace(/(\/blob\/)[0-9a-f]{7,40}\//g, '$1HEAD/');
 
-// 8. Normalize horizontal rules: canonicalize only 4-dash variant (----) to '***'.
-// DO NOT touch '---' because the file may use YAML frontmatter delimiters at the top which must stay '---'.
-block = block.replace(/^----\s*$/gm, '***');
+// 8. Normalize horizontal rules: canonicalize to '---' (markdownlint MD035 default) for deterministic style.
+// Preserve YAML frontmatter (first block) by capturing earlier; we only transform lines consisting solely of *** or ----.
+block = block.replace(/^\*\*\*\s*$/gm, '---');
+block = block.replace(/^----\s*$/gm, '---');
 
 // 9. Remove superfluous blank lines immediately after markdownlint-disable blocks and before the first content line
 // to reduce churn where a generator sometimes adds an empty line.
@@ -114,10 +121,21 @@ block = block.replace(/node\\_modules/g, 'node_modules');
 // 12b. Replace any lingering blob commit hashes missed by earlier pattern (case-insensitive safety)
 block = block.replace(/(blob)\/[0-9a-f]{7,40}\//gi, '$1/HEAD/');
 
-// 13. Ensure a blank line before and after every normalized horizontal rule (***), except at boundaries
-block = block.replace(/([^\n])\n\*\*\*\n([^\n])/g, (m, a, b) => `${a}\n\n***\n\n${b}`);
-// If we created double blank lines around, collapse again
+// 13. Ensure a blank line before and after every horizontal rule (---) except at file boundaries
+block = block.replace(/([^\n])\n---\n([^\n])/g, (m, a, b) => `${a}\n\n---\n\n${b}`);
+// Collapse any over-correction
 block = block.replace(/\n{3,}/g, '\n\n');
+
+// Reinsert preserved frontmatter block exactly as captured (avoid transformation to *** etc.)
+if (frontmatterMatch) {
+  const preserved = frontmatterMatch[1];
+  // Remove any transformed first section up to first heading and replace with preserved frontmatter
+  block = block.replace(/^(?:\*\*\*\n)?title: API Reference \(Stub\)\n(?:\*\*\*\n)?/, '');
+  // Prepend preserved frontmatter if it's not already there
+  if (!block.startsWith(preserved)) {
+    block = preserved + block.replace(/^\n+/, '');
+  }
+}
 
 const updated = block;
 if (updated !== content) {
