@@ -54,19 +54,38 @@ describe("Uploads -> Deployment creation (e2e)", () => {
       .expect(201);
     const token = reg.body.accessToken;
 
+    const uniqueName = `UploadProject-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)}`;
     const project = await request(app.getHttpServer())
       .post("/projects")
       .set("Authorization", `Bearer ${token}`)
-      .send({ name: "UploadProject" })
+      .send({ name: uniqueName })
       .expect(201);
+
+    // Confirm project persisted before proceeding (guards against racey cross-suite cleanup)
+    const persisted = await prisma.project.findUnique({
+      where: { id: project.body.id },
+    });
+    expect(persisted?.name).toBe(uniqueName);
 
     const filePath = tempFile("hello world");
 
     const uploadRes = await request(app.getHttpServer())
       .post(`/uploads/project/${project.body.id}`)
       .set("Authorization", `Bearer ${token}`)
-      .attach("file", filePath)
-      .expect(201);
+      .attach("file", filePath);
+
+    if (uploadRes.status !== 201) {
+      // Surface diagnostic detail to make future flakes actionable
+      // eslint-disable-next-line no-console
+      console.error(
+        "[upload.e2e] unexpected status",
+        uploadRes.status,
+        uploadRes.body,
+      );
+    }
+    expect(uploadRes.status).toBe(201);
 
     expect(uploadRes.body.deploymentId).toBeDefined();
     expect(uploadRes.body.status).toBe("PENDING");
