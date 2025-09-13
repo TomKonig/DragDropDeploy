@@ -6,11 +6,27 @@ if [ "$SKIP_HOOKS" = "1" ]; then
   exit 0
 fi
 
+# Load .env if present (export variables) but do not echo secrets
+if [ -f ./.env ]; then
+  # shellcheck disable=SC2046
+  set -a
+  . ./.env
+  set +a
+  echo "[husky] .env loaded"
+fi
+
 echo "[husky] Ensuring base branch fetched (develop)..."
 git fetch origin develop:refs/remotes/origin/develop --depth=1 || true
 
 if [ -z "$GH_TOKEN" ]; then
-  echo "[husky] GH_TOKEN not set – docs:check may skip GitHub-auth steps or fail if required." >&2
+  echo "[husky] ERROR: GH_TOKEN not set after loading .env; aborting push so roadmap/docs validation can't be skipped." >&2
+  exit 1
+else
+  # Basic format heuristic (do not fail strictly if pattern drifts)
+  case "$GH_TOKEN" in
+    ghp_*) echo "[husky] GH_TOKEN present (ghp_*)" ;;
+    *) echo "[husky] GH_TOKEN present (non-ghp prefix)" ;;
+  esac
 fi
 
 echo "[husky] Running full CI parity pipeline (ci:full) locally..."
