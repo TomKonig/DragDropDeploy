@@ -56,6 +56,8 @@ All notable changes (mirrored from root) are listed below.
 
 ### Fixed
 
+- Stabilize docs generation: normalize horizontal rules and remove blank line churn in api.md & changelog mirror (#120)
+
 - Robust fence lint: replace narrow docs/reference-only scanner with full docs tree unlabeled fence detector excluding generated dir (pure Node, no grep quoting risks).
 - Local vs GitHub CI parity: pre-push now runs `ci:full:strict` (adds clean tree verification) and workflow adds the same clean tree check.
 - Roadmap sync script auto-loads .env (dotenv) so GH_TOKEN is honored outside husky pre-push hook.

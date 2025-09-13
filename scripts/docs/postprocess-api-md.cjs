@@ -126,15 +126,31 @@ block = block.replace(/([^\n])\n---\n([^\n])/g, (m, a, b) => `${a}\n\n---\n\n${b
 // Collapse any over-correction
 block = block.replace(/\n{3,}/g, '\n\n');
 
+// 14. Remove stray blank lines immediately inside included TypeDoc blocks where we want a consistent pattern:
+// Pattern: markdownlint-disable ... \n(blank) \n [@pkg] -> drop the blank
+block = block.replace(/(markdownlint-disable[^\n]*\n)\n+\[/g, '$1[');
+// Pattern: --- \n(blank) \n [@pkg] -> drop the blank
+block = block.replace(/(---)\n\n+\[/g, '$1\n[');
+// Pattern: Responsibilities: \n(blank) \n - item -> drop blank after label paragraphs within bullet sections
+block = block.replace(/(Responsibilities:)\n\n(-)/g, '$1\n$2');
+
 // Reinsert preserved frontmatter block exactly as captured (avoid transformation to *** etc.)
 if (frontmatterMatch) {
   const preserved = frontmatterMatch[1];
-  // Remove any transformed first section up to first heading and replace with preserved frontmatter
-  block = block.replace(/^(?:\*\*\*\n)?title: API Reference \(Stub\)\n(?:\*\*\*\n)?/, '');
-  // Prepend preserved frontmatter if it's not already there
-  if (!block.startsWith(preserved)) {
-    block = preserved + block.replace(/^\n+/, '');
+  // Deduplicate if multiple frontmatter blocks accidentally present (rare churn source)
+  // Strategy: capture all consecutive leading frontmatter blocks and collapse to the first one only.
+  let remainder = block.slice(preserved.length);
+  // Remove any additional immediate frontmatter sequences at top
+  while (/^---\n[\s\S]*?\n---\n/.test(remainder)) {
+    const m = remainder.match(/^---\n[\s\S]*?\n---\n/);
+    if (!m) break;
+    remainder = remainder.slice(m[0].length);
   }
+  // Normalize single blank line after closing delimiter
+  remainder = remainder.replace(/^\n+/, '\n');
+  block = preserved + remainder;
+  // Ensure exactly one blank line after closing frontmatter before next heading/content
+  block = block.replace(/^(---\n[\s\S]*?\n---)\n{0,}/, '$1\n\n');
 }
 
 const updated = block;

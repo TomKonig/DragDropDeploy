@@ -6,16 +6,16 @@
  *
  * Idempotent: running multiple times yields same file state.
  */
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const ROOT = path.join(__dirname, '..', '..');
-const ROOT_CHANGELOG = path.join(ROOT, 'CHANGELOG.md');
-const DOC_CHANGELOG = path.join(ROOT, 'docs', 'reference', 'changelog.md');
-const MARKER = '## Unreleased';
+const ROOT = path.join(__dirname, "..", "..");
+const ROOT_CHANGELOG = path.join(ROOT, "CHANGELOG.md");
+const DOC_CHANGELOG = path.join(ROOT, "docs", "reference", "changelog.md");
+const MARKER = "## Unreleased";
 
 function load(file) {
-  return fs.readFileSync(file, 'utf8');
+  return fs.readFileSync(file, "utf8");
 }
 
 function sync() {
@@ -23,12 +23,14 @@ function sync() {
   const doc = load(DOC_CHANGELOG);
   const rootIdx = root.indexOf(MARKER);
   if (rootIdx === -1) {
-    console.error('sync-changelog: marker not found in root CHANGELOG.md');
+    console.error("sync-changelog: marker not found in root CHANGELOG.md");
     process.exit(1);
   }
   const docIdx = doc.indexOf(MARKER);
   if (docIdx === -1) {
-    console.error('sync-changelog: marker not found in docs/reference/changelog.md');
+    console.error(
+      "sync-changelog: marker not found in docs/reference/changelog.md",
+    );
     process.exit(1);
   }
 
@@ -36,15 +38,21 @@ function sync() {
 
   // Preserve everything before marker in docs (frontmatter, headings, procedure text, mirror intro) then inject updated slice.
   const preserved = doc.slice(0, docIdx).trimEnd();
-  const updated = preserved + '\n' + rootSlice + '\n';
+  const updated = preserved + "\n" + rootSlice + "\n";
 
-  if (updated === doc) {
-    console.log('sync-changelog: already up-to-date.');
+  // Stabilize spacing after markdownlint-disable blocks: ensure exactly one blank line following
+  const stabilized = updated.replace(
+    /(markdownlint-disable[^\n]*\n)\n+/g,
+    "$1\n",
+  );
+
+  if (stabilized === doc) {
+    console.log("sync-changelog: already up-to-date.");
     return;
   }
 
-  fs.writeFileSync(DOC_CHANGELOG, updated);
-  console.log('sync-changelog: mirror updated.');
+  fs.writeFileSync(DOC_CHANGELOG, stabilized);
+  console.log("sync-changelog: mirror updated.");
 }
 
 sync();
