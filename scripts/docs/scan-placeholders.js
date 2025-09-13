@@ -29,7 +29,14 @@ function walk(dir) {
     const p = path.join(dir, entry);
     const stat = fs.statSync(p);
     if (stat.isDirectory()) walk(p);
-    else if (p.endsWith('.md')) checkFile(p);
+    else if (p.endsWith('.md')) {
+      // Skip the dynamically generated roadmap.md since it contains real GitHub Issue content
+      if (path.basename(p) === 'roadmap.md' && p.includes(path.join('docs', 'roadmap.md'))) {
+        console.log(`Skipping dynamically generated roadmap: ${p}`);
+        return;
+      }
+      checkFile(p);
+    }
   }
 }
 
