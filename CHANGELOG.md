@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Documentation generation now enforces zero internal TypeDoc warnings (new strict wrapper) – exported public types and excluded shim definitions to keep API docs complete.
 - Roadmap validation now categorizes errors (Missing/Duplicate/Orphan/InvalidStatus), previously exempted `status: done` slugs from requiring open issues, and adds new DX slugs (lint-hardening, repo-hygiene, dev-tooling) to canonical YAML.
 - Removed temporary open-issue-per-slug policy in favor of refined status-driven rules (see Added) allowing closure of shipped slug issues instead of perpetual reopening.
+- Adjust markdownlint rule set: disable MD003 (heading style normalization) and MD026 (no trailing punctuation) while keeping structural/enforcement rules (MD012, MD022, MD040, etc.) to reduce churn and focus on rendering-impacting issues.
 
 ### Fixed
 
@@ -31,6 +32,7 @@ All notable changes to this project will be documented in this file.
 - Ensure Prisma Client is generated prior to lint via new `prelint` script preventing type fallback to `any` in CI (#116).
 - Resolve shared package path resolution issues in CI by adding TypeScript import resolver configuration (monorepo path aliases) (#116).
 - Harden build executor e2e test with retries, timeline capture, and richer timeout diagnostics to mitigate intermittent flake.
+- Enforce code fence languages in reference docs (fail build on unlabeled fenced blocks via new `docs:lint:fences` step) preventing recurring MD040 violations.
 
 ### Security
 

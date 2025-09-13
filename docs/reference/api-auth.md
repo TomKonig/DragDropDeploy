@@ -4,7 +4,7 @@ title: API Authentication
 
 ## Overview
 
-The platform uses stateless JWT bearer tokens for authenticating API requests. Tokens are signed with `HS256` using `JWT_SECRET` and have a configurable lifetime (`JWT_EXPIRES_IN`, default 15m). Refresh tokens are not yet implemented (future roadmap). Re-authenticate after expiry.
+Stateless JWT bearer tokens (HS256) authenticate API requests. Tokens use `JWT_SECRET` and expire after `JWT_EXPIRES_IN` (default 15m). No refresh tokens yet; clients must re-authenticate after expiry.
 
 ## Token Structure
 
@@ -13,29 +13,33 @@ Header:
 - alg: HS256
 - typ: JWT
 
-Claims (current):
+Claims:
 
 - sub: user id (UUID)
 - email: user email
 - role: USER | ADMIN | OPERATOR
-- iat / exp: issued-at and expiration
+- iat / exp: issued-at & expiration
 
-Planned future claims: `plan`, `features`, `nonce` (for replay protection enhancements).
+Planned: `plan`, `features`, `nonce`.
 
 ## Endpoints
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | /auth/register | public (if signup open) | Create new user; first user becomes OPERATOR. |
-| POST | /auth/login | public | Exchange credentials for access token. |
-| GET | /auth/me | bearer | Return current user profile. |
-| POST | /auth/logout | bearer (future) | Invalidate server-side session / token revocation list (future). |
+| Method | Path           | Auth                    | Description                              |
+| ------ | -------------- | ----------------------- | ---------------------------------------- |
+| POST   | /auth/register | public (if signup open) | Create user; first user becomes OPERATOR |
+| POST   | /auth/login    | public                  | Exchange credentials for access token    |
+| GET    | /auth/me       | bearer                  | Current user profile                     |
+| POST   | /auth/logout   | bearer (future)         | Invalidate token (future)                |
 
 ## Request / Response Examples
 
 ### Register
 
+Request:
+
+```http
 POST /auth/register
+```
 
 Body:
 
@@ -51,7 +55,11 @@ Response 201:
 
 ### Login
 
+Request:
+
+```http
 POST /auth/login
+```
 
 Body:
 
@@ -67,8 +75,6 @@ Response 200:
 
 ### Authenticated Example
 
-GET /projects
-
 Header:
 
 ```http
@@ -78,43 +84,41 @@ Authorization: Bearer <jwt>
 Response 200 (truncated):
 
 ```json
-[ { "id": "uuid", "name": "site" } ]
+[{ "id": "uuid", "name": "site" }]
 ```
 
 ## Error Formats
 
-Errors follow NestJS HTTP exception structure:
+NestJS HTTP exception shape:
 
 ```json
 { "statusCode": 401, "message": "Unauthorized" }
 ```
 
-Common cases:
+Common:
 
-- 400: validation error (invalid email/password format)
+- 400: validation error
 - 401: bad credentials / missing token
-- 403: insufficient role (protected route)
+- 403: insufficient role
 
 ## Security Considerations
 
-- Keep `JWT_SECRET` high-entropy (32+ chars) and rotate if leaked (forces re-login).
-- Short token lifetime reduces exposure; consider implementing refresh tokens with rotation & reuse detection later.
-- Store tokens in memory (frontend) rather than localStorage to reduce XSS persistence risk; if using cookies, set HttpOnly + Secure + SameSite=strict.
-- Rate limit login attempts (controlled by RATE_LIMIT_AUTH_* env vars) to slow brute force.
-- Future: implement audit log events for login success/failure, token invalidation on role downgrade, optional 2FA, and key rotation schedule.
+- Strong, unique `JWT_SECRET` (≥32 chars); rotate if leaked
+- Rate limit auth endpoints (`RATE_LIMIT_AUTH_*`)
+- Future: audit events for login, token revocation, 2FA, rotation
 
 ## Roadmap Enhancements
 
-| Feature | Purpose | Notes |
-|---------|---------|-------|
-| Refresh tokens | Silent renewal | Will require revocation list or rotation strategy. |
-| OAuth providers | External auth | Google/GitHub first; map provider id to user. |
-| 2FA | Strong auth | TOTP + recovery codes. |
-| Session revocation | Force logout | For compromised accounts. |
-| RLS integration | DB row security | Tie `sub` claim to PostgreSQL policies. |
+| Feature            | Purpose         | Notes                            |
+| ------------------ | --------------- | -------------------------------- |
+| Refresh tokens     | Silent renewal  | Needs revocation list / rotation |
+| OAuth providers    | External auth   | Google/GitHub first              |
+| 2FA                | Strong auth     | TOTP + recovery codes            |
+| Session revocation | Force logout    | Compromised accounts             |
+| RLS integration    | DB row security | Map `sub` to RLS policies        |
 
 ## Testing Tips
 
-- Override `JWT_SECRET` and `JWT_EXPIRES_IN` in tests via env to ensure deterministic expiry.
-- Use a helper to build tokens with modified claims for role-based guard tests.
-- Fuzz invalid tokens (truncated, wrong signature) to ensure 401 paths are consistent and don't leak secret material.
+- Override `JWT_SECRET` & `JWT_EXPIRES_IN` for deterministic expiry
+- Helper to build modified-claim tokens for guard tests
+- Fuzz invalid / tampered tokens to assert uniform 401 responses

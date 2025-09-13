@@ -15,10 +15,10 @@
      - Touching integration points (NestJS, Prisma, BullMQ, Traefik, Vite, Redis, PostgreSQL)
    - Summarize external references inline (do not paste large dumps).
 3. Roadmap & Issue Discipline
-    - Policy (2025-09-12): Use a single generic `roadmap` label plus an issue title prefix `[slug]` (e.g. `[upload-pipeline] Implement resumable chunking`).
-    - Legacy per-slug labels `roadmap:<slug>` are deprecated; do not create new ones. Existing ones may be removed opportunistically.
-    - Exemptions: trivial typo, tiny test fix, ultra-small bug (<5 lines) — roadmap label optional.
-    - If no fitting slug exists, create an issue proposing a new roadmap entry before coding (use placeholder title `[pending-slug] ...`).
+   - Policy (2025-09-12): Use a single generic `roadmap` label plus an issue title prefix `[slug]` (e.g. `[upload-pipeline] Implement resumable chunking`).
+   - Legacy per-slug labels `roadmap:<slug>` are deprecated; do not create new ones. Existing ones may be removed opportunistically.
+   - Exemptions: trivial typo, tiny test fix, ultra-small bug (<5 lines) — roadmap label optional.
+   - If no fitting slug exists, create an issue proposing a new roadmap entry before coding (use placeholder title `[pending-slug] ...`).
 4. Prioritization
    - Default queue: Open issues in the active Release / Project board (e.g. `MVP`) ordered by priority labels or pipeline column.
    - May preempt only for: confirmed vulnerability, blocking regression, data-loss risk, explicit user direction.
@@ -36,8 +36,8 @@
    - When punting scope (tech debt, optimization, edge case), immediately open a new issue with labels: `follow-up`, `tbd` or `next` + optional roadmap slug.
    - Reference original issue via `Related-To: #<num>` in description.
 9. Roadmap Synchronization
-    - On closing an issue tied to a roadmap slug (detected via title prefix): ensure corresponding roadmap item status (✅ / 🟡 / 🔜) reflects reality; update `roadmap.yaml` if scope changed.
-    - Never manually edit generated roadmap sections; adjust source data instead (`roadmap.yaml`).
+   - On closing an issue tied to a roadmap slug (detected via title prefix): ensure corresponding roadmap item status (✅ / 🟡 / 🔜) reflects reality; update `roadmap.yaml` if scope changed.
+   - Never manually edit generated roadmap sections; adjust source data instead (`roadmap.yaml`).
 10. GitHub-First Operations
     - Prefer GitHub MCP tooling for: creating issues, labeling, project column moves, PR creation, reviews, and merges.
     - Local tasks (tests, builds) must run before pushing.
@@ -108,29 +108,49 @@ Examples:
 
 ```markdown
 ### Context
+
 Portion deferred from #<origin>.
 
 ### Reason
+
 (Performance risk / scope guard / timebox)
 
 ### Proposed Follow-Up
+
 (Outline minimal next step.)
 ```
 
 ## Guardrails Summary
 
-| Area | Must Not | Must Always |
-|------|----------|-------------|
-| Roadmap | Bypass slug for major feature | Prefix meaningful issue titles with `[slug]` + add `roadmap` label |
-| Changelog | Merge feature w/out entry | Aggregate entry under Unreleased |
-| Docs | Add feature undocumented | Update or add relevant doc page |
-| Security | Introduce secret handling divergence | Follow rotation + credential runbooks |
-| Build | Inflate image with dev deps | Keep image minimal & flag gated |
+| Area      | Must Not                             | Must Always                                                        |
+| --------- | ------------------------------------ | ------------------------------------------------------------------ |
+| Roadmap   | Bypass slug for major feature        | Prefix meaningful issue titles with `[slug]` + add `roadmap` label |
+| Changelog | Merge feature w/out entry            | Aggregate entry under Unreleased                                   |
+| Docs      | Add feature undocumented             | Update or add relevant doc page                                    |
+| Security  | Introduce secret handling divergence | Follow rotation + credential runbooks                              |
+| Build     | Inflate image with dev deps          | Keep image minimal & flag gated                                    |
 
- 
 ## Escalation
 
 If conflicting constraints arise (e.g., roadmap mapping ambiguous, security vs performance trade-off), open an issue `decision:<topic>` and block merge pending human input.
 
 ---
+
 Generated: initial version. Future updates should append a dated changelog section within this file if governance rules change.
+
+## 2025-09-13 Addendum: Markdown Fence Enforcement
+
+1. All fenced code blocks in `docs/` must specify a language identifier (MD040). Acceptable generic fallbacks: `text` or a more specific language (`json`, `http`, `yaml`, `ts`, `sh`).
+2. The `docs:check` pipeline now includes `docs:lint:fences` which fails if any unlabeled fence (a line exactly equal to ``` with no language) is present.
+3. When adding or generating docs, ensure generators emit language tags; update post-processing scripts rather than committing unlabeled fences.
+4. Shell usage note: when searching for triple backticks, wrap pattern in single quotes to avoid zsh command substitution hangs, e.g. `grep -n '```' file.md` (DO NOT use double quotes).
+5. If a script must auto-detect languages, prefer heuristics: JSON if first non-blank char is `{` or `[`, HTTP if starts with an HTTP verb, SH if lines begin with `$` prompts or shebang.
+6. Do not suppress MD040 via markdownlint disable comments; fix the fence instead.
+
+## 2025-09-13 Addendum: Markdown Lint Rule Adjustments
+
+1. Disabled MD003 (heading style) to avoid large-scale churn; mixed heading styles permitted short term. A future single-sweep normalization may re-enable it.
+2. Disabled MD026 (no trailing punctuation in headings) allowing selective use of `?` or `:` where it clarifies meaning.
+3. Continued enforcement focus: MD012 (no multiple blank lines), MD022 (blank lines around headings), MD040 (fenced code language), MD007/MD005 (list indentation consistency), MD009 (no trailing spaces), MD010 (no hard tabs), MD024 (no duplicate headings), MD032 (blank lines around lists).
+4. Rationale: Prioritize rules that prevent structural or rendering issues over purely stylistic constraints to accelerate remediation and reduce noise in diffs.
+5. Re-enabling any relaxed rule requires a dedicated issue, plan for automated or single-pass migration, and one consolidated commit to avoid piecemeal churn.
