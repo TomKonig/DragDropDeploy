@@ -54,6 +54,18 @@ categories:
       - slug: incremental-deploys
         title: Incremental deploys
         description: Ship only changed assets
+      - slug: billing-payments
+        title: Billing & payments
+        description: Subscription management and metered usage billing
+        status: planned
+      - slug: themes-and-plugins
+        title: Themes & plugins framework
+        description: Extensible runtime/plugin architecture with marketplace integration (flag-gated)
+        status: planned
+      - slug: i18n-baseline
+        title: Internationalization baseline
+        description: Core i18n pipeline and locale resource loading
+        status: planned
   security:
     title: Security & Reliability
     items:
@@ -63,6 +75,14 @@ categories:
       - slug: build-sandbox
         title: Build sandboxing
         description: Ephemeral constrained build env
+      - slug: security-hardening
+        title: Security hardening
+        description: Ongoing hardening (headers, dependency audits, secret scanning, rate limits consolidation)
+        status: planned
+      - slug: auth-session-hardening
+        title: Auth/session hardening
+        description: Session rotation, refresh token invalidation, and anomaly detection
+        status: planned
   dx:
     title: Developer Experience
     items:
@@ -83,4 +103,20 @@ categories:
       - slug: dev-tooling
         title: Developer tooling baseline
         description: Unified ESLint baseline and DX improvements for local development flows
+        status: planned
+      - slug: ui-foundation
+        title: UI foundation
+        description: Shared design system primitives and base component library
+        status: planned
+      - slug: frontend-extensible-skeleton
+        title: Frontend extensible skeleton
+        description: Layout shell, routing, and extension injection points
+        status: planned
+      - slug: project-creation-flow
+        title: Project creation flow
+        description: Guided multi-step project setup wizard UX
+        status: planned
+      - slug: auth-ui
+        title: Auth UI
+        description: Polished sign-in/sign-up/reset flows & operator invite acceptance
         status: planned

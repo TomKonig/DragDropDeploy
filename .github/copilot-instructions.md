@@ -90,7 +90,7 @@ Await a single explicit approval (“Proceed” / label) per issue. After approv
    • ENABLE_OAUTH=false
    • ENABLE_RLS=false
    • BUILD_MODE=local|containerized (default: local)
-   • CUSTOM_BUILD_COMMAND_WHITELIST=build,export (comma-separated list)
+   • CUSTOM_BUILD_COMMAND_WHITELIST=build,export,hugo... (comma-separated list)
    • BUILD_ALLOWED_SSGS=HUGO,NODE,STATIC (comma-separated list)
    • SIGNUP_MODE=open|invite|closed (default: open)
 
