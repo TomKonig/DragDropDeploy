@@ -49,12 +49,8 @@ jobs:
           languages: ${{ matrix.language }}
           # Query packs: include default + security-and-quality; allow later custom extension
           queries: +security-and-quality
-          # Build mode: manual - we'll run minimal type extraction via tsc build steps below
-          build-mode: manual
-
-      - name: Build (TypeScript compilation only)
-        run: |
-          npm run build --workspaces --if-present || true
+          # JS/TS does not support manual build mode; rely on dependency install + extractor (no build)
+          build-mode: none
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

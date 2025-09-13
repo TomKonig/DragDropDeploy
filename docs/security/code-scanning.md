@@ -14,19 +14,19 @@ Key characteristics:
 
 - Triggers: push, pull_request, schedule (weekly), manual dispatch
 - Permissions: `contents: read`, `security-events: write` (principle of least privilege)
-- Build: lightweight TypeScript compilation (`npm run build --workspaces`) without executing app runtime
+- Build Mode: `none` (JS/TS extractor parses sources; dependencies installed for type resolution)
 - Query Pack: default + `security-and-quality`
 - SARIF Results: uploaded to the repository Security tab automatically; artifact uploaded as fallback
 
 ## Customization
 
-| Aspect        | How to Change                    | Notes                                                  |
-| ------------- | -------------------------------- | ------------------------------------------------------ |
-| Languages     | Update matrix `language` array   | Only `javascript` needed (covers TS)                   |
-| Query Packs   | Append to `queries` in init step | Use `+path/to/local.qls` for custom sets               |
-| Schedule      | Modify cron expression           | Keep at low-traffic time                               |
-| Build Steps   | Extend the build step            | Avoid running tests with side effects                  |
-| Feature Flags | Add env gating in build          | Ensure disabled subsystems aren't analyzed for secrets |
+| Aspect        | How to Change                                                   | Notes                                                  |
+| ------------- | --------------------------------------------------------------- | ------------------------------------------------------ |
+| Languages     | Update matrix `language` array                                  | Only `javascript` needed (covers TS)                   |
+| Query Packs   | Append to `queries` in init step                                | Use `+path/to/local.qls` for custom sets               |
+| Schedule      | Modify cron expression                                          | Keep at low-traffic time                               |
+| Build Steps   | (None by default) add optional `npm run build` prior to analyze | Only if future queries require emitted JS              |
+| Feature Flags | Add env gating in build                                         | Ensure disabled subsystems aren't analyzed for secrets |
 
 ## Triage Process
 
@@ -60,9 +60,9 @@ You can run CodeQL locally (optional):
 ```bash
 # 1. Install CodeQL CLI (or use gh extension):
 brew install --cask github/codeql-cli/codeql
-# 2. Create database
+# 2. Create database (no explicit build needed for JS/TS)
 git checkout develop
-codeql database create codeql-db --language=javascript --command='npm ci && npm run build --workspaces'
+codeql database create codeql-db --language=javascript --command='npm ci'
 # 3. Analyze
 git clone https://github.com/github/codeql.git codeql-repo || true
 codeql database analyze codeql-db codeql-repo/javascript/ql/src/codeql-suites/javascript-code-scanning.qls --format sarifv2.1.0 --output results.sarif
