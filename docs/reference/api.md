@@ -51,9 +51,7 @@ Below snippets are injected from TypeDoc output. Follow links within each snippe
 <!-- begin:included api/backend/auth/auth.service/classes/AuthService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [auth/auth.service](../README.md) / AuthService
 
@@ -128,9 +126,7 @@ Access token response including expiry metadata
 
 #### Throws
 
-UnauthorizedException on invalid credentials
-
----
+## UnauthorizedException on invalid credentials
 
 ### me()
 
@@ -154,9 +150,7 @@ Authenticated subject identifier (UUID)
 
 #### Throws
 
-UnauthorizedException if user not found (treat as stale token)
-
----
+## UnauthorizedException if user not found (treat as stale token)
 
 ### register()
 
@@ -198,9 +192,7 @@ ConflictException if email already exists
 <!-- begin:included api/backend/build/build.queue/classes/BuildQueueService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [build/build.queue](../README.md) / BuildQueueService
 
@@ -257,9 +249,7 @@ Enqueue a build. Without Redis yet, simulate PENDING -> RUNNING -> SUCCESS.
 
 #### Returns
 
-`Promise`\<\{ `artifactPath`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `logsPath`: `null` \| `string`; `projectId`: `string`; `status`: `BuildJobStatus`; `updatedAt`: `Date`; `version`: `null` \| `number`; \} \| \{ `id`: `string`; `projectId`: `string`; `status`: `null` \| `BuildJobStatus`; `version`: `null` \| `number`; \}\>
-
----
+## `Promise`\<\{ `artifactPath`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `logsPath`: `null` \| `string`; `projectId`: `string`; `status`: `BuildJobStatus`; `updatedAt`: `Date`; `version`: `null` \| `number`; \} \| \{ `id`: `string`; `projectId`: `string`; `status`: `null` \| `BuildJobStatus`; `version`: `null` \| `number`; \}\>
 
 ### getJob()
 
@@ -275,9 +265,7 @@ Defined in: [backend/src/build/build.queue.ts:292](https://github.com/TomKonig/D
 
 #### Returns
 
-`Promise`\<`null` \| \{ `artifactPath`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `logsPath`: `null` \| `string`; `projectId`: `string`; `status`: `BuildJobStatus`; `updatedAt`: `Date`; `version`: `null` \| `number`; \}\>
-
----
+## `Promise`\<`null` \| \{ `artifactPath`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `logsPath`: `null` \| `string`; `projectId`: `string`; `status`: `BuildJobStatus`; `updatedAt`: `Date`; `version`: `null` \| `number`; \}\>
 
 ### getLogs()
 
@@ -297,9 +285,7 @@ Defined in: [backend/src/build/build.queue.ts:304](https://github.com/TomKonig/D
 
 #### Returns
 
-`Promise`\<`string`\>
-
----
+## `Promise`\<`string`\>
 
 ### listProjectBuilds()
 
@@ -319,9 +305,7 @@ Defined in: [backend/src/build/build.queue.ts:296](https://github.com/TomKonig/D
 
 #### Returns
 
-`Promise`\<`object`[]\>
-
----
+## `Promise`\<`object`[]\>
 
 ### onModuleDestroy()
 
@@ -335,9 +319,7 @@ Defined in: [backend/src/build/build.queue.ts:349](https://github.com/TomKonig/D
 
 #### Implementation of
 
-`OnModuleDestroy.onModuleDestroy`
-
----
+## `OnModuleDestroy.onModuleDestroy`
 
 ### onModuleInit()
 
@@ -361,9 +343,7 @@ Defined in: [backend/src/build/build.queue.ts:41](https://github.com/TomKonig/Dr
 <!-- begin:included api/backend/i18n/i18n.service/classes/I18nService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [i18n/i18n.service](../README.md) / I18nService
 
@@ -399,9 +379,7 @@ Defined in: [backend/src/i18n/i18n.service.ts:22](https://github.com/TomKonig/Dr
 
 #### Returns
 
-`void`
-
----
+## `void`
 
 ### t()
 
@@ -435,9 +413,7 @@ Defined in: [backend/src/i18n/i18n.service.ts:47](https://github.com/TomKonig/Dr
 <!-- begin:included api/shared/functions/t.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/shared**](../README.md)
-
----
+## [**@dragdropdeploy/shared**](../README.md)
 
 [@dragdropdeploy/shared](../README.md) / t
 
@@ -479,9 +455,7 @@ These functions are thin re-exports so consumer packages only need the shared bu
 <!-- begin:included api/backend/deployments/deployments.controller/classes/DeploymentsController.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [deployments/deployments.controller](../README.md) / DeploymentsController
 
@@ -527,9 +501,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:72](https://githu
 
 #### Returns
 
-`Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
-
----
+## `Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
 
 ### rollback()
 
@@ -549,9 +521,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:110](https://gith
 
 #### Returns
 
-`Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
-
----
+## `Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
 
 ### serve()
 
@@ -571,9 +541,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:80](https://githu
 
 #### Returns
 
-`Promise`\<`void` \| `Response`\<`any`, `Record`\<`string`, `any`\>\>\>
-
----
+## `Promise`\<`void` \| `Response`\<`any`, `Record`\<`string`, `any`\>\>\>
 
 ### uploadArchive()
 
@@ -603,9 +571,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:42](https://githu
 <!-- begin:included api/backend/deployments/deployments.service/classes/DeploymentsService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [deployments/deployments.service](../README.md) / DeploymentsService
 
@@ -649,9 +615,7 @@ Activate a deployment after successful build. Marks previous ACTIVE deployments 
 
 #### Returns
 
-`Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
-
----
+## `Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
 
 ### createPending()
 
@@ -667,9 +631,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:33](https://github.c
 
 #### Returns
 
-`Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
-
----
+## `Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
 
 ### createWithArtifact()
 
@@ -692,9 +654,7 @@ and create a pending deployment that references it.
 
 #### Returns
 
-`Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
-
----
+## `Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
 
 ### getActiveArtifactPath()
 
@@ -710,9 +670,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:172](https://github.
 
 #### Returns
 
-`Promise`\<`null` \| `string`\>
-
----
+## `Promise`\<`null` \| `string`\>
 
 ### rollback()
 
@@ -742,9 +700,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:186](https://github.
 <!-- begin:included api/backend/projects/projects.controller/classes/ProjectsController.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [projects/projects.controller](../README.md) / ProjectsController
 
@@ -790,9 +746,7 @@ Defined in: [backend/src/projects/projects.controller.ts:28](https://github.com/
 
 #### Returns
 
-`Promise`\<\{ `createdAt`: `Date`; `domain`: `null` \| `string`; `id`: `string`; `name`: `string`; `ownerId`: `string`; `updatedAt`: `Date`; \}\>
-
----
+## `Promise`\<\{ `createdAt`: `Date`; `domain`: `null` \| `string`; `id`: `string`; `name`: `string`; `ownerId`: `string`; `updatedAt`: `Date`; \}\>
 
 ### delete()
 
@@ -812,9 +766,7 @@ Defined in: [backend/src/projects/projects.controller.ts:52](https://github.com/
 
 #### Returns
 
-`Promise`\<\{ `deleted`: `true`; \}\>
-
----
+## `Promise`\<\{ `deleted`: `true`; \}\>
 
 ### get()
 
@@ -834,9 +786,7 @@ Defined in: [backend/src/projects/projects.controller.ts:38](https://github.com/
 
 #### Returns
 
-`Promise`\<`object` & `object`\>
-
----
+## `Promise`\<`object` & `object`\>
 
 ### list()
 
@@ -852,9 +802,7 @@ Defined in: [backend/src/projects/projects.controller.ts:33](https://github.com/
 
 #### Returns
 
-`Promise`\<`object` & `object`[]\>
-
----
+## `Promise`\<`object` & `object`[]\>
 
 ### update()
 
@@ -888,9 +836,7 @@ Defined in: [backend/src/projects/projects.controller.ts:43](https://github.com/
 <!-- begin:included api/backend/projects/projects.service/classes/ProjectsService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [projects/projects.service](../README.md) / ProjectsService
 
@@ -940,9 +886,7 @@ Defined in: [backend/src/projects/projects.service.ts:28](https://github.com/Tom
 
 #### Returns
 
-`Promise`\<\{ `createdAt`: `Date`; `domain`: `null` \| `string`; `id`: `string`; `name`: `string`; `ownerId`: `string`; `updatedAt`: `Date`; \}\>
-
----
+## `Promise`\<\{ `createdAt`: `Date`; `domain`: `null` \| `string`; `id`: `string`; `name`: `string`; `ownerId`: `string`; `updatedAt`: `Date`; \}\>
 
 ### findAllForUser()
 
@@ -958,9 +902,7 @@ Defined in: [backend/src/projects/projects.service.ts:50](https://github.com/Tom
 
 #### Returns
 
-`Promise`\<`object` & `object`[]\>
-
----
+## `Promise`\<`object` & `object`[]\>
 
 ### findOneOwned()
 
@@ -980,9 +922,7 @@ Defined in: [backend/src/projects/projects.service.ts:60](https://github.com/Tom
 
 #### Returns
 
-`Promise`\<`object` & `object`\>
-
----
+## `Promise`\<`object` & `object`\>
 
 ### remove()
 
@@ -1002,9 +942,7 @@ Defined in: [backend/src/projects/projects.service.ts:126](https://github.com/To
 
 #### Returns
 
-`Promise`\<\{ `deleted`: `true`; \}\>
-
----
+## `Promise`\<\{ `deleted`: `true`; \}\>
 
 ### update()
 
@@ -1052,9 +990,7 @@ Defined in: [backend/src/projects/projects.service.ts:72](https://github.com/Tom
 <!-- begin:included api/backend/users/users.service/classes/UsersService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [users/users.service](../README.md) / UsersService
 
@@ -1100,9 +1036,7 @@ Defined in: [backend/src/users/users.service.ts:45](https://github.com/TomKonig/
 
 #### Returns
 
-`Promise`\<[`UserPublic`](../interfaces/UserPublic.md)\>
-
----
+## `Promise`\<[`UserPublic`](../interfaces/UserPublic.md)\>
 
 ### findByEmail()
 
@@ -1118,9 +1052,7 @@ Defined in: [backend/src/users/users.service.ts:33](https://github.com/TomKonig/
 
 #### Returns
 
-`Promise`\<`null` \| [`DBUser`](../interfaces/DBUser.md)\>
-
----
+## `Promise`\<`null` \| [`DBUser`](../interfaces/DBUser.md)\>
 
 ### findById()
 
@@ -1146,9 +1078,7 @@ Defined in: [backend/src/users/users.service.ts:39](https://github.com/TomKonig/
 <!-- begin:included api/backend/prisma/prisma.service/classes/PrismaService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 
-[**@dragdropdeploy/backend**](../../../README.md)
-
----
+## [**@dragdropdeploy/backend**](../../../README.md)
 
 [@dragdropdeploy/backend](../../../README.md) / [prisma/prisma.service](../README.md) / PrismaService
 
@@ -1242,7 +1172,6 @@ Defined in: node_modules/.prisma/client/index.d.ts:268
 #### Inherited from
 
 `PrismaClient.buildJob`
-
 ---
 ### deployment
 
@@ -1266,7 +1195,6 @@ Defined in: node_modules/.prisma/client/index.d.ts:258
 #### Inherited from
 
 `PrismaClient.deployment`
-
 ---
 ### project
 
@@ -1290,7 +1218,6 @@ Defined in: node_modules/.prisma/client/index.d.ts:248
 #### Inherited from
 
 `PrismaClient.project`
-
 ---
 ### projectSetting
 
@@ -1315,7 +1242,6 @@ Defined in: [backend/src/prisma/prisma.service.ts:28](https://github.com/TomKoni
 #### Returns
 
 `void`
-
 ---
 ### onModuleDestroy()
 
@@ -1330,7 +1256,6 @@ Defined in: [backend/src/prisma/prisma.service.ts:34](https://github.com/TomKoni
 #### Implementation of
 
 `OnModuleDestroy.onModuleDestroy`
-
 ---
 ### onModuleInit()
 
@@ -1345,7 +1270,6 @@ Defined in: [backend/src/prisma/prisma.service.ts:16](https://github.com/TomKoni
 #### Implementation of
 
 `OnModuleInit.onModuleInit`
-
 ---
 ### setTenantContext()
 
@@ -1368,7 +1292,6 @@ Defined in: [backend/src/prisma/prisma.service.ts:42](https://github.com/TomKoni
 <!-- begin:included api/backend/build/build.executor/classes/BuildExecutorService.md -->
 <!-- markdownlint-disable MD024 MD025 MD032 -->
 [**@dragdropdeploy/backend**](../../../README.md)
-
 ---
 [@dragdropdeploy/backend](../../../README.md) / [build/build.executor](../README.md) / BuildExecutorService
 
@@ -1419,7 +1342,6 @@ Defined in: [backend/src/build/build.executor.ts:29](https://github.com/TomKonig
 #### Returns
 
 `boolean`
-
 ---
 ### runBuild()
 

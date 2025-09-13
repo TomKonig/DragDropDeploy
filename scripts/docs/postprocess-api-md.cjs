@@ -133,6 +133,12 @@ block = block.replace(/(markdownlint-disable[^\n]*\n)\n+\[/g, '$1[');
 block = block.replace(/(---)\n\n+\[/g, '$1\n[');
 // Pattern: Responsibilities: \n(blank) \n - item -> drop blank after label paragraphs within bullet sections
 block = block.replace(/(Responsibilities:)\n\n(-)/g, '$1\n$2');
+// Pattern: Notes: \n(blank) \n - item -> similar handling
+block = block.replace(/(Notes:)\n\n(-)/g, '$1\n$2');
+// Remove blank line directly after an opening '---' horizontal rule when followed by a heading (### or ####)
+block = block.replace(/---\n\n+(###?\s)/g, '---\n$1');
+// Remove duplicate blank lines just before a horizontal rule inside included blocks
+block = block.replace(/\n\n+---\n/g, '\n---\n');
 
 // Reinsert preserved frontmatter block exactly as captured (avoid transformation to *** etc.)
 if (frontmatterMatch) {
