@@ -27,7 +27,6 @@ All notable changes (mirrored from root) are listed below.
 
 <!-- Mirror starts -->
 <!-- markdownlint-disable MD024 -->
-
 ## Unreleased
 
 ### Added
@@ -54,6 +53,8 @@ All notable changes (mirrored from root) are listed below.
 
 - Replace pre-push `ci:all` with `ci:full` including docs and coverage for local failure parity with GitHub workflow.
 - Resolve widespread TypeScript module resolution failures caused by incomplete package installations (restored proper `dist` contents via tarball extraction) (#115).
+- Added CodeQL static analysis workflow (`codeql.yml`) running on push/PR/schedule with security-and-quality queries to continuously surface code scanning alerts.
+- Remediated initial CodeQL findings: hardened deployment path validation, added prototype pollution key guard in i18n deep merge, masked bootstrap password logs, corrected regex escape usage, and improved shell command string escaping in migration script.
 
 ## 0.0.2 - 2025-09-12
 

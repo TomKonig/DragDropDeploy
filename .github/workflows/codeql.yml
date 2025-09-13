@@ -1,0 +1,70 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main, develop]
+    paths-ignore:
+      - "docs/**"
+      - "CHANGELOG.md"
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: "0 4 * * 1" # Mondays 04:00 UTC
+  workflow_dispatch: {}
+
+# We keep workflow-level permissions minimal; job grants security-events write.
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: CodeQL (JavaScript/TypeScript)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20 (for dependency graph)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies (root)
+        run: |
+          if [ -f package-lock.json ]; then npm ci --omit=optional; fi
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Query packs: include default + security-and-quality; allow later custom extension
+          queries: +security-and-quality
+          # Build mode: manual - we'll run minimal type extraction via tsc build steps below
+          build-mode: manual
+
+      - name: Build (TypeScript compilation only)
+        run: |
+          npm run build --workspaces --if-present || true
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+      - name: Upload SARIF (redundant safeguard)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-sarif-${{ matrix.language }}
+          path: ./codeql-sarif-results
+          if-no-files-found: ignore

@@ -180,10 +180,15 @@ export class DeploymentsService {
   }
 
   async getActiveArtifactPath(projectId: string): Promise<string | null> {
+    // Enforce same projectId pattern used elsewhere to prevent crafted path components.
+    if (!/^c[a-z0-9]{24,}$/i.test(projectId)) return null;
     const artifactsRoot = path.resolve(
       process.env.ARTIFACTS_DIR || "./artifacts",
     );
-    const symlinkPath = path.join(artifactsRoot, `${projectId}-active`);
+    // Construct the symlink path in a safe manner: resolve(root, component) so that any path separators in projectId (already rejected) cannot escape root.
+    const symlinkPath = path.resolve(artifactsRoot, `${projectId}-active`);
+    // Ensure symlink path itself did not traverse (defense-in-depth even though pattern restricts input)
+    if (!symlinkPath.startsWith(artifactsRoot + path.sep)) return null;
     try {
       const real = await fs.promises.realpath(symlinkPath);
       if (!real.startsWith(artifactsRoot + path.sep)) return null;

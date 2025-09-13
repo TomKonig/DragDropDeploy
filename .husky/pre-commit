@@ -1,11 +1,13 @@
 #!/bin/sh
 
-# Unified pre-commit hook
-# 1. Optionally skip via SKIP_HOOKS=1
-# 2. Generate & validate docs (roadmap/api/changelog + lint)
-# 3. Run lint-staged fixes
+# Unified pre-commit hook (reordered to avoid manual doc restaging loop)
+# Flow:
+# 1. Optional skip via SKIP_HOOKS=1
+# 2. Run lint-staged first (fast, only on staged files)
+# 3. Generate & validate docs (roadmap/api/changelog + lint)
+#    - Auto-stage any changed generated docs under docs/reference or other managed paths
 # 4. Typecheck (incremental project build)
-# 5. Ensure docs remained unchanged after generation (i.e. were staged)
+# 5. Final safety: ensure docs generation is now clean (idempotent second pass) without new unstaged changes
 
 if [ "$SKIP_HOOKS" = "1" ]; then
 	echo "[pre-commit] skipped via SKIP_HOOKS=1" >&2
@@ -14,20 +16,36 @@ fi
 
 set -e
 
-echo "[pre-commit] docs:check"
-npm run docs:check >/dev/null 2>&1 || { echo "[pre-commit] docs:check failed"; exit 1; }
-
 echo "[pre-commit] lint-staged"
 npx lint-staged || { echo "[pre-commit] lint-staged failed"; exit 1; }
 
-echo "[pre-commit] typecheck"
-npm run typecheck --silent || { echo "[pre-commit] typecheck failed"; exit 1; }
+echo "[pre-commit] docs:check (initial generation)"
+npm run docs:check >/dev/null 2>&1 || { echo "[pre-commit] docs:check failed"; exit 1; }
 
-echo "[pre-commit] verify docs unchanged"
+# Auto-stage generated docs changes (common churn: api.md, changelog ref, roadmap, injected includes)
+CHANGED_DOCS=$(git ls-files -m docs/ || true)
+if [ -n "$CHANGED_DOCS" ]; then
+	echo "[pre-commit] auto-staging regenerated docs"
+	echo "$CHANGED_DOCS" | while IFS= read -r f; do
+		# Only stage if file still exists and is tracked or untracked
+		if [ -f "$f" ]; then
+			git add "$f"
+		fi
+	done
+fi
+
+# Re-run docs:check quickly to confirm idempotence after staging (should be no further changes)
+echo "[pre-commit] docs:check (idempotence verify)"
+npm run docs:check >/dev/null 2>&1 || { echo "[pre-commit] second docs:check failed"; exit 1; }
+
 if ! git diff --name-only --exit-code docs/ >/dev/null 2>&1; then
-	echo "[pre-commit] docs changed after generation; stage them and retry commit." >&2
+	echo "[pre-commit] docs still change after second generation; aborting to avoid unstable commit." >&2
+	echo "[pre-commit] To bypass temporarily: SKIP_HOOKS=1 git commit -m '...'." >&2
 	exit 1
 fi
+
+echo "[pre-commit] typecheck"
+npm run typecheck --silent || { echo "[pre-commit] typecheck failed"; exit 1; }
 
 echo "[pre-commit] OK"
 exit 0
