@@ -33,8 +33,15 @@ if (!fs.existsSync(ROADMAP_MD)) {
 
 const yaml = require("yaml");
 const yamlDoc = yaml.parse(read(ROADMAP_YAML));
-const canonical = new Set(
-  Object.values(yamlDoc.categories).flatMap((c) => c.items.map((i) => i.slug)),
+const canonicalItems = Object.values(yamlDoc.categories).flatMap((c) =>
+  c.items.map((i) => i),
+);
+const canonical = new Set(canonicalItems.map((i) => i.slug));
+// Policy refinement (2025-09-13):
+//  - Active (non-done) slugs must have >=1 OPEN issue.
+//  - Done slugs must have 0 OPEN issues (we do not enforce presence of a historical issue here; validator handles inconsistency categories).
+const doneSet = new Set(
+  canonicalItems.filter((i) => i.status === "done").map((i) => i.slug),
 );
 
 // Extract slugs present in docs table first column (simple bracket or text containing slug)
@@ -86,9 +93,15 @@ for (const is of issues) {
   issueMap.get(slug).push(is);
 }
 
-const missingIssues = issues.length
-  ? [...canonical].filter((s) => !issueMap.has(s))
-  : [];
+// Missing issues: only active (non-done) slugs must have an OPEN issue
+let missingIssues = [];
+if (issues.length) {
+  missingIssues = [...canonical].filter((s) => {
+    if (doneSet.has(s)) return false;
+    const arr = issueMap.get(s) || [];
+    return !arr.some((i) => i.state === "OPEN");
+  });
+}
 const duplicateIssues = issues.length
   ? [...issueMap.entries()]
       .filter(([s, list]) => list.length > 1 && canonical.has(s))
@@ -100,7 +113,7 @@ const docOrphans = [...docSlugs].filter((s) => !canonical.has(s));
 let fail = false;
 if (missingIssues.length) {
   console.error(
-    "Missing issue(s) for canonical slug(s):",
+    "Missing issue(s) for active canonical slug(s) (excluding done):",
     missingIssues.join(", "),
   );
   fail = true;
@@ -123,4 +136,7 @@ if (docOrphans.length) {
 if (fail) {
   process.exit(1);
 }
-console.log("Roadmap documentation sync OK.");
+const activeCount = [...canonical].filter((s) => !doneSet.has(s)).length;
+console.log(
+  `Roadmap documentation sync OK. Total slugs: ${[...canonical].length}. Active (need OPEN issue): ${activeCount}. Done (must have 0 OPEN issues): ${doneSet.size}.`,
+);

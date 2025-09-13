@@ -1,8 +1,15 @@
 # Canonical roadmap definitions
-# Each item drives a roadmap:<slug> label. Generator will:
-#  - Ensure every slug here has at least one issue
-#  - Flag any roadmap:* label not listed here as ORPHAN
-#  - Order output based on this file
+# Policy (2025-09-13 refined):
+#  Status enum: planned | in-progress | done | (optional experimental/evaluating)
+#  Enforcement rules:
+#    - Active (status != done) slugs MUST have ≥1 OPEN issue titled `[slug] ...` with label `roadmap`.
+#    - Done slugs MUST have 0 OPEN issues (only CLOSED historical issues allowed) OR no issue at all.
+#    - If all issues for a non-done slug close → update status to done (or open a follow-up) or validator fails (FullyClosedNotDone).
+#    - If a done slug has any OPEN issue → validator fails (OpenIssuesForDone) until issue closes or status reverts.
+#  Rationale: Prevent stale “done” work from lingering with open trackers and prevent silent completion without marking done.
+#  Tooling: scripts/validate-roadmap.cjs (strict), scripts/docs/check-roadmap-sync.js (docs gate), generator inserts table between markers in docs/roadmap.md.
+#  Adding a new slug: create OPEN issue before CI passes (unless immediately marked done with no open work—rare; prefer opening issue first).
+#  Orphan detection: any issue slug not listed here fails validation.
 
 categories:
   now:
@@ -65,3 +72,15 @@ categories:
       - slug: roadmap-automation
         title: Roadmap automation
         description: Generated roadmap table + validation
+      - slug: lint-hardening
+        title: Lint hardening & unsafe any removal
+        description: Eliminate unsafe any usage and align strict ESLint config across packages
+        status: in-progress
+      - slug: repo-hygiene
+        title: Repository hygiene & artifact cleanup
+        description: Scripted pruning of transient build artifacts, consistent base lint configs
+        status: planned
+      - slug: dev-tooling
+        title: Developer tooling baseline
+        description: Unified ESLint baseline and DX improvements for local development flows
+        status: planned

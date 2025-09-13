@@ -13,11 +13,14 @@ All notable changes to this project will be documented in this file.
 - Enforceable monorepo ESLint baseline with typed rules and scoped test/config overrides (#114).
 - Artifact cleanup script (`scripts/cleanup-artifacts.cjs`) and root `clean:artifacts` npm script for repository hygiene (#115).
 - Roadmap generator uses YAML item status (done/in-progress/etc.) for icons; validator tolerates done items without active issues and detects duplicate prefixed issues (improved roadmap gating heuristics).
+- Roadmap validation refinement: introduce FullyClosedNotDone / OpenIssuesForDone categories and enforce that `status: done` slugs have zero OPEN issues while active slugs must retain ≥1 (policy header updated; legacy reopened issues closed out #12 #55 #106).
 
 ### Changed
 
 - Local full CI parity script (`ci:full`) and enhanced pre-push hook (runs docs:check, Prisma client generation, coverage, builds) to catch documentation/API drift pre-push.
 - Documentation generation now enforces zero internal TypeDoc warnings (new strict wrapper) – exported public types and excluded shim definitions to keep API docs complete.
+- Roadmap validation now categorizes errors (Missing/Duplicate/Orphan/InvalidStatus), previously exempted `status: done` slugs from requiring open issues, and adds new DX slugs (lint-hardening, repo-hygiene, dev-tooling) to canonical YAML.
+- Removed temporary open-issue-per-slug policy in favor of refined status-driven rules (see Added) allowing closure of shipped slug issues instead of perpetual reopening.
 
 ### Fixed
 
