@@ -1,5 +1,5 @@
-import { Injectable, NestMiddleware, HttpStatus } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Injectable, NestMiddleware, HttpStatus } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
 
 interface Bucket {
   tokens: number;
@@ -26,8 +26,9 @@ export class RateLimitMiddleware implements NestMiddleware {
           this.buckets.delete(key);
         }
       }
-    }, interval) as any;
-    (this.cleanupInterval as any)?.unref?.();
+    }, interval);
+    // Avoid keeping event loop alive solely for cleanup.
+    this.cleanupInterval.unref?.();
   }
 
   // Allow graceful shutdown to clear timer (Nest calls onModuleDestroy for providers, but middleware isn't automatically)
@@ -36,18 +37,34 @@ export class RateLimitMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction) {
-  // Apply only to auth login attempts (registration excluded so tests count only failed logins)
-    if (!req.path.startsWith('/auth/login')) {
+    // Apply only to auth login attempts (registration excluded so tests count only failed logins)
+    if (!req.path.startsWith("/auth/login")) {
       return next();
     }
-    const ip = ((req.headers['x-forwarded-for'] as string) || req.ip || 'unknown').split(',')[0].trim();
+    const ip = (
+      (req.headers["x-forwarded-for"] as string) ||
+      req.ip ||
+      "unknown"
+    )
+      .split(",")[0]
+      .trim();
     // Use email if present for login attempts, else just IP (for abuse resistance and test determinism)
-  // Coerce email to string only if primitive; avoid invoking toString on unexpected objects
-  const emailValue = req.body && typeof (req.body as any).email !== 'undefined' ? (req.body as any).email : '';
-  const emailRaw = typeof emailValue === 'string' ? emailValue.toLowerCase() : '';
-  const key = `${ip}:${emailRaw}`;
+    // Coerce email to string only if primitive; avoid invoking toString on unexpected objects
+    const rawBody = req.body as unknown;
+    const emailValue =
+      rawBody &&
+      typeof rawBody === "object" &&
+      "email" in (rawBody as Record<string, unknown>)
+        ? (rawBody as Record<string, unknown>).email
+        : "";
+    const emailRaw =
+      typeof emailValue === "string" ? emailValue.toLowerCase() : "";
+    const key = `${ip}:${emailRaw}`;
     const now = Date.now();
-  const bucket = this.buckets.get(key) || { tokens: this.capacity, lastRefill: now };
+    const bucket = this.buckets.get(key) || {
+      tokens: this.capacity,
+      lastRefill: now,
+    };
     // Refill
     const elapsed = now - bucket.lastRefill;
     if (elapsed > this.windowMs) {
@@ -55,23 +72,23 @@ export class RateLimitMiddleware implements NestMiddleware {
       bucket.lastRefill = now;
     }
     // Add a custom header only during tests for visibility
-    if (process.env.NODE_ENV === 'test') {
-      res.setHeader('X-RateLimit-Test', `${key}:${bucket.tokens}`);
+    if (process.env.NODE_ENV === "test") {
+      res.setHeader("X-RateLimit-Test", `${key}:${bucket.tokens}`);
     }
     bucket.tokens -= 1;
     if (bucket.tokens < 0) {
       bucket.tokens = 0; // clamp
       const retryAfterSec = Math.ceil(this.windowMs / 1000);
-      if (!res.getHeader('Retry-After')) {
-        res.setHeader('Retry-After', `${retryAfterSec}`);
+      if (!res.getHeader("Retry-After")) {
+        res.setHeader("Retry-After", `${retryAfterSec}`);
       }
       res.status(HttpStatus.TOO_MANY_REQUESTS).json({
         statusCode: HttpStatus.TOO_MANY_REQUESTS,
-        message: 'Rate limit exceeded'
+        message: "Rate limit exceeded",
       });
       return; // do not call next()
     }
-  this.buckets.set(key, bucket);
+    this.buckets.set(key, bucket);
     next();
   }
 }

@@ -1,9 +1,10 @@
-import request from 'supertest';
-import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../../app.module';
+import { INestApplication } from "@nestjs/common";
+import { Test } from "@nestjs/testing";
+import request from "supertest";
 
-describe('Metrics Endpoint (e2e)', () => {
+import { AppModule } from "../../app.module";
+
+describe("Metrics Endpoint (e2e)", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -19,28 +20,30 @@ describe('Metrics Endpoint (e2e)', () => {
     await app.close();
   });
 
-  it('returns Prometheus format text', async () => {
-    const res = await request(app.getHttpServer()).get('/metrics');
+  it("returns Prometheus format text", async () => {
+    const res = await request(app.getHttpServer()).get("/metrics");
     expect(res.status).toBe(200);
-    expect(res.headers['content-type']).toContain('text/plain');
-    expect(res.text).toContain('# HELP'); // crude check
-    expect(res.text).toContain('ddd_http_requests_total');
+    expect(res.headers["content-type"]).toContain("text/plain");
+    expect(res.text).toContain("# HELP"); // crude check
+    expect(res.text).toContain("ddd_http_requests_total");
   });
 
-  it('enforces allow-list when set', async () => {
-    process.env.METRICS_IP_ALLOWLIST = '127.0.0.1';
-    const res = await request(app.getHttpServer()).get('/metrics');
+  it("enforces allow-list when set", async () => {
+    process.env.METRICS_IP_ALLOWLIST = "127.0.0.1";
+    const res = await request(app.getHttpServer()).get("/metrics");
     expect(res.status).toBe(200);
-    process.env.METRICS_IP_ALLOWLIST = '10.0.0.1';
-    const forbidden = await request(app.getHttpServer()).get('/metrics');
+    process.env.METRICS_IP_ALLOWLIST = "10.0.0.1";
+    const forbidden = await request(app.getHttpServer()).get("/metrics");
     expect(forbidden.status).toBe(403);
     delete process.env.METRICS_IP_ALLOWLIST;
   });
 
-  it('increments http request counter for a sample route', async () => {
+  it("increments http request counter for a sample route", async () => {
     // Call health endpoint
-    await request(app.getHttpServer()).get('/health').expect(200);
-    const metrics = await request(app.getHttpServer()).get('/metrics');
-    expect(metrics.text).toMatch(/ddd_http_requests_total{.*route="\/health".*} 1|2|3/);
+    await request(app.getHttpServer()).get("/health").expect(200);
+    const metrics = await request(app.getHttpServer()).get("/metrics");
+    expect(metrics.text).toMatch(
+      /ddd_http_requests_total{.*route="\/health".*} 1|2|3/,
+    );
   });
 });

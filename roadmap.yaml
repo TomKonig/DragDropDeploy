@@ -1,0 +1,122 @@
+# Canonical roadmap definitions
+# Policy (2025-09-13 refined):
+#  Status enum: planned | in-progress | done | (optional experimental/evaluating)
+#  Enforcement rules:
+#    - Active (status != done) slugs MUST have ≥1 OPEN issue titled `[slug] ...` with label `roadmap`.
+#    - Done slugs MUST have 0 OPEN issues (only CLOSED historical issues allowed) OR no issue at all.
+#    - If all issues for a non-done slug close → update status to done (or open a follow-up) or validator fails (FullyClosedNotDone).
+#    - If a done slug has any OPEN issue → validator fails (OpenIssuesForDone) until issue closes or status reverts.
+#  Rationale: Prevent stale “done” work from lingering with open trackers and prevent silent completion without marking done.
+#  Tooling: scripts/validate-roadmap.cjs (strict), scripts/docs/check-roadmap-sync.js (docs gate), generator inserts table between markers in docs/roadmap.md.
+#  Adding a new slug: create OPEN issue before CI passes (unless immediately marked done with no open work—rare; prefer opening issue first).
+#  Orphan detection: any issue slug not listed here fails validation.
+
+categories:
+  now:
+    title: Now (Available or Shipping Soon)
+    items:
+      - slug: multipart-upload-endpoint
+        title: Multipart upload endpoint
+        description: Accept ZIP or raw directory uploads with validation
+        status: done
+      - slug: build-job-orchestration
+        title: Build job orchestration
+        description: Queue + worker foundation
+      - slug: static-asset-minification
+        title: Static asset minification
+        description: Minify HTML/CSS/JS with opt-outs
+        status: done
+      - slug: project-build-flags
+        title: Project build flags
+        description: Allow-listed flags appended to build command
+        status: done
+  next:
+    title: Next (Upcoming Focus)
+    items:
+      - slug: versioned-rollbacks
+        title: Versioned deploys & rollback
+        description: Retain and switch between deploy versions
+      - slug: domain-routing
+        title: Domain & wildcard routing
+        description: Custom + staging domain mapping
+      - slug: oauth-sign-in
+        title: OAuth sign-in
+        description: External provider login
+      - slug: atomic-publish
+        title: Atomic publish
+        description: Prevent partial deploy visibility
+  later:
+    title: Later / Exploration
+    items:
+      - slug: container-isolated-builds
+        title: Container-isolated builds
+        description: Stronger tenant isolation
+      - slug: incremental-deploys
+        title: Incremental deploys
+        description: Ship only changed assets
+      - slug: billing-payments
+        title: Billing & payments
+        description: Subscription management and metered usage billing
+        status: planned
+      - slug: themes-and-plugins
+        title: Themes & plugins framework
+        description: Extensible runtime/plugin architecture with marketplace integration (flag-gated)
+        status: planned
+      - slug: i18n-baseline
+        title: Internationalization baseline
+        description: Core i18n pipeline and locale resource loading
+        status: planned
+  security:
+    title: Security & Reliability
+    items:
+      - slug: rls-enforcement
+        title: Row-Level Security enforcement
+        description: Database tenant isolation policies
+      - slug: build-sandbox
+        title: Build sandboxing
+        description: Ephemeral constrained build env
+      - slug: security-hardening
+        title: Security hardening
+        description: Ongoing hardening (headers, dependency audits, secret scanning, rate limits consolidation)
+        status: planned
+      - slug: auth-session-hardening
+        title: Auth/session hardening
+        description: Session rotation, refresh token invalidation, and anomaly detection
+        status: planned
+  dx:
+    title: Developer Experience
+    items:
+      - slug: test-factory-helpers
+        title: Test factory helpers
+        description: Faster test data construction
+      - slug: roadmap-automation
+        title: Roadmap automation
+        description: Generated roadmap table + validation
+      - slug: lint-hardening
+        title: Lint hardening & unsafe any removal
+        description: Eliminate unsafe any usage and align strict ESLint config across packages
+        status: in-progress
+      - slug: repo-hygiene
+        title: Repository hygiene & artifact cleanup
+        description: Scripted pruning of transient build artifacts, consistent base lint configs
+        status: planned
+      - slug: dev-tooling
+        title: Developer tooling baseline
+        description: Unified ESLint baseline and DX improvements for local development flows
+        status: planned
+      - slug: ui-foundation
+        title: UI foundation
+        description: Shared design system primitives and base component library
+        status: planned
+      - slug: frontend-extensible-skeleton
+        title: Frontend extensible skeleton
+        description: Layout shell, routing, and extension injection points
+        status: planned
+      - slug: project-creation-flow
+        title: Project creation flow
+        description: Guided multi-step project setup wizard UX
+        status: planned
+      - slug: auth-ui
+        title: Auth UI
+        description: Polished sign-in/sign-up/reset flows & operator invite acceptance
+        status: planned

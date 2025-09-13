@@ -13,7 +13,7 @@ Authoritative source: root `CHANGELOG.md` (retained for repository + tooling con
 3. Before release, move those sections under a new heading: `## X.Y.Z - YYYY-MM-DD`.
 4. Keep an empty Unreleased template ready in the root file (see root CHANGELOG for canonical format).
 
-5. Run `npm run docs:changelog` (part of `npm run docs:check`) to ensure mirror sync.
+5. `npm run docs:check` now auto-runs the sync; you can run `npm run docs:changelog:sync` manually to update + verify (or `npm run docs:changelog` to only verify).
 
 ### Date Handling
 
@@ -31,15 +31,33 @@ All notable changes (mirrored from root) are listed below.
 
 ### Added
 
-- No user-visible additions since last release.
+- Adopt: Hierarchical roadmap issue model with single parent `[slug]` issue + sub-issues (replaces per-issue slug prefix pattern)
+- Removed redundant custom CodeQL workflow in favor of GitHub default configuration (eliminates SARIF conflict).
+- Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
+- Deployment archive upload endpoint enhancements since 0.0.2 (artifact processing groundwork for orchestration follow-up).
+- Enforceable monorepo ESLint baseline with typed rules and scoped test/config overrides (#114).
 
-### Changed
+- Unified CI parity: single `ci:full:strict` pipeline invoked locally (pre-push) and in GitHub Actions (workflow collapsed to one step, reordered to run Prisma generation first, added clean tree verification).
+- Early docs generation ordering: moved `docs:check` (roadmap/api/changelog sync) to the start of `ci:full` to prevent later test phases from seeing a dirty tree; added pre-commit hook enforcing up-to-date generated docs.
+- Refined docs workflow: removed docs generation from push CI path by deleting pre-push hook and taking `docs:check` out of `ci:full`; generation now enforced exclusively at pre-commit for deterministic diffs and faster pushes.
+- CI parity adjustment: removed separate `docs-validation` GitHub Action workflow and stripped docs generation from server-side CI; documentation generation now enforced solely via local pre-commit hook to guarantee committed artifacts without redundant regeneration in Actions.
+- Added new canonical roadmap slugs (billing-payments, themes-and-plugins, i18n-baseline, security-hardening, auth-session-hardening, ui-foundation, frontend-extensible-skeleton, project-creation-flow, auth-ui) with initial planned status.
 
-- No functional changes recorded yet.
+### Fixed
+
+- Project domain validation returning 500 for invalid/valid mix in aggregate runs; now consistently returns 400 for invalid domains and 201 for valid ones.
+- Intermittent 500 on build enqueue (`POST /builds/:projectId`) during rare concurrent versioning race; added idempotent transactional fallback returning existing/latest build job instead of error (prevents build.history flake).
+- Removed dynamic require + `any` fallbacks in build queue and controller; restored strong typing for BuildJob operations eliminating 49 ESLint unsafe-any violations.
+- Stabilize API reference generation by trimming redundant blank lines in included TypeDoc sections for deterministic api.md (postprocess normalization).
 
 ### Security
 
-- No security-related changes since last release.
+- Replace pre-push `ci:all` with `ci:full` including docs and coverage for local failure parity with GitHub workflow.
+- Resolve widespread TypeScript module resolution failures caused by incomplete package installations (restored proper `dist` contents via tarball extraction) (#115).
+- Added CodeQL static analysis workflow (`codeql.yml`) running on push/PR/schedule with security-and-quality queries to continuously surface code scanning alerts.
+- Fixed: CodeQL workflow switched from unsupported `manual` build mode (JS/TS) to `none` to resolve initialization failure.
+- Remediated initial CodeQL findings: hardened deployment path validation, added prototype pollution key guard in i18n deep merge, masked bootstrap password logs, corrected regex escape usage, and improved shell command string escaping in migration script.
+- Introduced centralized CodeQL configuration file (`.github/codeql/codeql-config.yml`) with `paths-ignore` for SARIF outputs and generated documentation/coverage artifacts to reduce noise and prevent self-analysis of tool outputs.
 
 ## 0.0.2 - 2025-09-12
 
@@ -60,11 +78,11 @@ All notable changes (mirrored from root) are listed below.
 - Deployment record creation on upload (now immediate transition to BUILDING with BuildJob creation) and e2e test coverage.
 - Security hardening middleware: Helmet + explicit CORS origins loading from CORS_ORIGINS env var.
 - Deployment archive upload endpoint (`POST /deployments/upload`):
-- In-memory buffer handling & ZIP extraction (path traversal, file count, compression ratio, magic number guards)
-- Artifact persisted to `ARTIFACTS_DIR` with recorded `artifactPath`
-- Deployment status immediately set to BUILDING; BuildJob row created (PENDING)
-- Configurable size via `MAX_UPLOAD_MB` (default 25) and storage root via `ARTIFACTS_DIR`
-- E2E tests: happy path, build job creation, oversize rejection, traversal attempt, non-zip rejection
+  - In-memory buffer handling & ZIP extraction (path traversal, file count, compression ratio, magic number guards)
+  - Artifact persisted to `ARTIFACTS_DIR` with recorded `artifactPath`
+  - Deployment status immediately set to BUILDING; BuildJob row created (PENDING)
+  - Configurable size via `MAX_UPLOAD_MB` (default 25) and storage root via `ARTIFACTS_DIR`
+  - E2E tests: happy path, build job creation, oversize rejection, traversal attempt, non-zip rejection
 
 ### Partial / In Progress
 
@@ -83,15 +101,4 @@ All notable changes (mirrored from root) are listed below.
 - Production compose adds: internal-only DB/Redis network, dropped capabilities (ALL), no-new-privileges, read-only FS (frontend & traefik), resource limits.
 - Added initial auth rate limiting (brute force mitigation) & security headers (Helmet) + stricter CORS configuration.
 
-### Post-0.0.2 Added (Unreleased)
-
-- Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
-- Static asset minification service (HTML/CSS/JS) with per-project opt-out (`optOutMinify`) and host override (`FORCE_MINIFY`).
-
-### Post-0.0.2 Changed (Unreleased)
-
-- Build executor now appends project build flags after `--` and redacts sensitive values in logs.
-
-### Post-0.0.2 Security (Unreleased)
-
-- Expanded log redaction to include `--token=`, `--secret=`, `--key=`, `--password=` patterns.
+<!-- Consolidated former Post-0.0.2 sections into standard Unreleased buckets per style guide. -->

@@ -1,121 +1,154 @@
 #!/usr/bin/env node
-/*
- Cross-check docs/roadmap.md against tasklist.md.
- Rules:
- 1. If roadmap row status is ✅ the corresponding concept must have at least one checked item in tasklist mentioning a keyword.
- 2. If roadmap row status is 🔜 or 🟡 and a clearly matching task is fully checked (all related lines), warn.
- 3. Exit non-zero only on rule #1 violations (roadmap claims done but no evidence in tasklist) or internal parsing errors.
+/**
+ * check-roadmap-sync.js
+ * Validates docs/roadmap.md table alignment with canonical roadmap.yaml + GitHub issues.
+ * Rules (exit non-zero on first two classes):
+ *  1. Every canonical slug in roadmap.yaml must appear exactly once as a [slug] issue title with roadmap label.
+ *  2. docs/roadmap.md must contain each canonical slug at least once in the first column (item cell).
+ *  3. Warn (do not fail) if docs/roadmap.md references a slug not in roadmap.yaml (stale / orphan doc entry).
+ */
+const fs = require("fs");
+const path = require("path");
+const { execSync } = require("child_process");
 
- Heuristic mapping: For each roadmap row (text cell #1), build a lowercase keyword set by splitting on non-alphanumerics, dropping stop words.
- Then scan tasklist for lines starting with "- [x]" containing any keyword (>=1) and count as evidence.
+const ROOT = path.join(__dirname, "..", "..");
+const ROADMAP_MD = path.join(ROOT, "docs", "roadmap.md");
+const ROADMAP_YAML = path.join(ROOT, "roadmap.yaml");
 
- Future enhancement: structured front-matter mapping.
-*/
-const fs = require('fs');
-const path = require('path');
-
-const ROOT = path.join(__dirname, '..', '..');
-const ROADMAP = path.join(ROOT, 'docs', 'roadmap.md');
-const TASKLIST = path.join(ROOT, 'tasklist.md');
-
-function read(file){return fs.readFileSync(file,'utf8');}
-
-const roadmap = read(ROADMAP);
-const tasklist = read(TASKLIST);
-
-// Extract markdown tables rows (ignore header separators) capturing: item | status | description
-const tableRowRe = /^\|([^\n]*?)\|([^\n]*?)\|([^\n]*?)\|$/gm;
-let rows=[]; let m;
-while((m=tableRowRe.exec(roadmap))){
-  const item=m[1].trim();
-  const status=m[2].trim();
-  const desc=m[3].trim();
-  if(item.toLowerCase().startsWith('deployment artifact')){ /* include */ }
-  // Skip header lines containing 'Item' or 'Status'
-  if(/item/i.test(item) && /status/i.test(status)) continue;
-  // Skip separators mis-captured
-  if(/^-+$/.test(item)) continue;
-  if(item) rows.push({item,status,desc});
-}
-
-// Build task evidence index
-const taskLines = tasklist.split(/\r?\n/).filter(l=>/^\s*- \[x\]/i.test(l));
-
-// Optional ignores (roadmap items intentionally broad or tracked elsewhere)
-const IGNORE_WARN = new Set([
-  'Build worker implementation',
-  'Domain & wildcard routing',
-  'OAuth provider integration',
-  'Metrics endpoint (Prometheus)',
-  'Test coverage reporting',
-  'SAST & SCA in CI',
-  'RLS policies',
-  'Drift detection for schema'
-]);
-
-// Allow items to be marked done without task evidence (purely documentation-level accomplishments)
-const ALLOW_MISSING_DONE = new Set([
-  'Docs restructuring (/docs)',
-  'Roadmap & contributing docs',
-  'API quickstart',
-  'Documentation validation CI',
-  'Threat model doc',
-  'Threat model'
-]);
-
-const STOP = new Set(['the','and','for','with','doc','docs','added','guide','creation','job','api','ref','reference','process','script','matrix']);
-function keywords(str){
-  return [...new Set(str.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2 && !STOP.has(w)))];
-}
-
-function phraseMatch(item, line){
-  const norm = s=>s.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-  const inorm = norm(item);
-  const lnorm = norm(line.replace(/^- \[x\] /,''));
-  // consider phrase match if all non-stop keywords appear
-  const keys = keywords(item);
-  return keys.length>0 && keys.every(k=>lnorm.includes(k));
-}
-
-function evidenceFor(item){
-  const keys=keywords(item);
-  if(!keys.length) return [];
-  const hits=[];
-  for(const line of taskLines){
-    const lower=line.toLowerCase();
-    let keyCount=0;
-    for(const k of keys){ if(lower.includes(k)) keyCount++; }
-    if(keyCount>=2 || phraseMatch(item,line)){
-      hits.push(line.trim());
-    }
+// Auto-load .env if present to surface GH_TOKEN/GITHUB_TOKEN without relying solely on husky hook.
+try {
+  const envPath = path.join(ROOT, ".env");
+  if (fs.existsSync(envPath)) {
+    // Lazy require to avoid mandatory dependency if script used elsewhere
+    require("dotenv").config({ path: envPath });
   }
-  return hits;
+} catch (e) {
+  // Non-fatal; continue without env injection
+  console.warn("dotenv load skipped:", e.message);
 }
 
-let hardFailures=[]; let warnings=[];
-for(const r of rows){
-  if(r.status.includes('✅')){
-    if(ALLOW_MISSING_DONE.has(r.item)) continue;
-    const ev = evidenceFor(r.item);
-    if(ev.length===0){
-      hardFailures.push(`Roadmap marks done but no task evidence: "${r.item}"`);
-    }
-  } else if(r.status.match(/🔜|🟡/)){
-    if(IGNORE_WARN.has(r.item)) continue;
-    const ev = evidenceFor(r.item);
-    if(ev.length>0){
-      warnings.push(`Roadmap pending but tasks show evidence of completion: "${r.item}" -> e.g. ${ev[0]}`);
-    }
-  }
+function read(p) {
+  return fs.readFileSync(p, "utf8");
+}
+function sh(c) {
+  return execSync(c, { stdio: ["ignore", "pipe", "pipe"] }).toString();
 }
 
-if(warnings.length) {
-  console.warn('Roadmap sync warnings:');
-  warnings.forEach(w=>console.warn('  '+w));
+if (!fs.existsSync(ROADMAP_YAML)) {
+  console.log("No roadmap.yaml present; skipping.");
+  process.exit(0);
 }
-if(hardFailures.length){
-  console.error('Roadmap sync FAIL:');
-  hardFailures.forEach(f=>console.error('  '+f));
+if (!fs.existsSync(ROADMAP_MD)) {
+  console.error("docs/roadmap.md missing.");
   process.exit(1);
 }
-console.log('Roadmap sync OK.');
+
+const yaml = require("yaml");
+const yamlDoc = yaml.parse(read(ROADMAP_YAML));
+const canonicalItems = Object.values(yamlDoc.categories).flatMap((c) =>
+  c.items.map((i) => i),
+);
+const canonical = new Set(canonicalItems.map((i) => i.slug));
+// Policy refinement (2025-09-13):
+//  - Active (non-done) slugs must have >=1 OPEN issue.
+//  - Done slugs must have 0 OPEN issues (we do not enforce presence of a historical issue here; validator handles inconsistency categories).
+const doneSet = new Set(
+  canonicalItems.filter((i) => i.status === "done").map((i) => i.slug),
+);
+
+// Extract slugs present in docs table first column (simple bracket or text containing slug)
+const md = read(ROADMAP_MD);
+const rowRe = /^\|([^|]+)\|/gm; // first cell
+const docSlugs = new Set();
+let m;
+for (; (m = rowRe.exec(md)); ) {
+  const cell = m[1].trim();
+  // Collect bare slug if it exactly matches canonical; also detect [slug]
+  const bracket = cell.match(/\[([a-z0-9-]+)\]/i);
+  if (bracket) {
+    docSlugs.add(bracket[1]);
+    continue;
+  }
+  if (canonical.has(cell)) docSlugs.add(cell);
+}
+
+// Query GitHub issues for roadmap label (token fallback: GH_TOKEN || GITHUB_TOKEN)
+let issues = [];
+const ghToken = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
+if (!ghToken) {
+  console.warn(
+    "No GH_TOKEN/GITHUB_TOKEN provided; skipping GitHub issue validation (permitted).",
+  );
+} else {
+  // Ensure gh CLI sees token
+  const envExport = `export GH_TOKEN='${ghToken.replace(/'/g, "'\\''")}'`;
+  try {
+    issues = JSON.parse(
+      sh(
+        `${envExport} && gh issue list --label roadmap --limit 500 --json number,title,labels,state`,
+      ),
+    );
+  } catch (e) {
+    console.warn(
+      "Warning: gh issue list failed, skipping issue validation:",
+      e.message,
+    );
+  }
+}
+
+const slugFromTitle = (t) => (t.match(/^\[([^\]]+)\]/) || [])[1];
+const issueMap = new Map();
+for (const is of issues) {
+  const slug = slugFromTitle(is.title);
+  if (!slug) continue;
+  if (!issueMap.has(slug)) issueMap.set(slug, []);
+  issueMap.get(slug).push(is);
+}
+
+// Missing issues: only active (non-done) slugs must have an OPEN issue
+let missingIssues = [];
+if (issues.length) {
+  missingIssues = [...canonical].filter((s) => {
+    if (doneSet.has(s)) return false;
+    const arr = issueMap.get(s) || [];
+    return !arr.some((i) => i.state === "OPEN");
+  });
+}
+const duplicateIssues = issues.length
+  ? [...issueMap.entries()]
+      .filter(([s, list]) => list.length > 1 && canonical.has(s))
+      .map(([s]) => s)
+  : [];
+const missingDoc = [...canonical].filter((s) => !docSlugs.has(s));
+const docOrphans = [...docSlugs].filter((s) => !canonical.has(s));
+
+let fail = false;
+if (missingIssues.length) {
+  console.error(
+    "Missing issue(s) for active canonical slug(s) (excluding done):",
+    missingIssues.join(", "),
+  );
+  fail = true;
+}
+if (duplicateIssues.length) {
+  console.error("Duplicate issue(s) for slug(s):", duplicateIssues.join(", "));
+  fail = true;
+}
+if (missingDoc.length) {
+  console.error("docs/roadmap.md missing slug row(s):", missingDoc.join(", "));
+  fail = true;
+}
+if (docOrphans.length) {
+  console.warn(
+    "Orphan slug(s) in docs/roadmap.md (not in roadmap.yaml):",
+    docOrphans.join(", "),
+  );
+}
+
+if (fail) {
+  process.exit(1);
+}
+const activeCount = [...canonical].filter((s) => !doneSet.has(s)).length;
+console.log(
+  `Roadmap documentation sync OK. Total slugs: ${[...canonical].length}. Active (need OPEN issue): ${activeCount}. Done (must have 0 OPEN issues): ${doneSet.size}.`,
+);

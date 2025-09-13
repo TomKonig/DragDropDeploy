@@ -19,6 +19,37 @@ Guidelines for proposing changes and submitting pull requests.
 5. Update docs & changelog (Unreleased section)
 6. Open PR with clear description & checklist
 
+### Fast Docs / Roadmap Regeneration
+
+To refresh the user-facing roadmap table and API/TypeDoc markdown in one go:
+
+```bash
+npm run docs:regen-core
+```
+
+This runs the roadmap generator (`node scripts/generate-roadmap.cjs`) plus the OpenAPI + TypeDoc pipeline. Commit any changes in `docs/roadmap.md` and avoid manual edits inside its AUTO-ROADMAP block.
+
+### Roadmap Item Lifecycle (Quick)
+
+1. Add or adjust slug in `roadmap.yaml`.
+2. Ensure a GitHub issue exists titled `[slug] Descriptive title` and labeled `roadmap`.
+3. Run `npm run docs:regen-core` (optional – CI will also validate).
+4. Commit updated docs.
+
+Validation: CI step `docs:roadmap` checks slug ↔ issue ↔ table alignment (missing, duplicate, or stale rows).
+
+### Changelog Entries (Keep a Changelog)
+
+Add user-visible changes under `## Unreleased` grouped by: Added / Changed / Fixed / Security / Removed. The `docs:changelog` script enforces structure.
+
+### Quick Quality Checklist Before Pushing
+
+- Tests pass (`npm test -w backend`, `npm test -w frontend`)
+- `npm run docs:check` green OR at least `npm run docs:regen-core` if touching roadmap/API
+- Changelog updated if user-visible change
+- Roadmap issue + slug alignment if you modified `roadmap.yaml`
+- No stray debug `console.log` left in committed code
+
 ### Commit Messages
 
 Recommend Conventional Commits subset:

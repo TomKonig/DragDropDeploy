@@ -16,11 +16,11 @@ Related: See `../security/threat-model.md` for assets, threats, and mitigations 
 
 ### Least Privilege / DB
 
-- Future: dedicated roles (migrator, app_rw, app_ro). Runtime will *not* use superuser.
+- Future: dedicated roles (migrator, app_rw, app_ro). Runtime will _not_ use superuser.
 - RLS to be enabled after schema stabilization; tenant scoping via session variable.
-- Document JIT elevated role procedure for maintenance.
+- Document JIT elevated role procedure for maintenance. (See: ../operations/jit-admin-access.md for design & runbook)
 - Roles script added at `backend/prisma/db_roles.sql`; production to run via isolated migration job, not app container.
-- Separate DATABASE_URLs: one for migrations (migrator), one for runtime (app_rw), optional reporting (app_ro).
+- Separate DATABASE_URLs: one for migrations (migrator), one for runtime (app_rw), optional reporting (app_ro). (See: ../operations/credential-rotation.md for rotation runbook)
 
 ### Secrets & Config
 
@@ -67,12 +67,30 @@ Baseline Docker defaults already apply a seccomp profile that blocks dangerous s
 
 ```json
 {
-    "defaultAction": "SCMP_ACT_ERRNO",
-    "archMap": [{ "architecture": "SCMP_ARCH_X86_64", "subArchitectures": ["SCMP_ARCH_X86", "SCMP_ARCH_X32"] }],
-    "syscalls": [
-        { "names": ["read", "write", "exit", "futex", "clone", "execve", "openat", "close", "statx"], "action": "SCMP_ACT_ALLOW" },
-        { "names": ["ptrace"], "action": "SCMP_ACT_ERRNO" }
-    ]
+  "defaultAction": "SCMP_ACT_ERRNO",
+  "archMap": [
+    {
+      "architecture": "SCMP_ARCH_X86_64",
+      "subArchitectures": ["SCMP_ARCH_X86", "SCMP_ARCH_X32"]
+    }
+  ],
+  "syscalls": [
+    {
+      "names": [
+        "read",
+        "write",
+        "exit",
+        "futex",
+        "clone",
+        "execve",
+        "openat",
+        "close",
+        "statx"
+      ],
+      "action": "SCMP_ACT_ALLOW"
+    },
+    { "names": ["ptrace"], "action": "SCMP_ACT_ERRNO" }
+  ]
 }
 ```
 
@@ -80,12 +98,12 @@ Compose usage (optional override):
 
 ```yaml
 services:
-    api:
-        security_opt:
-            - seccomp:./hardening/seccomp-api.json
-    frontend:
-        security_opt:
-            - seccomp:unconfined # only temporarily during troubleshooting
+  api:
+    security_opt:
+      - seccomp:./hardening/seccomp-api.json
+  frontend:
+    security_opt:
+      - seccomp:unconfined # only temporarily during troubleshooting
 ```
 
 #### AppArmor Example
@@ -106,9 +124,9 @@ Compose reference:
 
 ```yaml
 services:
-    api:
-        security_opt:
-            - apparmor:dragdropdeploy-api
+  api:
+    security_opt:
+      - apparmor:dragdropdeploy-api
 ```
 
 ### Operational Notes

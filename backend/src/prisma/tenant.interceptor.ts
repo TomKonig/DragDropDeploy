@@ -1,6 +1,12 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tenantStorage } from './tenant-context';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+
+import { tenantStorage } from "./tenant-context";
 
 // TenantInterceptor establishes a per-request AsyncLocalStorage context storing the
 // authenticated user id. This avoids passing userId through every service method
@@ -12,9 +18,15 @@ import { tenantStorage } from './tenant-context';
 
 @Injectable()
 export class TenantInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req = context.switchToHttp().getRequest();
-    const userId: string | undefined = req?.user?.sub;
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    interface ReqUser {
+      sub: string;
+    }
+    interface Req {
+      user?: ReqUser;
+    }
+    const req = context.switchToHttp().getRequest<Req>();
+    const userId: string | undefined = req.user?.sub;
     return tenantStorage.run({ userId }, () => next.handle());
   }
 }

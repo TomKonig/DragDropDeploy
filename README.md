@@ -1,4 +1,3 @@
-
 # DragDropDeploy
 
 <!-- Project Logo -->
@@ -6,11 +5,11 @@
 <img src="./docs/assets/logo.jpg" alt="DragDropDeploy Logo" width="480" />
 </p>
 <p align="center">
-	<a href="https://github.com/TomKonig/DragDropDeploy/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/TomKonig/DragDropDeploy/ci.yml?style=flat-square" alt="Build" /></a>
-	<a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License: MIT" /></a>
-	<a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Changelog-keep--a--changelog-blue?style=flat-square" alt="Changelog" /></a>
-	<a href="./docs/roadmap.md"><img src="https://img.shields.io/badge/Roadmap-Now%2FNext%2FLater-purple?style=flat-square" alt="Roadmap" /></a>
-	<a href="https://github.com/TomKonig/DragDropDeploy/issues"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome" /></a>
+  <a href="https://github.com/TomKonig/DragDropDeploy/actions/workflows/ci.yml?query=branch:develop"><img src="https://img.shields.io/github/actions/workflow/status/TomKonig/DragDropDeploy/ci.yml?branch=develop&style=flat-square" alt="Build (develop)" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License: MIT" /></a>
+  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Changelog-keep--a--changelog-blue?style=flat-square" alt="Changelog" /></a>
+  <a href="./docs/roadmap.md"><img src="https://img.shields.io/badge/Roadmap-Now%2FNext%2FLater-purple?style=flat-square" alt="Roadmap" /></a>
+  <a href="https://github.com/TomKonig/DragDropDeploy/issues"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome" /></a>
 </p>
 
 Self‑hosted, lightweight static (and future hybrid) site hosting — drop in your site and share the link. An open alternative to closed platforms like Tiiny.host, Cloudflare Pages, and Netlify, designed for people who want control, customization, and low resource usage.
@@ -48,6 +47,42 @@ Self‑hosted, lightweight static (and future hybrid) site hosting — drop in y
 - Metrics endpoint (Prometheus) & structured logs
 
 See the user‑oriented roadmap for “Now / Next / Later”: [`docs/roadmap.md`](docs/roadmap.md)
+
+## Roadmap Maintenance
+
+The roadmap is source‑controlled and enforced — no manual editing of the table in `docs/roadmap.md`.
+
+Authoritative data flow:
+
+1. `roadmap.yaml` (canonical categories + slugs)
+2. One GitHub issue per slug, labeled `roadmap`, titled `[slug] Descriptive title`
+3. Generated markdown table inside `docs/roadmap.md` (AUTO-ROADMAP block)
+4. CI validation (`scripts/docs/check-roadmap-sync.js`) ensures: every slug has an issue & doc row; warns on stale doc rows.
+
+Daily tasks:
+
+- To add a roadmap item: add slug entry under the right category in `roadmap.yaml`, create the matching issue.
+- To rename: update slug in YAML AND retitle the issue; regenerate docs.
+- To remove: delete from YAML; close the issue (optionally remove label); regenerate docs.
+
+Regenerate the roadmap table:
+
+```bash
+node scripts/generate-roadmap.cjs
+```
+
+Commit the changed `docs/roadmap.md`.
+
+Token usage in CI:
+
+- Uses `GH_TOKEN` (fallback `GITHUB_TOKEN`) for listing issues via `gh` CLI.
+- If neither token is present, script skips issue validation (prints a warning).
+
+Common pitfalls:
+
+- Forgetting the `[slug]` prefix → item treated as missing.
+- Duplicate slugs in issues → validation fails until duplicates closed/retitled.
+- Manual edits inside the AUTO-ROADMAP block → overwritten next generation.
 
 ## Coming Soon (Highlights)
 

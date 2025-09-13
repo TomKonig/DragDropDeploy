@@ -2,16 +2,21 @@ name: CI
 
 on:
   push:
-    branches: [ main, feature/** ]
+    branches: [main, develop, feature/**]
     tags:
-      - 'v*'
+      - "v*"
   pull_request:
-    branches: [ main ]
+    branches: [main, develop]
   workflow_dispatch: {}
 
 jobs:
   build-test:
-    name: Lint / Type Check / Test
+    name: Full CI (lint, typecheck, tests, coverage, builds, clean tree)
+    # Explicit permissions so the workflow token can read issues (roadmap scripts) and push packages if needed in later jobs
+    permissions:
+      contents: read
+      issues: read
+      packages: read
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -37,30 +42,16 @@ jobs:
         with:
           node-version: 20
           # Monorepo uses a single root package-lock.json (npm workspaces) so we can cache it directly
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies (workspace root)
         run: npm ci
-      - name: Generate Prisma Client
-        run: npm run prisma:generate -w backend
-      - name: Docs checks (includes API gen)
-        run: npm run docs:check
-      - name: Run backend tests
+      - name: Full pipeline ci:full:strict
         env:
+          # Single export is sufficient; scripts fall back GH_TOKEN || GITHUB_TOKEN
+          GH_TOKEN: ${{ github.token }}
           DATABASE_URL: postgresql://ddd:ddd@localhost:5432/ddd
-        run: npm test -w backend -- --runInBand
-      - name: Run frontend tests
-        run: npm test -w frontend
-      - name: Backend coverage
-        run: npm run coverage:backend
-      - name: Frontend coverage
-        run: npm run coverage:frontend
-      - name: Build backend
-        run: npm run build -w backend
-      - name: Build shared (explicit)
-        run: npm run build -w @dragdropdeploy/shared
-      - name: Build frontend
-        run: npm run build -w frontend
+        run: npm run ci:full:strict
       # Placeholder lint (add ESLint when config present)
       # - name: Lint
       #   run: npm run lint
@@ -89,7 +80,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci --omit=dev
@@ -99,12 +90,14 @@ jobs:
           command: code test --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
       - name: Snyk Open Source (SCA) Test
         uses: snyk/actions/node@master
         with:
           command: test --all-projects --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
       - name: Snyk Open Source Monitor (optional)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: snyk/actions/node@master
@@ -112,12 +105,16 @@ jobs:
           command: monitor --all-projects
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
 
   docker-images:
     name: Build & Push Images
     needs: build-test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up QEMU

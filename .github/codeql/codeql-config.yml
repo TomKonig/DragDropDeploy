@@ -1,0 +1,22 @@
+name: dragdropdeploy-codeql-config
+
+# CodeQL config centralizing query packs and path exclusions.
+# We explicitly ignore generated artifacts and SARIF outputs to avoid
+# wasting analysis cycles or accidentally re-importing produced results.
+#
+# NOTE: SARIF results are produced by the analyze step and uploaded to
+# the Security tab; they should never be committed. This also prevents
+# the action from trying to analyze its own prior outputs if they were
+# ever added.
+
+paths-ignore:
+  - "**/*.sarif"
+  - "docs/reference/api.md"
+  - "docs/reference/changelog.md"
+  - "docs/.generated/**"
+  - "tmp-*/**"
+  - "coverage/**"
+# Query packs: keep default plus security-and-quality (already selected in workflow).
+# Additional custom packs could be appended here later.
+# queries:
+#   - uses: security-and-quality

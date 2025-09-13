@@ -18,6 +18,7 @@
   },
   "exclude": [
     "**/generated/prisma/runtime/**",
-    "**/generated/prisma/namespaces/Prisma/**"
+    "**/generated/prisma/namespaces/Prisma/**",
+    "src/types/jszip.d.ts"
   ]
 }

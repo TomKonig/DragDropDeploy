@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+if [ "$SKIP_HOOKS" = "1" ]; then
+  echo "[pre-push] skipped via SKIP_HOOKS=1" >&2
+  exit 0
+fi
+
+set -e
+
+# Lightweight env load (do not require GH_TOKEN now that docs gen moved to pre-commit)
+if [ -f ./.env ]; then
+  set -a; . ./.env; set +a
+fi
+
+echo "[pre-push] Running ci:full:strict (no docs generation here)" >&2
+npm run ci:full:strict || { echo "[pre-push] ci:full:strict failed" >&2; exit 1; }
+
+echo "[pre-push] OK" >&2

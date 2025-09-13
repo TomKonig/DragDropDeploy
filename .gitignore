@@ -10,8 +10,9 @@ dist
 # Keep generated root-level build artifacts ignored, but allow source folder backend/src/build
 /build/
 coverage
-tsconfig.tsbuildinfo
-tsconfig.build.tsbuildinfo
+# TypeScript incremental build info (root & workspace)
+*.tsbuildinfo
+
 
 # Local debug logs
 debug.log
@@ -27,6 +28,7 @@ backend/prisma/migrations/*/schema.prisma
 # Coverage reports
 coverage/
 
+tmp-nestjs-swagger/
 # MkDocs build output (if used locally)
 site/
 

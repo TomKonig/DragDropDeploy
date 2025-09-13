@@ -1,57 +1,61 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
+import { Injectable } from "@nestjs/common";
+import * as bcrypt from "bcrypt";
 
-/**
- * Data-layer service for user retrieval and creation.
- *
- * Handles bootstrap operator promotion logic for the first user or a
- * specifically designated bootstrap email (via OPERATOR_BOOTSTRAP_EMAIL).
- */
+import { PrismaService } from "../prisma/prisma.service";
+
+// Lightweight in-module interfaces to give explicit structure without relying on generated Prisma types.
+// They mirror the current Prisma schema fields used by this service.
+export interface DBUser {
+  id: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+  passwordHash: string | null;
+  role: string;
+  isOperator: boolean;
+  displayName: string | null;
+}
+
+export interface UserPublic {
+  id: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+  role: string;
+  isOperator: boolean;
+  displayName: string | null;
+}
+
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Locate a user by email (case-sensitive by default).
-   * @param email User email
-   */
-  async findByEmail(email: string) {
-    return this.prisma.user.findUnique({ where: { email } });
+  findByEmail(email: string): Promise<DBUser | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+    }) as Promise<DBUser | null>;
   }
 
-  /**
-   * Fetch a user by id.
-   * @param id User UUID
-   */
-  async findById(id: string) {
-    return this.prisma.user.findUnique({ where: { id } });
+  findById(id: string): Promise<DBUser | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+    }) as Promise<DBUser | null>;
   }
 
-  /**
-   * Create a new user, hashing password and optionally elevating to operator.
-   *
-   * Elevation rules:
-   * - If no users exist yet OR
-   * - If OPERATOR_BOOTSTRAP_EMAIL matches the registering email (case-insensitive)
-   * @param email New user email
-   * @param password Raw password (bcrypt hashed)
-   * @returns Sanitized user projection (no password hash)
-   */
-  async create(email: string, password: string) {
+  async create(email: string, password: string): Promise<UserPublic> {
     const hash = await bcrypt.hash(password, 12);
-    // Determine if this should be the bootstrap operator user
-    let role: any = 'USER';
+    let role: "USER" | "ADMIN" | "OPERATOR" = "USER";
     let isOperator = false;
     const userCount = await this.prisma.user.count();
     const bootstrapEmail = process.env.OPERATOR_BOOTSTRAP_EMAIL;
     const makeOperator =
-      userCount === 0 || (bootstrapEmail && bootstrapEmail.toLowerCase() === email.toLowerCase());
+      userCount === 0 ||
+      (bootstrapEmail && bootstrapEmail.toLowerCase() === email.toLowerCase());
     if (makeOperator) {
-      role = 'OPERATOR';
+      role = "OPERATOR";
       isOperator = true;
     }
-    return this.prisma.user.create({
+    const created = await this.prisma.user.create({
       data: { email, passwordHash: hash, role, isOperator },
       select: {
         id: true,
@@ -63,5 +67,6 @@ export class UsersService {
         displayName: true,
       },
     });
+    return created as UserPublic;
   }
 }

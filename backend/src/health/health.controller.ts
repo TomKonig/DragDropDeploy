@@ -1,22 +1,23 @@
-import { Controller, Get } from '@nestjs/common';
-import { Roles } from '../auth/roles.decorator';
-import { Public } from '../auth/public.decorator';
+import { Controller, Get } from "@nestjs/common";
 
-@Controller('health')
+import { Public } from "../auth/public.decorator";
+import { Roles } from "../auth/roles.decorator";
+
+@Controller("health")
 export class HealthController {
   // Public basic liveness endpoint
   @Public()
   @Get()
   public() {
-    return { status: 'ok', timestamp: new Date().toISOString() };
+    return { status: "ok", timestamp: new Date().toISOString() };
   }
 
   // Internal detailed endpoint restricted to operators/admins
-  @Get('internal')
-  @Roles('OPERATOR', 'ADMIN')
+  @Get("internal")
+  @Roles("OPERATOR", "ADMIN")
   internal() {
     return {
-      status: 'ok',
+      status: "ok",
       timestamp: new Date().toISOString(),
       uptimeSeconds: process.uptime(),
       memory: process.memoryUsage(),

@@ -20,6 +20,12 @@ let content = fs.readFileSync(target, 'utf8');
 // Process full file because TypeDoc includes appear outside AUTO-API block.
 let block = content;
 
+// Preserve YAML frontmatter delimiters if present at top (--- on line 1 and within first 5 lines again)
+let frontmatterMatch = null;
+if (/^---\n[\s\S]*?\n---\n/.test(block)) {
+  frontmatterMatch = block.match(/^(---\n[\s\S]*?\n---\n)/);
+}
+
 // 1. Fix multiple spaces after heading hashes (MD019) preserving rest of line
 block = block.replace(/^(#{1,6})\s{2,}([^\n]+)/gm, (_, hashes, rest) => `${hashes} ${rest}`);
 
@@ -82,8 +88,76 @@ block = block
   .replace(/([^\n])\n```(\w*)\n/g, (m, prev, lang) => `${prev}\n\n\`\`\`${lang}\n`)
   .replace(/```(\w*)\n([\s\S]*?)```(\n[^\n])/g, (m, lang, inner, next) => `\`\`\`${lang}\n${inner}\`\`\`\n${next}`);
 
+// 7. Ensure blank line after raw HTML anchors before next heading (fix MD022)
+// Pattern: <a id="something"></a>\n### Heading -> insert an extra \n between
+block = block.replace(/(<a id="[^"]+"><\/a>)\n(###\s+)/g, (m, anchor, heading) => `${anchor}\n\n${heading}`);
+
 // 5. Trim any trailing whitespace on lines
 block = block.replace(/[ \t]+$/gm, '');
+
+// 7. Stabilize GitHub source links: replace commit-specific blob hashes with HEAD so docs don't churn each commit.
+// Example: https://github.com/org/repo/blob/3ef2c5d9bef761a03025df6b8767642077c87fd2/path -> .../blob/HEAD/path
+// This keeps links valid while ensuring deterministic doc generation for ci:full:strict clean-tree verification.
+block = block.replace(/(\/blob\/)[0-9a-f]{7,40}\//g, '$1HEAD/');
+
+// 8. Normalize horizontal rules: canonicalize to '---' (markdownlint MD035 default) for deterministic style.
+// Preserve YAML frontmatter (first block) by capturing earlier; we only transform lines consisting solely of *** or ----.
+block = block.replace(/^\*\*\*\s*$/gm, '---');
+block = block.replace(/^----\s*$/gm, '---');
+
+// 9. Remove superfluous blank lines immediately after markdownlint-disable blocks and before the first content line
+// to reduce churn where a generator sometimes adds an empty line.
+block = block.replace(/(markdownlint-disable[^\n]*\n)\n+/g, '$1');
+
+// 10. Likewise trim blank lines just before markdownlint-enable markers.
+block = block.replace(/\n+((?:<!--\s*markdownlint-enable))/g, '\n$1');
+
+// 11. Collapse any sequence of more than two blank lines overall to at most one (avoid vertical drift)
+block = block.replace(/\n{3,}/g, '\n\n');
+
+// 12. Unescape prisma `node_modules` path underscores that occasionally toggle (ensure single representation)
+block = block.replace(/node\\_modules/g, 'node_modules');
+
+// 12b. Replace any lingering blob commit hashes missed by earlier pattern (case-insensitive safety)
+block = block.replace(/(blob)\/[0-9a-f]{7,40}\//gi, '$1/HEAD/');
+
+// 13. Ensure a blank line before and after every horizontal rule (---) except at file boundaries
+block = block.replace(/([^\n])\n---\n([^\n])/g, (m, a, b) => `${a}\n\n---\n\n${b}`);
+// Collapse any over-correction
+block = block.replace(/\n{3,}/g, '\n\n');
+
+// 14. Remove stray blank lines immediately inside included TypeDoc blocks where we want a consistent pattern:
+// Pattern: markdownlint-disable ... \n(blank) \n [@pkg] -> drop the blank
+block = block.replace(/(markdownlint-disable[^\n]*\n)\n+\[/g, '$1[');
+// Pattern: --- \n(blank) \n [@pkg] -> drop the blank
+block = block.replace(/(---)\n\n+\[/g, '$1\n[');
+// Pattern: Responsibilities: \n(blank) \n - item -> drop blank after label paragraphs within bullet sections
+block = block.replace(/(Responsibilities:)\n\n(-)/g, '$1\n$2');
+// Pattern: Notes: \n(blank) \n - item -> similar handling
+block = block.replace(/(Notes:)\n\n(-)/g, '$1\n$2');
+// Remove blank line directly after an opening '---' horizontal rule when followed by a heading (### or ####)
+block = block.replace(/---\n\n+(###?\s)/g, '---\n$1');
+// Remove duplicate blank lines just before a horizontal rule inside included blocks
+block = block.replace(/\n\n+---\n/g, '\n---\n');
+
+// Reinsert preserved frontmatter block exactly as captured (avoid transformation to *** etc.)
+if (frontmatterMatch) {
+  const preserved = frontmatterMatch[1];
+  // Deduplicate if multiple frontmatter blocks accidentally present (rare churn source)
+  // Strategy: capture all consecutive leading frontmatter blocks and collapse to the first one only.
+  let remainder = block.slice(preserved.length);
+  // Remove any additional immediate frontmatter sequences at top
+  while (/^---\n[\s\S]*?\n---\n/.test(remainder)) {
+    const m = remainder.match(/^---\n[\s\S]*?\n---\n/);
+    if (!m) break;
+    remainder = remainder.slice(m[0].length);
+  }
+  // Normalize single blank line after closing delimiter
+  remainder = remainder.replace(/^\n+/, '\n');
+  block = preserved + remainder;
+  // Ensure exactly one blank line after closing frontmatter before next heading/content
+  block = block.replace(/^(---\n[\s\S]*?\n---)\n{0,}/, '$1\n\n');
+}
 
 const updated = block;
 if (updated !== content) {

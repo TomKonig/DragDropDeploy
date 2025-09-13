@@ -50,6 +50,7 @@ nav:
       - Contributing: development/contributing.md
   - Security:
       - Threat Model: security/threat-model.md
+      - Code Scanning (CodeQL): security/code-scanning.md
   - Roadmap: roadmap.md
   - Troubleshooting: troubleshooting/index.md
 markdown_extensions:
