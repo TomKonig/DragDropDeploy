@@ -56,11 +56,13 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
+          # Explicit output directory to ensure artifact step finds SARIF results consistently.
+          output: codeql-sarif-results
 
       - name: Upload SARIF (redundant safeguard)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: codeql-sarif-${{ matrix.language }}
-          path: ./codeql-sarif-results
+          path: codeql-sarif-results
           if-no-files-found: ignore
