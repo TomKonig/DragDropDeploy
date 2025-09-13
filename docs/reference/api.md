@@ -1212,7 +1212,7 @@ Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interface
 
 > **$extends**: `ExtendsHook`\<`"extends"`, `TypeMapCb`, `DefaultArgs`\>
 
-Defined in: node\_modules/.prisma/client/index.d.ts:228
+Defined in: node_modules/.prisma/client/index.d.ts:228
 
 #### Inherited from
 
@@ -1226,7 +1226,7 @@ Defined in: node\_modules/.prisma/client/index.d.ts:228
 
 > **get** **buildJob**(): `BuildJobDelegate`\<`ExtArgs`\>
 
-Defined in: node\_modules/.prisma/client/index.d.ts:268
+Defined in: node_modules/.prisma/client/index.d.ts:268
 
 `prisma.buildJob`: Exposes CRUD operations for the **BuildJob** model.
 - Example usage:
@@ -1251,7 +1251,7 @@ Defined in: node\_modules/.prisma/client/index.d.ts:268
 
 > **get** **deployment**(): `DeploymentDelegate`\<`ExtArgs`\>
 
-Defined in: node\_modules/.prisma/client/index.d.ts:258
+Defined in: node_modules/.prisma/client/index.d.ts:258
 
 `prisma.deployment`: Exposes CRUD operations for the **Deployment** model.
 - Example usage:
@@ -1276,7 +1276,7 @@ Defined in: node\_modules/.prisma/client/index.d.ts:258
 
 > **get** **project**(): `ProjectDelegate`\<`ExtArgs`\>
 
-Defined in: node\_modules/.prisma/client/index.d.ts:248
+Defined in: node_modules/.prisma/client/index.d.ts:248
 
 `prisma.project`: Exposes CRUD operations for the **Project** model.
 - Example usage:
@@ -1301,7 +1301,7 @@ Defined in: node\_modules/.prisma/client/index.d.ts:248
 
 > **get** **projectSetting**(): `ProjectSettingDelegate`\<`ExtArgs`\>
 
-Defined in: node\_modules/.prisma/client/index.d.ts:288
+Defined in: node_modules/.prisma/client/index.d.ts:288
 
 ### enableShutdownHooks()
 

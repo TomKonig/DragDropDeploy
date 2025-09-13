@@ -94,6 +94,28 @@ block = block.replace(/[ \t]+$/gm, '');
 // This keeps links valid while ensuring deterministic doc generation for ci:full:strict clean-tree verification.
 block = block.replace(/(\/blob\/)[0-9a-f]{7,40}\//g, '$1HEAD/');
 
+// 8. Normalize horizontal rules: some generators emit '----' (4 dashes). Canonicalize to '***' for consistency.
+// Only replace lines that are exactly a rule (optionally surrounded by spaces).
+block = block.replace(/^----\s*$/gm, '***');
+
+// 9. Remove superfluous blank lines immediately after markdownlint-disable blocks and before the first content line
+// to reduce churn where a generator sometimes adds an empty line.
+block = block.replace(/(markdownlint-disable[^\n]*\n)\n+/g, '$1');
+
+// 10. Likewise trim blank lines just before markdownlint-enable markers.
+block = block.replace(/\n+((?:<!--\s*markdownlint-enable))/g, '\n$1');
+
+// 11. Collapse any sequence of more than two blank lines overall to at most one (avoid vertical drift)
+block = block.replace(/\n{3,}/g, '\n\n');
+
+// 12. Unescape prisma `node_modules` path underscores that occasionally toggle (ensure single representation)
+block = block.replace(/node\\_modules/g, 'node_modules');
+
+// 13. Ensure a blank line before and after every normalized horizontal rule (***), except at boundaries
+block = block.replace(/([^\n])\n\*\*\*\n([^\n])/g, (m, a, b) => `${a}\n\n***\n\n${b}`);
+// If we created double blank lines around, collapse again
+block = block.replace(/\n{3,}/g, '\n\n');
+
 const updated = block;
 if (updated !== content) {
   fs.writeFileSync(target, updated, 'utf8');
