@@ -1,13 +1,33 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/sh
+
+# Unified pre-commit hook
+# 1. Optionally skip via SKIP_HOOKS=1
+# 2. Generate & validate docs (roadmap/api/changelog + lint)
+# 3. Run lint-staged fixes
+# 4. Typecheck (incremental project build)
+# 5. Ensure docs remained unchanged after generation (i.e. were staged)
 
 if [ "$SKIP_HOOKS" = "1" ]; then
-	echo "[husky] pre-commit skipped via SKIP_HOOKS=1" >&2
+	echo "[pre-commit] skipped via SKIP_HOOKS=1" >&2
 	exit 0
 fi
 
-echo "[husky] Running lint-staged..."
-npx lint-staged || exit 1
+set -e
 
-echo "[husky] Type checking..."
-npm run typecheck || exit 1
+echo "[pre-commit] docs:check"
+npm run docs:check >/dev/null 2>&1 || { echo "[pre-commit] docs:check failed"; exit 1; }
+
+echo "[pre-commit] lint-staged"
+npx lint-staged || { echo "[pre-commit] lint-staged failed"; exit 1; }
+
+echo "[pre-commit] typecheck"
+npm run typecheck --silent || { echo "[pre-commit] typecheck failed"; exit 1; }
+
+echo "[pre-commit] verify docs unchanged"
+if ! git diff --name-only --exit-code docs/ >/dev/null 2>&1; then
+	echo "[pre-commit] docs changed after generation; stage them and retry commit." >&2
+	exit 1
+fi
+
+echo "[pre-commit] OK"
+exit 0

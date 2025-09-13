@@ -28,7 +28,8 @@ describe("Deployments end-to-end", () => {
   });
 
   it("deploy v1 then v2 then rollback to v1 (auth)", async () => {
-    const email = "d@d.dev";
+    // Use a unique email each run to avoid cross-test collisions or prior script leftovers
+    const email = `d_${Date.now()}_${Math.random().toString(36).slice(2, 8)}@d.dev`;
     const password = "Passw0rd!test";
     await request(app.getHttpServer())
       .post("/auth/register")

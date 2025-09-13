@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Enforceable monorepo ESLint baseline with typed rules and scoped test/config overrides (#114).
 
 - Unified CI parity: single `ci:full:strict` pipeline invoked locally (pre-push) and in GitHub Actions (workflow collapsed to one step, reordered to run Prisma generation first, added clean tree verification).
+- Early docs generation ordering: moved `docs:check` (roadmap/api/changelog sync) to the start of `ci:full` to prevent later test phases from seeing a dirty tree; added pre-commit hook enforcing up-to-date generated docs.
 
 ### Fixed
 
