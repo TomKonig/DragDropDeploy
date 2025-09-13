@@ -31,6 +31,8 @@ describe("Build Queue (BullMQ Redis) e2e", () => {
       const host = redis.getHost();
       const port = redis.getMappedPort(6379);
       process.env.REDIS_URL = `redis://${host}:${port}`;
+      // Allow BullMQ usage inside test environment explicitly
+      process.env.ALLOW_REDIS_IN_TEST = "1";
     } catch (e) {
       // If Redis can't start, skip suite (likely no Docker)
       console.warn("Redis container unavailable, skipping BullMQ test:", e);
@@ -56,6 +58,7 @@ describe("Build Queue (BullMQ Redis) e2e", () => {
     }
     if (redis) await redis.stop();
     delete process.env.REDIS_URL; // avoid leaking into subsequent tests
+    delete process.env.ALLOW_REDIS_IN_TEST;
   });
 
   // Ensure REDIS_URL doesn't persist if a test early-exits or jest bails mid-suite.
