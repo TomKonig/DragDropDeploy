@@ -6,7 +6,7 @@ on:
       - roadmap.yaml
       - scripts/validate-roadmap.cjs
       - .github/workflows/roadmap-validate.yml
-      - '**/agent-guidelines.md'
+      - "**/agent-guidelines.md"
   pull_request:
     paths:
       - roadmap.yaml
@@ -30,7 +30,8 @@ jobs:
           npm ls yaml >/dev/null 2>&1 || npm i yaml
       - name: Validate roadmap
         env:
+          # Provide both variable names; gh CLI will auto-use GITHUB_TOKEN; scripts may fallback to GH_TOKEN.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "$GITHUB_TOKEN" | gh auth login --with-token
           node scripts/validate-roadmap.cjs
