@@ -72,6 +72,18 @@ function extractSlugFromIssue(issue){
   return null;
 }
 
+function statusFromItem(item){
+  // Map YAML status -> icon; fallback to planned 🔜
+  switch(item.status){
+    case 'done': return '✅';
+    case 'in-progress': return '🟡';
+    case 'experimental': return '🧪';
+    case 'evaluating': return '❓';
+    case 'planned':
+    default: return '🔜';
+  }
+}
+
 function aggregate(issues, yaml){
   const bySlug = new Map();
   for(const issue of issues){
@@ -87,27 +99,19 @@ function aggregate(issues, yaml){
     for(const item of cat.items){
       yamlSlugs.add(item.slug);
       const linked = bySlug.get(item.slug) || [];
-      const itemStatus = item.status || '';
-      const isDone = itemStatus === 'done';
+      const isDone = item.status === 'done';
       if(linked.length===0 && !isDone) missing.push(item.slug);
       if(linked.length>1) duplicates.push(item.slug);
-      // Derive merged meta
-      const meta = { phase:'', type:'', scope:'', status:'🔜' };
+      // Derive meta from first issue, but prefer YAML status mapping
+      let phase=''; let type=''; let scope='';
       if(linked.length){
-        // pick first for meta inference
         const ex = extract(linked[0]);
-        meta.phase = ex.phase.replace('phase:','');
-        meta.type = ex.type.replace('type:','');
-        meta.scope = ex.scope.replace('scope:','');
-        // status: ✅ if any closed; else 🟡 if any security/bug; else 🔜
-        const statuses = linked.map(i=> extract(i));
-        if(statuses.some(s=> s.statusIcon==='✅')) meta.status='✅';
-        else if(statuses.some(s=> /security|bug/.test(s.type))) meta.status='🟡';
-        else meta.status='🔜';
-      } else if(isDone){
-        meta.status='✅';
+        phase = ex.phase.replace('phase:','');
+        type = ex.type.replace('type:','');
+        scope = ex.scope.replace('scope:','');
       }
-      rows.push({ slug:item.slug, issues: linked.map(i=>({number:i.number})), ...meta });
+      const status = statusFromItem(item);
+      rows.push({ slug:item.slug, issues: linked.map(i=>({number:i.number})), phase, type, scope, status });
     }
   }
   for(const slug of bySlug.keys()) if(!yamlSlugs.has(slug)) orphan.push(slug);

@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Roadmap automation: support `status: done` in `roadmap.yaml` so shipped slugs no longer require interim tracking issues (#113).
 - Enforceable monorepo ESLint baseline with typed rules and scoped test/config overrides (#114).
 - Artifact cleanup script (`scripts/cleanup-artifacts.cjs`) and root `clean:artifacts` npm script for repository hygiene (#115).
+- Roadmap generator uses YAML item status (done/in-progress/etc.) for icons; validator tolerates done items without active issues and detects duplicate prefixed issues (improved roadmap gating heuristics).
 
 ### Changed
 
