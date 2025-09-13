@@ -32,11 +32,12 @@ describe("Health endpoints (e2e)", () => {
     await app.init();
     registerTestApp(app);
     // Clean in dependency order: deployments -> buildJobs -> projectSetting -> projects -> users
-    await (prisma as any).deployment.deleteMany();
-    await (prisma as any).buildJob.deleteMany();
-    await (prisma as any).projectSetting.deleteMany();
-    await (prisma as any).project.deleteMany();
-    await (prisma as any).user.deleteMany();
+    // (Mirrors ordering in auth.e2e to guarantee first-user bootstrap semantics)
+    await prisma.deployment.deleteMany();
+    await prisma.buildJob.deleteMany();
+    await prisma.projectSetting.deleteMany();
+    await prisma.project.deleteMany();
+    await prisma.user.deleteMany();
   });
 
   afterAll(async () => {
@@ -55,7 +56,8 @@ describe("Health endpoints (e2e)", () => {
 
   it("returns 403 for /health/internal with basic user token", async () => {
     // Ensure first user (operator bootstrap) is created so the next user is plain USER
-    await register(app, "health-bootstrap-op@example.com");
+    // Ensure deterministic first bootstrap user (unique email to avoid collisions across test runs)
+    await register(app, `health-bootstrap-op-${Date.now()}@example.com`);
     const token = await register(app, "healthuser@example.com");
     // Debug: attempt request and log intermediate response
     const res = await request(app.getHttpServer())
