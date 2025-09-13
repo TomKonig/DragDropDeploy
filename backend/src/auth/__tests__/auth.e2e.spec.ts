@@ -25,12 +25,7 @@ describe("Auth & Roles (e2e)", () => {
 
     await app.init();
     registerTestApp(app);
-    // Global clean for deterministic first-user promotion; truncate key tables
-    await prisma.deployment.deleteMany();
-    await prisma.project.deleteMany();
-    await prisma.buildJob.deleteMany();
-    await prisma.projectSetting.deleteMany();
-    await prisma.user.deleteMany();
+    // Global cleanup moved to jest.global-setup via resetDatabase() for suite isolation.
   });
 
   afterAll(async () => {

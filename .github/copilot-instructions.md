@@ -1,6 +1,6 @@
 DragDropDeploy — Copilot Operational Guidelines
 
-Audience: Autonomous AI coding agents operating in VS Code on this repository.
+Audience: Autonomous AI coding agents operating on this repository.
 Authority: These rules are mandatory. If a rule cannot be followed, open a blocking decision:<topic> issue explaining why and request human input.
 
 ⸻
