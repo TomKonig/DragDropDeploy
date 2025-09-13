@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-test:
-    name: Full CI (lint, typecheck, docs, tests, coverage, builds, clean tree)
+    name: Full CI (lint, typecheck, tests, coverage, builds, clean tree)
     runs-on: ubuntu-latest
     services:
       postgres:

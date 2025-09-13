@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Unified CI parity: single `ci:full:strict` pipeline invoked locally (pre-push) and in GitHub Actions (workflow collapsed to one step, reordered to run Prisma generation first, added clean tree verification).
 - Early docs generation ordering: moved `docs:check` (roadmap/api/changelog sync) to the start of `ci:full` to prevent later test phases from seeing a dirty tree; added pre-commit hook enforcing up-to-date generated docs.
 - Refined docs workflow: removed docs generation from push CI path by deleting pre-push hook and taking `docs:check` out of `ci:full`; generation now enforced exclusively at pre-commit for deterministic diffs and faster pushes.
+- CI parity adjustment: removed separate `docs-validation` GitHub Action workflow and stripped docs generation from server-side CI; documentation generation now enforced solely via local pre-commit hook to guarantee committed artifacts without redundant regeneration in Actions.
 
 ### Fixed
 
