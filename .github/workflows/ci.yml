@@ -12,6 +12,11 @@ on:
 jobs:
   build-test:
     name: Full CI (lint, typecheck, tests, coverage, builds, clean tree)
+    # Explicit permissions so the workflow token can read issues (roadmap scripts) and push packages if needed in later jobs
+    permissions:
+      contents: read
+      issues: read
+      packages: read
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -43,8 +48,8 @@ jobs:
         run: npm ci
       - name: Full pipeline ci:full:strict
         env:
+          # Single export is sufficient; scripts fall back GH_TOKEN || GITHUB_TOKEN
           GH_TOKEN: ${{ github.token }}
-          GITHUB_TOKEN: ${{ github.token }}
           DATABASE_URL: postgresql://ddd:ddd@localhost:5432/ddd
         run: npm run ci:full:strict
       # Placeholder lint (add ESLint when config present)
@@ -107,6 +112,9 @@ jobs:
     needs: build-test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up QEMU
