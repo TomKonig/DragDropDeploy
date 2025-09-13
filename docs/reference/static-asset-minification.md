@@ -6,7 +6,7 @@ This page documents the built‑in static asset minification pass and how to con
 
 ## Overview
 
-After a successful (or no-op) build, the executor invokes the `MinifyService` to shrink HTML, CSS, and JS assets for each project unless disabled. The service walks the project artifact directory and applies lightweight regex-based reductions (comment stripping, whitespace collapse, tag gap removal) without introducing heavy bundler dependencies.
+After a successful (or no-op) build, the executor invokes the `MinifyService` to shrink HTML, CSS, and JS assets unless disabled. It applies lightweight regex-based reductions (comment stripping, whitespace collapse, tag gap removal) without heavy bundler dependencies.
 
 ## File Types Processed
 
@@ -14,13 +14,19 @@ After a successful (or no-op) build, the executor invokes the `MinifyService` to
 - `.css`
 - `.js`
 
-Files already ending in `.min.js` or `.min.css` are skipped.
+Files ending in `.min.js` or `.min.css` are skipped.
 
 ## Opt-Out Per Project
 
-Each project has a `ProjectSetting.optOutMinify` flag. When `true`, minification is skipped unless `FORCE_MINIFY=1` is set globally.
+Flag: `ProjectSetting.optOutMinify` (boolean). When `true`, minification is skipped unless `FORCE_MINIFY=1`.
 
-API (PATCH `/projects/:id`):
+Example PATCH:
+
+```http
+PATCH /projects/:id
+```
+
+Body:
 
 ```json
 { "optOutMinify": true }
@@ -30,38 +36,38 @@ API (PATCH `/projects/:id`):
 
 Environment variable: `FORCE_MINIFY`
 
-- `1` => Force minification even if a project opted out.
-- `0` => Disable minification globally regardless of project settings.
-- Unset => Respect per-project setting (default behavior).
+- `1`: Force minification even if a project opted out
+- `0`: Disable minification globally
+- Unset: Respect per-project setting (default)
 
 ## Logging & Observability
 
-The executor log file includes lines like:
+Sample log lines:
 
 ```text
 minify: starting pass
 minify: complete processed=42 skipped=18 errors=0
 ```
 
-Errors for individual files are logged but do not fail the build; they increment an `errors` counter.
+Errors for individual files don’t fail the build; they increment an `errors` counter.
 
 ## Performance Considerations
 
-The current implementation is single-threaded and performs synchronous file I/O for simplicity. For large sites consider future enhancements (parallel traversal, streaming, real minifier libraries). Reductions are conservative to avoid breaking scripts/styles.
+Single-threaded synchronous I/O for simplicity. Large sites may later benefit from parallel traversal, streaming, or real minifier libraries. Reductions are conservative to avoid breakage.
 
 ## Skipped Files
 
 - Non-target extensions
-- Already minified (`.min.js`/`.min.css`)
-- Files where the minified output is not smaller than original (counts as skipped)
+- Already minified (`.min.js` / `.min.css`)
+- Output not smaller than input
 
 ## Error Handling
 
-- Missing project artifacts directory -> logged and aborts pass
-- Read/write failures -> logged per file; processing continues
+- Missing artifact directory -> log and abort pass
+- Read/write failures -> log and continue
 
 ## Future Enhancements
 
 - Source map preservation / regeneration
-- Pluggable minifier strategy (swap in terser/lightningcss/html-minifier-terser via feature flag)
+- Pluggable minifier strategy (terser / lightningcss / html-minifier-terser)
 - Metrics export (processed/skipped/errors gauges)

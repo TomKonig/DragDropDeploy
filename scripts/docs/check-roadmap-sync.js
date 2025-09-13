@@ -15,6 +15,18 @@ const ROOT = path.join(__dirname, "..", "..");
 const ROADMAP_MD = path.join(ROOT, "docs", "roadmap.md");
 const ROADMAP_YAML = path.join(ROOT, "roadmap.yaml");
 
+// Auto-load .env if present to surface GH_TOKEN/GITHUB_TOKEN without relying solely on husky hook.
+try {
+  const envPath = path.join(ROOT, ".env");
+  if (fs.existsSync(envPath)) {
+    // Lazy require to avoid mandatory dependency if script used elsewhere
+    require("dotenv").config({ path: envPath });
+  }
+} catch (e) {
+  // Non-fatal; continue without env injection
+  console.warn("dotenv load skipped:", e.message);
+}
+
 function read(p) {
   return fs.readFileSync(p, "utf8");
 }

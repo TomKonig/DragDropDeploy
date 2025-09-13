@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-test:
-    name: Lint / Type Check / Test
+    name: Full CI (lint, typecheck, docs, tests, coverage, builds, clean tree)
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -41,32 +41,12 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies (workspace root)
         run: npm ci
-      - name: Lint
-        run: npm run lint
-      - name: Type Check
-        run: npm run typecheck
-      - name: Generate Prisma Client
-        run: npm run prisma:generate -w backend
-      - name: Docs checks (includes API gen)
+      - name: Full pipeline ci:full:strict
         env:
           GH_TOKEN: ${{ github.token }}
-        run: npm run docs:check
-      - name: Run backend tests
-        env:
+          GITHUB_TOKEN: ${{ github.token }}
           DATABASE_URL: postgresql://ddd:ddd@localhost:5432/ddd
-        run: npm test -w backend -- --runInBand
-      - name: Run frontend tests
-        run: npm test -w frontend
-      - name: Backend coverage
-        run: npm run coverage:backend
-      - name: Frontend coverage
-        run: npm run coverage:frontend
-      - name: Build backend
-        run: npm run build -w backend
-      - name: Build shared (explicit)
-        run: npm run build -w @dragdropdeploy/shared
-      - name: Build frontend
-        run: npm run build -w frontend
+        run: npm run ci:full:strict
       # Placeholder lint (add ESLint when config present)
       # - name: Lint
       #   run: npm run lint

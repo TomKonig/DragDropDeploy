@@ -29,5 +29,8 @@ else
   esac
 fi
 
-echo "[husky] Running full CI parity pipeline (ci:full) locally..."
-npm run ci:full || exit 1
+echo "[husky] Ensuring docker compose services (postgres, redis)..."
+bash scripts/ci/ensure-services.sh || exit 1
+
+echo "[husky] Running full CI parity pipeline (ci:full:strict) locally..."
+npm run ci:full:strict || exit 1

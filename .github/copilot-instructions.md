@@ -15,10 +15,13 @@
      - Touching integration points (NestJS, Prisma, BullMQ, Traefik, Vite, Redis, PostgreSQL)
    - Summarize external references inline (do not paste large dumps).
 3. Roadmap & Issue Discipline
-   - Policy (2025-09-12): Use a single generic `roadmap` label plus an issue title prefix `[slug]` (e.g. `[upload-pipeline] Implement resumable chunking`).
-   - Legacy per-slug labels `roadmap:<slug>` are deprecated; do not create new ones. Existing ones may be removed opportunistically.
-   - Exemptions: trivial typo, tiny test fix, ultra-small bug (<5 lines) — roadmap label optional.
-   - If no fitting slug exists, create an issue proposing a new roadmap entry before coding (use placeholder title `[pending-slug] ...`).
+   - Policy (2025-09-13 supersedes 2025-09-12): Each roadmap slug has ONE canonical parent issue titled `[slug] <short scope summary>` with the `roadmap` label.
+   - All execution / task / bug / enhancement work for that scope MUST be created as GitHub sub-issues (child issues) of the canonical slug issue WITHOUT repeating the slug in their titles (no `[slug]` prefix for sub-issues).
+   - The parent slug issue acts as an umbrella tracker (status updates, summary, acceptance). Sub-issues drive granular implementation and may have normal labels (type, scope, priority) but MUST NOT add another `roadmap` label.
+   - Creating a new slug: open a single parent issue with `[pending-slug]` prefix if slug naming unsettled; once finalized rename to `[slug] ...` then attach sub-issues.
+   - Do NOT open multiple `[slug]` parent issues. If overlap discovered, consolidate by linking and closing duplicates.
+   - Exemptions: trivial typo, tiny test fix, ultra-small bug (<5 lines) — may live as standalone issue (no sub-issue) unless clearly tied to an active slug (then make it a sub-issue).
+   - Migration note: Existing multiple `[slug]` issues should be collapsed: choose oldest or most descriptive as parent; convert others into sub-issues or close with reference.
 4. Prioritization
    - Default queue: Open issues in the active Release / Project board (e.g. `MVP`) ordered by priority labels or pipeline column.
    - May preempt only for: confirmed vulnerability, blocking regression, data-loss risk, explicit user direction.
@@ -72,7 +75,7 @@
 3. Draft phase plan & acceptance criteria; wait for single approval.
 4. Implement in small, logically isolated commits (tests may come first TDD style if suitable).
 5. Maintain/update `CHANGELOG.md` (Unreleased) once per issue.
-6. Ensure roadmap sync (label + generated status) before final push.
+6. Ensure roadmap sync: for new scope, parent slug issue created / updated; sub-issues linked under the parent; update `roadmap.yaml` status if scope materially advances.
 7. Run full validation gates locally.
 8. Open PR with template populated (roadmap slug, changelog section, docs updated = yes/no).
 9. Self-review diff for noise / dead code.
@@ -80,7 +83,7 @@
 
 ## Labels Reference (Baseline)
 
-- `roadmap` – Marks issue as part of product roadmap (slug from title prefix `[slug]`).
+- `roadmap` – Marks the single parent issue representing a roadmap slug (only parent issues carry this label; sub-issues omit it).
 - `priority:critical|high|normal|low`
 - `type:feature|bug|refactor|security|docs|chore`
 - `scope:backend|frontend|shared|infra|docs`
@@ -122,13 +125,13 @@ Portion deferred from #<origin>.
 
 ## Guardrails Summary
 
-| Area      | Must Not                             | Must Always                                                        |
-| --------- | ------------------------------------ | ------------------------------------------------------------------ |
-| Roadmap   | Bypass slug for major feature        | Prefix meaningful issue titles with `[slug]` + add `roadmap` label |
-| Changelog | Merge feature w/out entry            | Aggregate entry under Unreleased                                   |
-| Docs      | Add feature undocumented             | Update or add relevant doc page                                    |
-| Security  | Introduce secret handling divergence | Follow rotation + credential runbooks                              |
-| Build     | Inflate image with dev deps          | Keep image minimal & flag gated                                    |
+| Area      | Must Not                             | Must Always                                                            |
+| --------- | ------------------------------------ | ---------------------------------------------------------------------- |
+| Roadmap   | Open multiple parent slug issues     | Maintain one `[slug]` parent issue; use sub-issues without slug prefix |
+| Changelog | Merge feature w/out entry            | Aggregate entry under Unreleased                                       |
+| Docs      | Add feature undocumented             | Update or add relevant doc page                                        |
+| Security  | Introduce secret handling divergence | Follow rotation + credential runbooks                                  |
+| Build     | Inflate image with dev deps          | Keep image minimal & flag gated                                        |
 
 ## Escalation
 
@@ -154,3 +157,14 @@ Generated: initial version. Future updates should append a dated changelog secti
 3. Continued enforcement focus: MD012 (no multiple blank lines), MD022 (blank lines around headings), MD040 (fenced code language), MD007/MD005 (list indentation consistency), MD009 (no trailing spaces), MD010 (no hard tabs), MD024 (no duplicate headings), MD032 (blank lines around lists).
 4. Rationale: Prioritize rules that prevent structural or rendering issues over purely stylistic constraints to accelerate remediation and reduce noise in diffs.
 5. Re-enabling any relaxed rule requires a dedicated issue, plan for automated or single-pass migration, and one consolidated commit to avoid piecemeal churn.
+
+## 2025-09-13 Addendum: Roadmap Sub-Issue Model
+
+1. Canonical slug representation: exactly one parent issue titled `[slug] <summary>` labeled `roadmap`.
+2. Child work units: created as GitHub sub-issues (GitHub "Add sub-issue" feature) under the parent. Titles omit the slug prefix.
+3. Labeling: sub-issues use standard `type:*`, `scope:*`, `priority:*` labels; they MUST NOT carry `roadmap`.
+4. Status tracking: Progress / decisions summarized in parent description or comment thread; parent remains open until all required sub-issues closed and acceptance criteria met.
+5. Closing flow: When parent closes, ensure `roadmap.yaml` marks slug `done` (or appropriate status). All open sub-issues must be resolved, deferred (converted to new follow-up parent?), or explicitly closed with rationale.
+6. Migration guidance: Identify multiple existing `[slug]` issues → choose authoritative parent → convert others into sub-issues or close referencing parent (`Superseded by #[parent]`).
+7. Automation expectations: Validation scripts will evolve to assert exactly one open/closed parent per active/done slug and zero parent duplicates; sub-issues excluded from slug duplication checks.
+8. Rationale: Reduces label/slug duplication noise, creates a clear hierarchy, and simplifies roadmap gating logic.
