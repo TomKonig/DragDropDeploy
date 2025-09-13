@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Eliminate unsafe implicit Prisma result inference causing `@typescript-eslint/no-unsafe-*` CI failures by adding explicit model return types across services and controllers (#116).
 - Ensure Prisma Client is generated prior to lint via new `prelint` script preventing type fallback to `any` in CI (#116).
 - Resolve shared package path resolution issues in CI by adding TypeScript import resolver configuration (monorepo path aliases) (#116).
+- Harden build executor e2e test with retries, timeline capture, and richer timeout diagnostics to mitigate intermittent flake.
 
 ### Security
 
