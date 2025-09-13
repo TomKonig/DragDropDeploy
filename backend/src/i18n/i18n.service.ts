@@ -80,6 +80,8 @@ function deepMerge(
   source: Record<string, unknown>,
 ): LocaleStore {
   for (const k of Object.keys(source)) {
+    // Guard against prototype pollution keys
+    if (k === "__proto__" || k === "constructor" || k === "prototype") continue;
     const sv = source[k];
     if (isPlainObject(sv)) {
       // Ensure the branch is an object before recursing

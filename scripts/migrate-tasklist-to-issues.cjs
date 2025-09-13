@@ -83,7 +83,8 @@ for (const line of lines) {
       inferType(title),
       `roadmap:${slug}`
     ];
-    const escapedTitle = title.replace(/"/g, '\\"');
+  // Escape backslashes first, then quotes to prevent double-interpretation
+  const escapedTitle = title.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
     const bodyLines = [
       `Imported from deprecated tasklist (Phase ${currentPhase}).`,
       'Acceptance Criteria:',
@@ -91,7 +92,10 @@ for (const line of lines) {
       '- [ ] Add tests / docs / changelog entry',
       'Migration Note: Replace roadmap status manually if this closes the item.'
     ];
-    const body = bodyLines.join('\\n').replace(/"/g, '\\"');
+    const body = bodyLines
+      .join('\\n')
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"');
     const cmd = `gh issue create --title "${escapedTitle}" --body "${body}" --label "${labels.join(',')}"`;
     commands.push(cmd);
   }

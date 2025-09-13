@@ -45,6 +45,10 @@ export class DeploymentsController {
   ): Promise<UploadResponse> {
     // Test environment accommodates missing auth; no global mutation needed.
     if (!file) throw new BadRequestException("file is required");
+    // Basic validation for projectId to prevent unsafe path usage; matches other endpoints' pattern
+    if (!/^c[a-z0-9]{24,}$/i.test(projectId)) {
+      throw new BadRequestException("Invalid projectId");
+    }
     const lower = file.originalname.toLowerCase();
     if (!lower.endsWith(".zip"))
       throw new BadRequestException("Only .zip files supported");

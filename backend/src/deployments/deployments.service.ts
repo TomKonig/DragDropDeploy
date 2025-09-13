@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import * as fs from "fs";
+import * as os from "os";
 import * as path from "path";
 
 import {
@@ -51,8 +52,17 @@ export class DeploymentsService {
     stagedPath: string,
   ): Promise<Deployment> {
     if (!stagedPath) throw new BadRequestException("stagedPath required");
+    // Require projectId format similar to other endpoints for early rejection
+    if (!/^c[a-z0-9]{24,}$/i.test(projectId)) {
+      throw new BadRequestException("Invalid projectId");
+    }
+    // Enforce that stagedPath must originate from our controlled temp staging prefix to reduce TOCTOU and path injection risk.
+    const tmpPrefix = path.resolve(os.tmpdir());
     // Normalize and ensure stagedPath is an existing directory produced by our extraction logic.
     const stagedReal = path.resolve(stagedPath);
+    if (!stagedReal.startsWith(tmpPrefix + path.sep)) {
+      throw new BadRequestException("stagedPath outside allowed temp root");
+    }
     let stagedStat: fs.Stats;
     try {
       stagedStat = await fs.promises.stat(stagedReal);

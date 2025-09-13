@@ -33,7 +33,7 @@ async function main() {
   if (generated) {
     // eslint-disable-next-line no-console -- operational output guides secure handling of generated password
     console.log(
-      `Seeded operator user ${user.email} (role=OPERATOR) with GENERATED one-time password: ${bootstrapPassword}`,
+      `Seeded operator user ${user.email} (role=OPERATOR) with GENERATED one-time password (value suppressed; see secure channel).`,
     );
     // eslint-disable-next-line no-console -- follow-up guidance
     console.log(

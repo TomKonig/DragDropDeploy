@@ -54,7 +54,8 @@ function insert(md,table){
   if(!md.includes(start)){
     return md.trimEnd()+`\n\n${start}\n${table}\n${end}\n`;
   }
-  const regex = new RegExp(`${start}[\s\S]*?${end}`);
+  // Use explicit [\s\S] to match any character including newlines (avoid useless escape warnings)
+  const regex = new RegExp(`${start}[\\s\\S]*?${end}`);
   return md.replace(regex,`${start}\n${table}\n${end}`);
 }
 

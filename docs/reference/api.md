@@ -491,7 +491,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:34](https://githu
 
 > **activate**(`id`): `Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.controller.ts:72](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.controller.ts#L72)
+Defined in: [backend/src/deployments/deployments.controller.ts:76](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.controller.ts#L76)
 
 #### Parameters
 
@@ -507,7 +507,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:72](https://githu
 
 > **rollback**(`projectId`, `targetDeploymentId?`): `Promise`\<\{ `activePath`: `string`; `deploymentId`: `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.controller.ts:110](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.controller.ts#L110)
+Defined in: [backend/src/deployments/deployments.controller.ts:114](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.controller.ts#L114)
 
 #### Parameters
 
@@ -527,7 +527,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:110](https://gith
 
 > **serve**(`projectId`, `res`): `Promise`\<`void` \| `Response`\<`any`, `Record`\<`string`, `any`\>\>\>
 
-Defined in: [backend/src/deployments/deployments.controller.ts:80](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.controller.ts#L80)
+Defined in: [backend/src/deployments/deployments.controller.ts:84](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.controller.ts#L84)
 
 #### Parameters
 
@@ -577,7 +577,7 @@ Defined in: [backend/src/deployments/deployments.controller.ts:42](https://githu
 
 ### Class: DeploymentsService
 
-Defined in: [backend/src/deployments/deployments.service.ts:30](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L30)
+Defined in: [backend/src/deployments/deployments.service.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L31)
 
 #### Constructors
 
@@ -585,7 +585,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:30](https://github.c
 
 > **new DeploymentsService**(`prisma`): `DeploymentsService`
 
-Defined in: [backend/src/deployments/deployments.service.ts:31](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L31)
+Defined in: [backend/src/deployments/deployments.service.ts:32](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L32)
 
 #### Parameters
 
@@ -603,7 +603,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:31](https://github.c
 
 > **activateDeployment**(`deploymentId`): `Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:124](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L124)
+Defined in: [backend/src/deployments/deployments.service.ts:134](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L134)
 
 Activate a deployment after successful build. Marks previous ACTIVE deployments INACTIVE (same project) and updates symlink.
 
@@ -621,7 +621,7 @@ Activate a deployment after successful build. Marks previous ACTIVE deployments 
 
 > **createPending**(`projectId`): `Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:33](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L33)
+Defined in: [backend/src/deployments/deployments.service.ts:34](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L34)
 
 #### Parameters
 
@@ -637,7 +637,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:33](https://github.c
 
 > **createWithArtifact**(`projectId`, `stagedPath`): `Promise`\<\{ `artifactPath`: `null` \| `string`; `buildJobId`: `null` \| `string`; `buildLogsUrl`: `null` \| `string`; `commitHash`: `null` \| `string`; `createdAt`: `Date`; `id`: `string`; `imageTag`: `null` \| `string`; `projectId`: `string`; `status`: `DeployStatus`; `userId`: `null` \| `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:49](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L49)
+Defined in: [backend/src/deployments/deployments.service.ts:50](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L50)
 
 Persist a staged (temp) directory produced by the upload extraction into the artifacts root
 and create a pending deployment that references it.
@@ -660,7 +660,7 @@ and create a pending deployment that references it.
 
 > **getActiveArtifactPath**(`projectId`): `Promise`\<`null` \| `string`\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:172](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L172)
+Defined in: [backend/src/deployments/deployments.service.ts:182](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L182)
 
 #### Parameters
 
@@ -676,7 +676,7 @@ Defined in: [backend/src/deployments/deployments.service.ts:172](https://github.
 
 > **rollback**(`projectId`, `targetDeploymentId?`): `Promise`\<\{ `activePath`: `string`; `id`: `string`; \}\>
 
-Defined in: [backend/src/deployments/deployments.service.ts:186](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L186)
+Defined in: [backend/src/deployments/deployments.service.ts:196](https://github.com/TomKonig/DragDropDeploy/blob/HEAD/backend/src/deployments/deployments.service.ts#L196)
 
 #### Parameters
 
