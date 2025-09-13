@@ -30,8 +30,8 @@ jobs:
           npm ls yaml >/dev/null 2>&1 || npm i yaml
       - name: Validate roadmap
         env:
-          # Provide both variable names; gh CLI will auto-use GITHUB_TOKEN; scripts may fallback to GH_TOKEN.
+          # Provide both variable names; gh CLI auto-uses GITHUB_TOKEN. If you define a repository secret GH_TOKEN (a PAT) it will be used by scripts via fallback logic.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           node scripts/validate-roadmap.cjs
