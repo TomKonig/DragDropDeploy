@@ -19,6 +19,10 @@ permissions:
 jobs:
   analyze:
     name: CodeQL (JavaScript/TypeScript)
+    # Skip unless repository variable ENABLE_CODEQL_WORKFLOW is explicitly set to 'true'.
+    if: ${{ env.ENABLE_CODEQL_WORKFLOW == 'true' }}
+    env:
+      ENABLE_CODEQL_WORKFLOW: ${{ vars.ENABLE_CODEQL_WORKFLOW || 'false' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

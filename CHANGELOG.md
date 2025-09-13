@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Adopt: Hierarchical roadmap issue model with single parent `[slug]` issue + sub-issues (replaces per-issue slug prefix pattern)
+- Removed redundant custom CodeQL workflow in favor of GitHub default configuration (eliminates SARIF conflict).
 - Project-level build flags (`ProjectSetting.buildFlags`) with allowlist enforcement (`BUILD_FLAGS_ALLOWLIST`), executor integration, and redacted logging.
 - Deployment archive upload endpoint enhancements since 0.0.2 (artifact processing groundwork for orchestration follow-up).
 - Enforceable monorepo ESLint baseline with typed rules and scoped test/config overrides (#114).
