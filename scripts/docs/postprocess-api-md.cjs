@@ -94,11 +94,9 @@ block = block.replace(/[ \t]+$/gm, '');
 // This keeps links valid while ensuring deterministic doc generation for ci:full:strict clean-tree verification.
 block = block.replace(/(\/blob\/)[0-9a-f]{7,40}\//g, '$1HEAD/');
 
-// 8. Normalize horizontal rules: some generators emit '----' (4 dashes). Canonicalize to '***' for consistency.
-// Only replace lines that are exactly a rule (optionally surrounded by spaces).
+// 8. Normalize horizontal rules: canonicalize only 4-dash variant (----) to '***'.
+// DO NOT touch '---' because the file may use YAML frontmatter delimiters at the top which must stay '---'.
 block = block.replace(/^----\s*$/gm, '***');
-// Also normalize '---' (three dashes) if used as a thematic break inside generated include regions to avoid mixed styles.
-block = block.replace(/^---\s*$/gm, '***');
 
 // 9. Remove superfluous blank lines immediately after markdownlint-disable blocks and before the first content line
 // to reduce churn where a generator sometimes adds an empty line.
@@ -112,6 +110,9 @@ block = block.replace(/\n{3,}/g, '\n\n');
 
 // 12. Unescape prisma `node_modules` path underscores that occasionally toggle (ensure single representation)
 block = block.replace(/node\\_modules/g, 'node_modules');
+
+// 12b. Replace any lingering blob commit hashes missed by earlier pattern (case-insensitive safety)
+block = block.replace(/(blob)\/[0-9a-f]{7,40}\//gi, '$1/HEAD/');
 
 // 13. Ensure a blank line before and after every normalized horizontal rule (***), except at boundaries
 block = block.replace(/([^\n])\n\*\*\*\n([^\n])/g, (m, a, b) => `${a}\n\n***\n\n${b}`);
