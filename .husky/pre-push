@@ -2,35 +2,18 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 if [ "$SKIP_HOOKS" = "1" ]; then
-  echo "[husky] pre-push skipped via SKIP_HOOKS=1" >&2
+  echo "[pre-push] skipped via SKIP_HOOKS=1" >&2
   exit 0
 fi
 
-# Load .env if present (export variables) but do not echo secrets
+set -e
+
+# Lightweight env load (do not require GH_TOKEN now that docs gen moved to pre-commit)
 if [ -f ./.env ]; then
-  # shellcheck disable=SC2046
-  set -a
-  . ./.env
-  set +a
-  echo "[husky] .env loaded"
+  set -a; . ./.env; set +a
 fi
 
-echo "[husky] Ensuring base branch fetched (develop)..."
-git fetch origin develop:refs/remotes/origin/develop --depth=1 || true
+echo "[pre-push] Running ci:full:strict (no docs generation here)" >&2
+npm run ci:full:strict || { echo "[pre-push] ci:full:strict failed" >&2; exit 1; }
 
-if [ -z "$GH_TOKEN" ]; then
-  echo "[husky] ERROR: GH_TOKEN not set after loading .env; aborting push so roadmap/docs validation can't be skipped." >&2
-  exit 1
-else
-  # Basic format heuristic (do not fail strictly if pattern drifts)
-  case "$GH_TOKEN" in
-    ghp_*) echo "[husky] GH_TOKEN present (ghp_*)" ;;
-    *) echo "[husky] GH_TOKEN present (non-ghp prefix)" ;;
-  esac
-fi
-
-echo "[husky] Ensuring docker compose services (postgres, redis)..."
-bash scripts/ci/ensure-services.sh || exit 1
-
-echo "[husky] Running full CI parity pipeline (ci:full:strict) locally..."
-npm run ci:full:strict || exit 1
+echo "[pre-push] OK" >&2

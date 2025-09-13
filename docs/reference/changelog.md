@@ -27,7 +27,6 @@ All notable changes (mirrored from root) are listed below.
 
 <!-- Mirror starts -->
 <!-- markdownlint-disable MD024 -->
-
 ## Unreleased
 
 ### Added
@@ -39,6 +38,7 @@ All notable changes (mirrored from root) are listed below.
 
 - Unified CI parity: single `ci:full:strict` pipeline invoked locally (pre-push) and in GitHub Actions (workflow collapsed to one step, reordered to run Prisma generation first, added clean tree verification).
 - Early docs generation ordering: moved `docs:check` (roadmap/api/changelog sync) to the start of `ci:full` to prevent later test phases from seeing a dirty tree; added pre-commit hook enforcing up-to-date generated docs.
+- Refined docs workflow: removed docs generation from push CI path by deleting pre-push hook and taking `docs:check` out of `ci:full`; generation now enforced exclusively at pre-commit for deterministic diffs and faster pushes.
 
 ### Fixed
 
