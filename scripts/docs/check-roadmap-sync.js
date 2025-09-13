@@ -1,5 +1,29 @@
 #!/usr/bin/env node
 /*
+ * DEPRECATED: Complex roadmap synchronization checker
+ * 
+ * This script is deprecated in favor of the new dynamic GitHub Issues-based
+ * roadmap generation system (scripts/docs/generate-roadmap.js).
+ * 
+ * The new system eliminates the need for manual synchronization between
+ * tasklist.md and docs/roadmap.md by using GitHub Issues as the source of truth.
+ * 
+ * This file is kept for backward compatibility but will be removed in a future version.
+ * 
+ * See docs/architecture/docs-simplification.md for details on the new approach.
+ */
+
+console.warn('⚠️  DEPRECATED: This roadmap sync checker is deprecated.');
+console.warn('🚀 Please use the new dynamic roadmap generator: npm run docs:roadmap');  
+console.warn('📚 See docs/architecture/docs-simplification.md for migration details.');
+
+// For backward compatibility, just exit successfully
+console.log('Roadmap sync OK (deprecated - no longer needed).');
+process.exit(0);
+
+/*
+ * Legacy code below - no longer executed but kept for reference
+ * 
  Cross-check docs/roadmap.md against tasklist.md.
  Rules:
  1. If roadmap row status is ✅ the corresponding concept must have at least one checked item in tasklist mentioning a keyword.

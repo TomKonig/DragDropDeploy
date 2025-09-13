@@ -20,5 +20,5 @@ jobs:
           node-version: '20'
       - name: Install deps
         run: npm install --no-audit --no-fund
-      - name: Run docs checks
+      - name: Run docs checks (simplified)  
         run: npm run docs:check

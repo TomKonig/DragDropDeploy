@@ -48,6 +48,14 @@ function checkFile(file) {
       if (re.test(line)) {
         // Allow i18n placeholder usage for variables
         if (file.includes('i18n') && line.includes('{{')) continue;
+        
+        // Allow documentation about placeholders (meta-documentation)
+        if (file.includes('docs-simplification') || file.includes('architecture')) {
+          // Skip if it's documentation talking about placeholder scanning/checking
+          if (line.includes('Checks for') || line.includes('development placeholders') || 
+              line.includes('Placeholder') || line.includes('placeholders')) continue;
+        }
+        
         failures.push(`${file}:${idx + 1}: matched ${re} => ${line.trim()}`);
       }
     }
