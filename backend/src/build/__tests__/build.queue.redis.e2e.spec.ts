@@ -58,6 +58,12 @@ describe("Build Queue (BullMQ Redis) e2e", () => {
     delete process.env.REDIS_URL; // avoid leaking into subsequent tests
   });
 
+  // Ensure REDIS_URL doesn't persist if a test early-exits or jest bails mid-suite.
+  afterEach(() => {
+    // When running full suite we want later tests to default to in-memory path.
+    if (process.env.REDIS_URL) delete process.env.REDIS_URL;
+  });
+
   it("enqueues a build and reaches SUCCESS via BullMQ worker", async () => {
     if (!redis) {
       return; // skipped
