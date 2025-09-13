@@ -37,6 +37,24 @@ describe("Auth & Roles (e2e)", () => {
     await prisma.$disconnect();
   });
 
+  // Ensure mutations to JWT secrets in rotation test do not leak to other
+  // suites (which assume initial secret state). This mirrors a realistic
+  // process restart boundary between independent test files.
+  afterEach(() => {
+    if (process.env.JWT_VERIFICATION_SECRETS) {
+      delete process.env.JWT_VERIFICATION_SECRETS;
+    }
+    if (process.env.JWT_SIGNING_SECRET && process.env.JWT_SECRET) {
+      // If both are defined we preserve JWT_SECRET (validated by config) and
+      // clear the override JWT_SIGNING_SECRET used only for rotation test.
+      delete process.env.JWT_SIGNING_SECRET;
+    } else if (process.env.JWT_SIGNING_SECRET && !process.env.JWT_SECRET) {
+      // If only signing secret was set (unlikely in normal path), keep one stable value.
+      process.env.JWT_SECRET = process.env.JWT_SIGNING_SECRET;
+      delete process.env.JWT_SIGNING_SECRET;
+    }
+  });
+
   it("promotes first user to operator role", async () => {
     const email = randomEmail("bootstrap.test");
     const password = randomPassword();
