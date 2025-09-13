@@ -47,8 +47,8 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          # Query packs: include default + security-and-quality; allow later custom extension
-          queries: +security-and-quality
+          # Central config file defines additional ignores and (optional) query packs.
+          config-file: ./.github/codeql/codeql-config.yml
           # JS/TS does not support manual build mode; rely on dependency install + extractor (no build)
           build-mode: none
 
